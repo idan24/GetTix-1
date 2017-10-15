@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayoutManager mLayoutManager;
 
     List<Show> showList = new ArrayList<>();
+    String bla = "bla";
 
 
     @Override
