@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="app.com.flighter.foo.gettix.MainActivity">
+    tools:context="app.com.almogrubi.idansasson.gettix.MainActivity">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -43,7 +43,7 @@
                     android:text="Date" />
 
                 <Button
-                    android:id="@+id/_date_button"
+                    android:id="@+id/date_button"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="Pick Date" />

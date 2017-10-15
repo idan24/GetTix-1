@@ -1,4 +1,4 @@
-package app.com.flighter.foo.gettix;
+package app.com.almogrubi.idansasson.gettix;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

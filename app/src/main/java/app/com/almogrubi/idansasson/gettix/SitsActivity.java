@@ -1,4 +1,4 @@
-package app.com.flighter.foo.gettix;
+package app.com.almogrubi.idansasson.gettix;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
