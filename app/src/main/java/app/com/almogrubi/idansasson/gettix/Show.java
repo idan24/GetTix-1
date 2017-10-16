@@ -17,6 +17,8 @@ public class Show implements Serializable {
     private int price;
     private int ID;
     private String drawNmae;
+    private int[][] sitsArray = new int[5][5];
+
 
     public Show(String title, String location, String type, String descreption, String date, String time, int price, int id, String drawNmae)
     {
@@ -29,6 +31,23 @@ public class Show implements Serializable {
         this.price = price;
         this.ID = id;
         this.drawNmae = drawNmae;
+        fillTheatre();
+    }
+
+    private void fillTheatre (){
+        for (int i=0;i<sitsArray.length;i++){
+            for (int j=0;i<sitsArray[0].length;i++){
+                sitsArray[i][j]=0;
+            }
+        }
+    }
+
+    public int[][] getSitsArray() {
+        return sitsArray;
+    }
+
+    public void setSitsArray(int[][] sitsArray) {
+        this.sitsArray = sitsArray;
     }
 
     public String getTitle() {
