@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="app.com.almogrubi.idansasson.gettix.MainActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -17,12 +17,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="app.com.almogrubi.idansasson.gettix.DetailActivity"
+            android:name=".DetailActivity"
             android:label="@string/title_activity_detail"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="app.com.almogrubi.idansasson.gettix.SitsActivity"
+            android:name=".SitsActivity"
             android:label="@string/title_activity_sits"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".PayActivity"
+            android:label="@string/title_activity_pay"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

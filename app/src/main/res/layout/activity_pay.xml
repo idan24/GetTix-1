@@ -4,19 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="app.com.almogrubi.idansasson.gettix.MainActivity">
+    tools:context="app.com.almogrubi.idansasson.gettix.PayActivity">
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="495dp"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteY="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp">
+        android:orientation="vertical"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_editor_absoluteY="16dp">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -27,12 +28,12 @@
                 android:id="@+id/date_picker_box"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginTop="8dp"
                 android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
                 app:layout_constraintLeft_toLeftOf="parent"
-                android:layout_marginStart="8dp">
+                app:layout_constraintTop_toTopOf="parent">
 
 
                 <TextView
@@ -51,13 +52,13 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/location_box"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_marginTop="8dp"
-                app:layout_constraintTop_toBottomOf="@+id/date_picker_box"
+                android:orientation="horizontal"
                 app:layout_constraintLeft_toLeftOf="@+id/date_picker_box"
-                android:id="@+id/location_box">
+                app:layout_constraintTop_toBottomOf="@+id/date_picker_box">
 
                 <TextView
                     android:id="@+id/location_text"
@@ -74,18 +75,17 @@
                     android:layout_weight="1"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="enter location here" />
+                    android:text="Name" />
 
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@+id/location_box"
                 app:layout_constraintLeft_toLeftOf="@+id/location_box"
-                android:id="@+id/type"
-                >
+                app:layout_constraintTop_toBottomOf="@+id/location_box">
 
                 <TextView
                     android:id="@+id/name_text"
@@ -102,34 +102,32 @@
                     android:layout_weight="1"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="name of the show" />
+                    android:text="Name" />
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                tools:layout_editor_absoluteX="8dp"
-                app:layout_constraintTop_toBottomOf="@+id/type"
                 android:id="@+id/type_box"
-                android:layout_marginTop="0dp">
+                android:layout_width="283dp"
+                android:layout_height="39dp"
+                android:layout_marginTop="0dp"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@+id/type"
+                tools:layout_editor_absoluteX="8dp">
 
                 <TextView
                     android:id="@+id/type_text_view"
                     android:layout_width="70dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:ems="10"
                     android:text="Type" />
 
                 <EditText
                     android:id="@+id/type_edit_text"
-                    android:layout_width="wrap_content"
+                    android:layout_width="233dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="movie/theater" />
+                    android:text="Name" />
 
             </LinearLayout>
 
@@ -143,12 +141,6 @@
                 tools:layout_editor_absoluteX="8dp" />
 
         </android.support.constraint.ConstraintLayout>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/my_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical" />
 
 
     </LinearLayout>

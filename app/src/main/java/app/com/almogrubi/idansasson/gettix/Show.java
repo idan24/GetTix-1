@@ -1,9 +1,8 @@
 package app.com.almogrubi.idansasson.gettix;
 
 import java.io.Serializable;
-
 /**
- * Created by Almog.Rubinstein on 10/11/2017.
+ * Created by almogrubi on 10/14/17.
  */
 
 public class Show implements Serializable {
@@ -42,9 +41,17 @@ public class Show implements Serializable {
         }
     }
 
+    public void choseSit(int ID) {
+        int x = ID/10;
+        int y = ID%10;
+        sitsArray[x][y]=1;
+    }
+
     public int[][] getSitsArray() {
         return sitsArray;
     }
+
+
 
     public void setSitsArray(int[][] sitsArray) {
         this.sitsArray = sitsArray;

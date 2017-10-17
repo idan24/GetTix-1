@@ -15,6 +15,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+/**
+ * Created by almogrubi on 10/14/17.
+ */
+
 public class MainActivity extends AppCompatActivity {
 
     private Button DatePickerButton;
