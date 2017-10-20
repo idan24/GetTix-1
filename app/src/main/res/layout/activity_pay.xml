@@ -17,12 +17,37 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        tools:layout_editor_absoluteY="16dp">
+        tools:layout_editor_absoluteY="17dp">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+
+            <LinearLayout
+                android:id="@+id/email_box"
+                android:layout_width="283dp"
+                android:layout_height="39dp"
+                android:layout_marginTop="0dp"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@+id/phone_box"
+                tools:layout_editor_absoluteX="8dp">
+
+                <TextView
+                    android:id="@+id/email_text_view"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:text="email" />
+
+                <EditText
+                    android:id="@+id/email_edit_text"
+                    android:layout_width="233dp"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textPersonName" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/date_picker_box"
@@ -38,16 +63,10 @@
 
                 <TextView
                     android:id="@+id/editText"
-                    android:layout_width="70dp"
+                    android:layout_width="344dp"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:text="Date" />
-
-                <Button
-                    android:id="@+id/date_button"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:text="Pick Date" />
+                    android:text="text from detail activity" />
 
             </LinearLayout>
 
@@ -61,12 +80,12 @@
                 app:layout_constraintTop_toBottomOf="@+id/date_picker_box">
 
                 <TextView
-                    android:id="@+id/location_text"
+                    android:id="@+id/full_name_text"
                     android:layout_width="70dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ems="10"
-                    android:text="Location" />
+                    android:text="Full name" />
 
                 <EditText
                     android:id="@+id/location_edit_text"
@@ -80,7 +99,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/type"
+                android:id="@+id/phone_box"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -88,12 +107,12 @@
                 app:layout_constraintTop_toBottomOf="@+id/location_box">
 
                 <TextView
-                    android:id="@+id/name_text"
+                    android:id="@+id/Phone_text"
                     android:layout_width="70dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ems="10"
-                    android:text="Name" />
+                    android:text="Phone " />
 
                 <EditText
                     android:id="@+id/name_edit_text"
@@ -102,43 +121,120 @@
                     android:layout_weight="1"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="Name" />
+                    android:text="05-" />
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/type_box"
-                android:layout_width="283dp"
-                android:layout_height="39dp"
-                android:layout_marginTop="0dp"
+                android:id="@+id/payment_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@+id/type"
-                tools:layout_editor_absoluteX="8dp">
+                app:layout_constraintLeft_toLeftOf="@+id/email_box"
+                app:layout_constraintTop_toBottomOf="@+id/email_box">
 
                 <TextView
-                    android:id="@+id/type_text_view"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/payment_text"
+                    android:layout_width="306dp"
+                    android:layout_height="43dp"
                     android:ems="10"
-                    android:text="Type" />
-
-                <EditText
-                    android:id="@+id/type_edit_text"
-                    android:layout_width="233dp"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="textPersonName"
-                    android:text="Name" />
+                    android:text="Please enter payment method " />
 
             </LinearLayout>
 
-            <Button
-                android:id="@+id/search_button"
+            <LinearLayout
+                android:id="@+id/credit_box"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Search"
-                app:layout_constraintTop_toBottomOf="@+id/type_box"
-                tools:layout_editor_absoluteX="8dp" />
+                android:orientation="horizontal"
+                app:layout_constraintLeft_toLeftOf="@+id/payment_box"
+                app:layout_constraintTop_toBottomOf="@+id/payment_box">
+
+                <TextView
+                    android:id="@+id/credit_text"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:text="Credit card " />
+
+                <EditText
+                    android:id="@+id/credit_edit_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:text="credit card number" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/expiration_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintLeft_toLeftOf="@+id/credit_box"
+                app:layout_constraintTop_toBottomOf="@+id/credit_box">
+
+                <TextView
+                    android:id="@+id/expiration_text"
+                    android:layout_width="70dp"
+                    android:layout_height="50dp"
+                    android:ems="10"
+                    android:text="Expiration date" />
+
+                <EditText
+                    android:id="@+id/expiration_edit_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:text="MM/YYYY" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/CVV_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintLeft_toLeftOf="@+id/expiration_box"
+                app:layout_constraintTop_toBottomOf="@+id/expiration_box">
+
+                <TextView
+                    android:id="@+id/CVV_text"
+                    android:layout_width="70dp"
+                    android:layout_height="50dp"
+                    android:ems="10"
+                    android:text="CVV" />
+
+                <EditText
+                    android:id="@+id/CVV_edit_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:text="XXX" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/approve_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintLeft_toLeftOf="@+id/CVV_box"
+                app:layout_constraintTop_toBottomOf="@+id/CVV_box">
+
+                <Button
+                    android:id="@+id/approveButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Next" />
+
+            </LinearLayout>
+
+
 
         </android.support.constraint.ConstraintLayout>
 
