@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         );
 
 
-        Show macbeth = new Show("macbeth", "Haifa,Sderot zion", "Movie", "Godd", "45/6/2016", "21:45", 30, 1, "macbeth");
+        Show macbeth = new Show("macbeth", "Haifa,Sderot zion", "Theatre", "Godd", "45/6/2016", "21:45", 30, 1, "macbeth");
         Show starwars = new Show("starwars", "Haifa,Sderot zion", "Movie", "Godd", "45/6/2016", "21:45", 30, 1, "starwars");
 
         showList.add(macbeth );

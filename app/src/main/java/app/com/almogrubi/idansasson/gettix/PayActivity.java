@@ -18,6 +18,11 @@ import android.widget.TextView;
 
 public class PayActivity extends AppCompatActivity {
 
+
+    Show show;
+    int price;
+    int counter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,18 +37,18 @@ public class PayActivity extends AppCompatActivity {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                String tos = to.getText().toString();
-                Intent intent = new Intent(Intent.ACTION_SEND); // was ACTION_SENDTO
-                intent.putExtra(Intent.EXTRA_EMAIL, tos);
-                intent.putExtra(Intent.EXTRA_SUBJECT, "Subject of email");
-                intent.putExtra(Intent.EXTRA_TEXT, "Body of email");
-
-                intent.setType("message/rfc822");
+                Intent intent = new Intent(v.getContext(), FinishingActivity.class);
+                intent.putExtra("price", price);
+                intent.putExtra("showObject", show);
                 startActivity(intent);
 
             }
          }
         );
+
+
+
+
     }
 
 }

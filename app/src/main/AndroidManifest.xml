@@ -28,7 +28,8 @@
             android:name=".PayActivity"
             android:label="@string/title_activity_pay"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".NoSitsActivity"></activity>
+        <activity android:name=".NoSitsActivity" />
+        <activity android:name=".FinishingActivity"></activity>
     </application>
 
 </manifest>

@@ -35,8 +35,8 @@ public class SitsActivity extends AppCompatActivity{
         if (intent != null) {
 
             show = (Show) intent.getSerializableExtra("showObject");
-            rows =4; //show.getSitsArray().length;;
-            columns =4; //show.getSitsArray().length;
+            rows =show.getSitsArray().length;
+            columns =show.getSitsArray().length;
             //fix - not on the same length
 
             for (int i = 0; i < rows; i++) {
@@ -89,9 +89,11 @@ public class SitsActivity extends AppCompatActivity{
         setContentView(layout);
 
         next.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), PayActivity.class);
                 intent.putExtra("price", price);
+                intent.putExtra("showObject", show);
                 startActivity(intent);
                 Log.i("almog", "id is " + v.getId());
 
@@ -101,8 +103,6 @@ public class SitsActivity extends AppCompatActivity{
         }
 
         );
-
-
 
     }
 }
