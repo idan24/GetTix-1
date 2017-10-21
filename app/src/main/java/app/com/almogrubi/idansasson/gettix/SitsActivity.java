@@ -93,16 +93,9 @@ public class SitsActivity extends AppCompatActivity{
                 Intent intent = new Intent(v.getContext(), PayActivity.class);
                 intent.putExtra("price", price);
                 startActivity(intent);
-
-
-
-                ((Button) v).setText("*");
-                ((Button) v).setEnabled(false);
                 Log.i("almog", "id is " + v.getId());
 
                 show.choseSit(v.getId());
-
-
 
             }
         }

@@ -25,35 +25,25 @@ public class PayActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Button next = (Button) findViewById(R.id.button_pick_sits);
+        final EditText to = (EditText) findViewById(R.id.email_edit_text);
+        Button next = (Button) findViewById(R.id.approveButton);
 
 
-/*        next.setOnClickListener(new View.OnClickListener() {
+        next.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                //Intent intent = new Intent(v.getContext(), SitsActivity.class);
-                EditText emailInput = (EditText) findViewById(R.id.email_edit_text);
-                String email = emailInput.getText().toString();
-
-                //sending email code
-                Intent intent = new Intent(Intent.ACTION_SENDTO); // it's not ACTION_SEND
-                intent.setType("text/plain");
+            public void onClick(View v){
+                String tos = to.getText().toString();
+                Intent intent = new Intent(Intent.ACTION_SEND); // was ACTION_SENDTO
+                intent.putExtra(Intent.EXTRA_EMAIL, tos);
                 intent.putExtra(Intent.EXTRA_SUBJECT, "Subject of email");
                 intent.putExtra(Intent.EXTRA_TEXT, "Body of email");
-                intent.setData(Uri.parse("mailto:default@recipient.com")); // or just "mailto:" for blank
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // this will make such that when user returns to your app, your app is displayed, instead of the email app.
+
+                intent.setType("message/rfc822");
                 startActivity(intent);
 
-
             }
-        });*/
-
-
-
-
-
-
-
+         }
+        );
     }
 
 }
