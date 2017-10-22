@@ -1,156 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:grid="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layoutDirection="rtl"
     tools:context="app.com.almogrubi.idansasson.gettix.MainActivity">
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="495dp"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteY="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp">
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:alignmentMode="alignBounds"
+        android:columnCount="2"
+        android:rowCount="2">
 
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tv_find_label"
+            android:text="@string/find_events_label"
+            android:textSize="16sp"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_columnSpan="2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
+        <LinearLayout
+            android:gravity="right"
+            android:layout_gravity="right"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:layout_row="1"
+            android:layout_column="0">
 
-            <LinearLayout
-                android:id="@+id/date_picker_box"
+            <EditText
+                android:id="@+id/et_find_by_date"
+                android:hint="@string/event_date_label"
+                android:clickable="true"
+                android:focusable="false"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="8dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                android:layout_marginStart="8dp">
+                android:layout_height="wrap_content" />
 
-
-                <TextView
-                    android:id="@+id/editText"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:text="Date" />
-
-                <Button
-                    android:id="@+id/date_button"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:text="Pick Date" />
-
-            </LinearLayout>
-
-            <LinearLayout
+            <EditText
+                android:id="@+id/et_find_by_hall"
+                android:hint="@string/event_hall_label"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp"
-                app:layout_constraintTop_toBottomOf="@+id/date_picker_box"
-                app:layout_constraintLeft_toLeftOf="@+id/date_picker_box"
-                android:id="@+id/location_box">
+                android:layout_height="wrap_content" />
 
-                <TextView
-                    android:id="@+id/location_text"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:text="Location" />
-
-                <EditText
-                    android:id="@+id/location_edit_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:inputType="textPersonName"
-                    android:text="enter location here" />
-
-            </LinearLayout>
-
-            <LinearLayout
+            <EditText
+                android:id="@+id/et_find_by_city"
+                android:hint="@string/event_city_label"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@+id/location_box"
-                app:layout_constraintLeft_toLeftOf="@+id/location_box"
-                android:id="@+id/phone_box"
-                >
+                android:layout_height="wrap_content" />
 
-                <TextView
-                    android:id="@+id/name_text"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:text="Name" />
+        </LinearLayout>
 
-                <EditText
-                    android:id="@+id/name_edit_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:inputType="textPersonName"
-                    android:text="name of the show" />
-            </LinearLayout>
+        <LinearLayout
+            android:gravity="right"
+            android:layout_gravity="center"
+            android:padding="8dp"
+            android:orientation="vertical"
+            android:layout_row="1"
+            android:layout_column="1">
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                tools:layout_editor_absoluteX="8dp"
-                app:layout_constraintTop_toBottomOf="@+id/phone_box"
-                android:id="@+id/email_box"
-                android:layout_marginTop="0dp">
+            <Spinner
+                android:id="@+id/sp_find_by_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-                <TextView
-                    android:id="@+id/type_text_view"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:text="Type" />
-
-                <EditText
-                    android:id="@+id/type_edit_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:inputType="textPersonName"
-                    android:text="movie/theater" />
-
-            </LinearLayout>
+            <EditText
+                android:id="@+id/et_find_by_keyword"
+                android:hint="@string/event_keyword_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
             <Button
-                android:id="@+id/search_button"
+                android:id="@+id/bt_search_events"
+                android:text="@string/search_events_button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Search"
-                app:layout_constraintTop_toBottomOf="@+id/email_box"
-                tools:layout_editor_absoluteX="8dp" />
+                android:layout_height="wrap_content" />
 
-        </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/my_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical" />
+    </GridLayout>
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/colorPrimary" />
 
-    </LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/events_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical" />
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

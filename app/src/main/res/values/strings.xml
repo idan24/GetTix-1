@@ -3,4 +3,23 @@
     <string name="title_activity_detail">DetailActivity</string>
     <string name="title_activity_sits">SitsActivity</string>
     <string name="title_activity_pay">PayActivity</string>
+
+    <string name="find_events_label">מצא את האירוע שלך:</string>
+    <string name="event_date_label">תאריך</string>
+    <string name="event_hall_label">מקום</string>
+    <string name="event_category_label">תחום</string>
+    <string name="event_city_label">עיר</string>
+    <string name="event_keyword_label">מילה חופשית</string>
+    <string name="search_events_button">חפש</string>
+
+    <string-array name="categories_array">
+        <item>MUSIC</item>
+        <item>Venus</item>
+        <item>Earth</item>
+        <item>Mars</item>
+        <item>Jupiter</item>
+        <item>Saturn</item>
+        <item>Uranus</item>
+        <item>Neptune</item>
+    </string-array>
 </resources>
