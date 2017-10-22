@@ -78,33 +78,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(EventViewHolder holder, int position) {
         Event event = eventList.get(position);
-
-        holder.titleView.setText(event.getTitle());
-
-        DateTime dateTime = new DateTime(event.getDateTime());
-        holder.dateTimeView.setText(String.format("%d/%d/%d בשעה %d:%d",
-                dateTime.getDayOfMonth(),
-                dateTime.getMonthOfYear(),
-                dateTime.getYearOfCentury(),
-                dateTime.getHourOfDay(),
-                dateTime.getMinuteOfHour()));
-
-        holder.hallView.setText(String.format("%s, %s", event.getHallId(), event.getCity()));
-
-        holder.categoryView.setBackgroundResource(Utils.lookupImageByCategory(event.getCategory()));
-
-        holder.imageView.setBackgroundResource(R.drawable.miserables);
-//
-//        holder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Log.d("I", "was clicked");
-//                Context contextO = v.getContext();
-//                Intent intent = new Intent(contextO, DetailActivity.class);
-//                intent.putExtra("showObject", show);
-//                contextO.startActivity(intent);
-//            }
-//        });
+        holder.bindEvent(event);
     }
 
     @Override
@@ -113,8 +87,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     public void filter(Date date, String hall, DataUtils.Category category, String city, String keyword) {
+
         keyword = keyword.toLowerCase(Locale.getDefault());
         eventList.clear();
+
         if (date == null && hall.isEmpty() && category == null && city.isEmpty() && keyword.isEmpty()) {
             eventList.addAll(eventArrayList);
         }
@@ -187,6 +163,36 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             this.hallView = (TextView) itemView.findViewById(R.id.tv_event_item_hall);
             this.categoryView = (ImageView) itemView.findViewById(R.id.iv_event_item_category);
             this.imageView = (ImageView) itemView.findViewById(R.id.iv_event_item_image);
+        }
+
+        public void bindEvent(Event event) {
+
+            titleView.setText(event.getTitle());
+
+            DateTime dateTime = new DateTime(event.getDateTime());
+            dateTimeView.setText(String.format("%d/%d/%d בשעה %d:%d",
+                    dateTime.getDayOfMonth(),
+                    dateTime.getMonthOfYear(),
+                    dateTime.getYearOfCentury(),
+                    dateTime.getHourOfDay(),
+                    dateTime.getMinuteOfHour()));
+
+            hallView.setText(String.format("%s, %s", event.getHallId(), event.getCity()));
+
+            categoryView.setBackgroundResource(Utils.lookupImageByCategory(event.getCategory()));
+
+            imageView.setBackgroundResource(R.drawable.miserables);
+//
+//        holder.itemView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.d("I", "was clicked");
+//                Context contextO = v.getContext();
+//                Intent intent = new Intent(contextO, DetailActivity.class);
+//                intent.putExtra("showObject", show);
+//                contextO.startActivity(intent);
+//            }
+//        });
         }
     }
 }

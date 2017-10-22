@@ -3,6 +3,159 @@
 
     <item
         is-multidex="true"
+        jar="C:\Users\idans\.android\build-cache\046c76f1a2f1aab27f2abfef818538e268b41686\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="c88bd2d95ec2fe819a00506817fb43251d68cdb7">
+        <dex dex="C:\Users\idans\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_4c81d65097d7b6b3e40a772194363022f9358587\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\idans\.gradle\caches\modules-2\files-2.1\com.android.support\support-annotations\26.0.2\8b68a849722b44f584e2d68c451c5e3844c10380\support-annotations-26.0.2.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="8b68a849722b44f584e2d68c451c5e3844c10380">
+        <dex dex="C:\Users\idans\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-26.0.2_3aa4b8675e8d578d5cfb7a76c458bb60dfd720b6\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\idans\.gradle\caches\modules-2\files-2.1\com.github.bumptech.glide\disklrucache\4.2.0\fd3a444cc7987b5fa2a60fabb116395ca2a4da1c\disklrucache-4.2.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="fd3a444cc7987b5fa2a60fabb116395ca2a4da1c">
+        <dex dex="C:\Users\idans\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\disklrucache-4.2.0_11911455a7d8e6b682a2696b5b852146c2c0b043\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\idans\.android\build-cache\955b1a8ea365832a217e96c3497c1ad1fd02da80\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="97fb40924e83775c91374180494801cb022aa008">
+        <dex dex="C:\Users\idans\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_25f2d0096a742f12992e762849b25ff6afbb771c\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\idans\.android\build-cache\992b8b10eef0d63026961afdacfa151e7bd738d9\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="2d45b277afdf55bcfdc005c03c0c2f1733aaa1b0">
+        <dex dex="C:\Users\idans\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_ea970fafec053a7a9046b22606918913491bc184\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\idans\GetTix-1\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="5e1f29d9107819e70cbc86ea8621eb1bb469af96">
+        <dex dex="C:\Users\idans\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run-bootstrap_63abbec4eda4893437ce5581724bfe4a4d0ff6f6\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\idans\.gradle\caches\modules-2\files-2.1\com.github.bumptech.glide\glide\4.2.0\b76d4269b06b8bda96aac32342a05843b4c0be41\glide-4.2.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="b76d4269b06b8bda96aac32342a05843b4c0be41">
+        <dex dex="C:\Users\idans\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\glide-4.2.0_92e0cbfe7765a881603f72a982d27daed25efda4\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\idans\.android\build-cache\92dfc596ca6404bd3e7ef32fe3f0cf0c77bf7d84\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="52339832d252da4328c5ffcacbc205268346362a">
+        <dex dex="C:\Users\idans\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_a13191cbcd480882e260f0871e75b680021f9567\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\idans\.android\build-cache\5ed6b808ec113bd44819bd0f256329806bf66cd7\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="bed98ea7af8c5c4202820875e856dd3eb296e22d">
+        <dex dex="C:\Users\idans\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_338f4b2e8d7ffc932962fae127933d9ec48783d3\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\idans\.android\build-cache\2753f13089a3600bbc5421c7239f61284895a50f\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="20d6aa9a18ea9833cd2bee95dff7cd303cdb80e4">
+        <dex dex="C:\Users\idans\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_7b6a8de9593ba75eb3749c8436580e579db9a0d6\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\idans\.gradle\caches\modules-2\files-2.1\com.github.bumptech.glide\gifdecoder\4.2.0\f196283dab426e09559bfe7385f162b2b254cf72\gifdecoder-4.2.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="f196283dab426e09559bfe7385f162b2b254cf72">
+        <dex dex="C:\Users\idans\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\gifdecoder-4.2.0_ced1569f169885b97124b9b06b613fa92ef8d53b\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\idans\GetTix-1\app\lib\joda-time-2.9.9.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="f7b520c458572890807d143670c9b24f4de90897">
+        <dex dex="C:\Users\idans\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\2\joda-time-2.9.9_f52a122a7b3c9eed170406caf2c77e06d5780bf0\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\idans\.android\build-cache\e593bb8ba223acde7c26f8517f730764f04b60c8\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="3e1185bdde08224bf1275f6b4f9771df5e738e1b">
+        <dex dex="C:\Users\idans\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_fa90d2d65eb7b799d10c057460ec8ec4aa3dff08\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\idans\.android\build-cache\fbe67298d6870864744e2c14f6001afa5de53daa\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="6e6b94b72d7912a627fb1629c310b2bca9261f06">
+        <dex dex="C:\Users\idans\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_1290e2ab4d172b1dad6fd7480bd92ef78aa3738b\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\idans\.android\build-cache\1c029e1bb2f4b8a54b070a5d7085e3a62d8477b8\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="73c80b05a390e8319d1ef7a236739cd610c8f774">
+        <dex dex="C:\Users\idans\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_6225a152e50c90a1e9f1f186e9be8b7bd939e8b9\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\idans\.android\build-cache\bd28a1cb5578576412a728ec35291fc8bf8ec3c1\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="c2cadea4d8a1a5b5c4e5f0dc99a99a43774f5e6e">
+        <dex dex="C:\Users\idans\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_675651bd1885dcaf54a26cfc53c926f5235532f1\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\idans\.android\build-cache\2f747e3d80f9aabe4e81b489aa97e52170eb45d0\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="5f519b8c692038a47ee404b6ea6b847f6402000c">
+        <dex dex="C:\Users\idans\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_dcf75e0ff57dcfb5a61af172807d1cf579dc16c5\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="C:\Users\idans\GetTix-1\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
         jumboMode="true"
         optimize="true"
@@ -12,12 +165,30 @@
     </item>
     <item
         is-multidex="true"
-        jar="C:\Users\idans\GetTix-1\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jar="C:\Users\idans\.android\build-cache\3c7d4ac4093e9f38d0aad7e9ad4eaca0b31e2a25\output\jars\classes.jar"
         jumboMode="true"
         optimize="true"
         revision="25.0.2"
-        sha1="edb31132c219c8e51bfc430341bd0af4599c5941">
-        <dex dex="C:\Users\idans\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run-bootstrap_63abbec4eda4893437ce5581724bfe4a4d0ff6f6\classes.dex" />
+        sha1="8040d53ecd4bd895360eafdc25e1c1cc9479e6aa">
+        <dex dex="C:\Users\idans\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_fd48163fa7b1388d556350b96224cbe759d35338\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\idans\.gradle\caches\modules-2\files-2.1\com.github.bumptech.glide\annotations\4.2.0\1d6fc29f2af61d8fdc31018416040c560423c4b3\annotations-4.2.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="1d6fc29f2af61d8fdc31018416040c560423c4b3">
+        <dex dex="C:\Users\idans\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\annotations-4.2.0_8658b233ddd1b5d90d7c1e3a75924202794a4412\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\idans\.android\build-cache\1348c55898c626ad16d2846140cc7d51865c7d32\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="643a2fd3bd06c44be5d20efc0ba4ca02036d2c8a">
+        <dex dex="C:\Users\idans\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_8260653b9f3f061bd412fdfed1ad4cc4e8c21112\classes.dex" />
     </item>
 
 </items>

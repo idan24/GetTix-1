@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.util.Log;
 import android.widget.Spinner;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btSearchEvents;
 
     private FirebaseDatabase firebaseDatabase;
+    private FirebaseRecyclerAdapter firebaseAdapter;
     private DatabaseReference eventsDatabaseReference;
     private ChildEventListener childEventListener;
 
@@ -106,6 +108,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        firebaseAdapter = new FirebaseRecyclerAdapter<Event, RecyclerViewAdapter.EventViewHolder>
+                (Event.class, R.layout.list_item, RecyclerViewAdapter.EventViewHolder.class,
+                        eventsDatabaseReference) {
+
+            @Override
+            protected void populateViewHolder(RecyclerViewAdapter.EventViewHolder viewHolder,
+                                              Event model, int position) {
+                viewHolder.bindEvent(model);
+            }
+        };
+
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         recyclerView.setHasFixedSize(true);
@@ -116,5 +129,11 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new RecyclerViewAdapter(this, eventList);
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        firebaseAdapter.cleanup();
     }
 }
