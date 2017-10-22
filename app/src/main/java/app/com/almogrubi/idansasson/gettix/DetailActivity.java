@@ -3,6 +3,7 @@ package app.com.almogrubi.idansasson.gettix;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -55,12 +56,27 @@ public class DetailActivity extends AppCompatActivity {
         }
 
         pickSitsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), SitsActivity.class);
-                intent.putExtra("showObject", show);
-                startActivity(intent);
-            }
+                @Override
+                public void onClick(View v) {
+                Intent intent;
+
+                Log.i("almog","" + show.getType());
+
+                if (show.getType().toString().equals("Theatre"))
+                    {
+                    intent = new Intent(v.getContext(), NoSitsActivity.class);
+                        intent.putExtra("showObject", show);
+                        startActivity(intent);
+
+                    }
+                    if (show.getType().toString().equals("Movie")){
+                    intent = new Intent(v.getContext(), SitsActivity.class);
+                    intent.putExtra("showObject", show);
+                    startActivity(intent);
+                    }
+                }
+
+
         });
 
     }
