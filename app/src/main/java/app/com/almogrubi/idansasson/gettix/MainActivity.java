@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private RecyclerViewAdapter adapter;
-    private LinearLayoutManager mLayoutManager;
 
     List<Event> eventList = new ArrayList<>();
 
@@ -124,8 +123,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         adapter = new RecyclerViewAdapter(this, eventList);
         recyclerView.setAdapter(adapter);

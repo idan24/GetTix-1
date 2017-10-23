@@ -77,8 +77,18 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
      */
     @Override
     public void onBindViewHolder(EventViewHolder holder, int position) {
-        Event event = eventList.get(position);
+        final Event event = eventList.get(position);
         holder.bindEvent(event);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context context = v.getContext();
+                Intent intent = new Intent(context, DetailActivity.class);
+                intent.putExtra("eventObject", event);
+                context.startActivity(intent);
+            }
+        });
+
     }
 
     @Override
@@ -182,17 +192,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             categoryView.setBackgroundResource(Utils.lookupImageByCategory(event.getCategory()));
 
             imageView.setBackgroundResource(R.drawable.miserables);
-//
-//        holder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Log.d("I", "was clicked");
-//                Context contextO = v.getContext();
-//                Intent intent = new Intent(contextO, DetailActivity.class);
-//                intent.putExtra("showObject", show);
-//                contextO.startActivity(intent);
-//            }
-//        });
         }
     }
 }

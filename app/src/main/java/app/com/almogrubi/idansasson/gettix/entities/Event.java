@@ -1,5 +1,6 @@
 package app.com.almogrubi.idansasson.gettix.entities;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
@@ -8,7 +9,7 @@ import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
  * Created by idans on 21/10/2017.
  */
 
-public class Event {
+public class Event implements Serializable {
 
     private String id;
     private String title;
