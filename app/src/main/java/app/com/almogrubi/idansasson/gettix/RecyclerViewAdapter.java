@@ -192,6 +192,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             categoryView.setBackgroundResource(Utils.lookupImageByCategory(event.getCategory()));
 
             imageView.setBackgroundResource(R.drawable.miserables);
+
         }
     }
 }

@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private RecyclerViewAdapter adapter;
+    private RecyclerView.Adapter mAdapter;
 
     List<Event> eventList = new ArrayList<>();
 
@@ -127,6 +128,20 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new RecyclerViewAdapter(this, eventList);
         recyclerView.setAdapter(adapter);
+
+
+        List<Event> showList = new ArrayList<>();
+        Event startwars = new Event("1", "starwars","best movie ever", DataUtils.Category.THEATER, "1","Tel Aviv","",new Date(1),60,
+                "startwars",30, true,16,"" );
+        Event got = new Event("2", "game of thrones","2nd best movie ever", DataUtils.Category.THEATER, "2","Tel Aviv","",new Date(2),60,
+                "got",30, false,16,"" );
+        showList.add(startwars);
+        showList.add(got);
+
+
+        mAdapter = new RecyclerViewAdapter(this, showList);
+        recyclerView.setAdapter(mAdapter);
+
     }
 
     @Override
