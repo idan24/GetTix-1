@@ -42,9 +42,6 @@ public class DetailActivity extends AppCompatActivity {
 
             String imgName = event.getImage();
 
-
-
-
             int idImg = this.getResources().getIdentifier(imgName, "mipmap",
                     this.getPackageName());
             imgTop.setImageResource(idImg);
@@ -60,17 +57,16 @@ public class DetailActivity extends AppCompatActivity {
                 public void onClick(View v) {
                 Intent intent;
 
-                Log.i("almog","" + event.getTitle());
-
                 if (event.hasMarkedSeats())
                     {
-                    intent = new Intent(v.getContext(), NoSitsActivity.class);
+                    intent = new Intent(v.getContext(), NoSeatsActivity.class);
                         intent.putExtra("eventObject", event);
                         startActivity(intent);
 
                     }
-                    if (!event.hasMarkedSeats()){
-                    intent = new Intent(v.getContext(), SitsActivity.class);
+                if (!event.hasMarkedSeats())
+                    {
+                    intent = new Intent(v.getContext(), SeatsActivity.class);
                     intent.putExtra("eventObject", event);
                     startActivity(intent);
                     }

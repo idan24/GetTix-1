@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import app.com.almogrubi.idansasson.gettix.entities.Event;
+
 /**
  * Created by almogrubi on 10/20/17.
  */
@@ -19,8 +21,7 @@ import android.widget.TextView;
 public class PayActivity extends AppCompatActivity {
 
 
-    Show show;
-    int price;
+    Event event;
     int counter;
 
     @Override
@@ -34,20 +35,21 @@ public class PayActivity extends AppCompatActivity {
         Button next = (Button) findViewById(R.id.approveButton);
 
 
+        Intent intent = this.getIntent();
+        event = (Event) intent.getSerializableExtra("eventObject");
+        counter = (int) intent.getSerializableExtra("counter");
+
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
                 Intent intent = new Intent(v.getContext(), FinishingActivity.class);
-                intent.putExtra("price", price);
-                intent.putExtra("showObject", show);
+                intent.putExtra("counter", counter);
+                intent.putExtra("eventObject", event);
                 startActivity(intent);
 
             }
          }
         );
-
-
-
 
     }
 
