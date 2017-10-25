@@ -2,10 +2,15 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowTitleSize">20dp</item>
+        <item name="pageMargin">2sp</item>
+        <item name="android:spinnerItemStyle">@style/SpinnerItem</item>
+        <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItem</item>
+        <item name="android:dropDownListViewStyle">@style/SpinnerStyle</item>
+        <item name="android:textViewStyle">@style/AppTextViewStyle</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -14,7 +19,44 @@
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="AppTextViewStyle" parent="android:style/Widget.TextView">
+        <item name="android:padding">5dp</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textDirection">anyRtl</item>
+    </style>
+
+    <style name="AppEditTextStyle" parent="android:style/Widget.EditText">
+        <item name="android:maxLines">1</item>
+        <item name="android:inputType">text</item>
+        <item name="android:textDirection">anyRtl</item>
+        <item name="android:layout_width">120dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="AppButtonStyle" parent="Widget.AppCompat.Button">
+        <item name="android:textSize">18sp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="SpinnerStyle" parent="android:Widget.ListView.DropDown">
+        <item name="android:dividerHeight">1dip</item>
+        <item name="android:divider">@color/wl_gray</item>
+    </style>
+
+    <style name="SpinnerItem">
+        <item name="android:textDirection">anyRtl</item>
+    </style>
+    <style name="SpinnerDropDownItem">
+        <item name="android:textDirection">anyRtl</item>
+        <item name="android:textAlignment">center</item>
+    </style>
 
 </resources>

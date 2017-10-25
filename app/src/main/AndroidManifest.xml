@@ -29,7 +29,12 @@
             android:label="@string/title_activity_pay"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".NoSitsActivity" />
-        <activity android:name=".FinishingActivity"></activity>
+        <activity android:name=".FinishingActivity" />
+        <activity android:name=".ManagementActivity" />
+        <activity android:name=".EventsActivity" />
+        <activity android:name=".HallsActivity" />
+        <activity android:name=".ReportsActivity" />
+        <activity android:name=".EventEditActivity"></activity>
     </application>
 
 </manifest>

@@ -7,6 +7,7 @@ package app.com.almogrubi.idansasson.gettix.utilities;
 public class DataUtils {
 
     public enum Category {
+        ALL("הכל"),
         MUSIC("מוזיקה"),
         THEATER("תיאטרון"),
         DANCE("מחול"),
