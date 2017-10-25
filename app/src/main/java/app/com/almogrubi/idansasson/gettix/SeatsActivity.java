@@ -15,7 +15,7 @@ import android.util.Log;
  * Created by almogrubi on 10/14/17.
  */
 
-public class SitsActivity extends AppCompatActivity{
+public class SeatsActivity extends AppCompatActivity{
 
 
     Show show;
@@ -52,7 +52,7 @@ public class SitsActivity extends AppCompatActivity{
 
                     b.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View v) {
-//                                Intent intent = new Intent(v.getContext(), SitsActivity.class);
+//                                Intent intent = new Intent(v.getContext(), SeatsActivity.class);
 //                                intent.putExtra("showObject", show);
 //                                startActivity(intent);
                                 ((Button) v).setText("*");

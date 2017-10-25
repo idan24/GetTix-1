@@ -21,14 +21,14 @@
             android:label="@string/title_activity_detail"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".SeatsActivity"
+            android:name=".SitsActivity"
             android:label="@string/title_activity_sits"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".PayActivity"
             android:label="@string/title_activity_pay"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".NoSeatsActivity" />
+        <activity android:name=".NoSitsActivity" />
         <activity android:name=".FinishingActivity" />
         <activity android:name=".ManagementActivity" />
         <activity android:name=".EventsActivity" />

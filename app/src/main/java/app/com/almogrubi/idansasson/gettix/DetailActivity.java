@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import app.com.almogrubi.idansasson.gettix.entities.Event;
+
 public class DetailActivity extends AppCompatActivity {
 
     ImageView imgTop;
@@ -18,7 +20,7 @@ public class DetailActivity extends AppCompatActivity {
     TextView showLocation;
     TextView description;
 
-    Show show;
+    Event event;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,22 +38,17 @@ public class DetailActivity extends AppCompatActivity {
         Intent intent = this.getIntent();
 
         if (intent != null){
-            show = (Show) intent.getSerializableExtra("showObject");
+            event = (Event) intent.getSerializableExtra("eventObject");
 
-            String imgName = show.getDrawNmae();
-
-
-
+            String imgName = event.getImage();
 
             int idImg = this.getResources().getIdentifier(imgName, "mipmap",
                     this.getPackageName());
             imgTop.setImageResource(idImg);
-            showName.setText(show.getTitle());
-            showDateAndTime.setText(show.getDate() + " and " + show.getTime());
-            showLocation.setText(show.getLocation());
-            description.setText(show.getDescreption());
-
-
+            showName.setText(event.getTitle());
+            showDateAndTime.setText(event.getDateTime().toString());
+            showLocation.setText(event.getHallId());
+            description.setText(event.getDescription());
 
         }
 
@@ -60,18 +57,17 @@ public class DetailActivity extends AppCompatActivity {
                 public void onClick(View v) {
                 Intent intent;
 
-                Log.i("almog","" + show.getType());
-
-                if (show.getType().toString().equals("Theatre"))
+                if (event.hasMarkedSeats())
                     {
-                    intent = new Intent(v.getContext(), NoSitsActivity.class);
-                        intent.putExtra("showObject", show);
+                    intent = new Intent(v.getContext(), NoSeatsActivity.class);
+                        intent.putExtra("eventObject", event);
                         startActivity(intent);
 
                     }
-                    if (show.getType().toString().equals("Movie")){
-                    intent = new Intent(v.getContext(), SitsActivity.class);
-                    intent.putExtra("showObject", show);
+                if (!event.hasMarkedSeats())
+                    {
+                    intent = new Intent(v.getContext(), SeatsActivity.class);
+                    intent.putExtra("eventObject", event);
                     startActivity(intent);
                     }
                 }
