@@ -42,19 +42,19 @@
 
             <EditText
                 android:id="@+id/et_find_by_date"
-                android:hint="@string/event_date_label"
+                android:hint="@string/event_date_hint"
                 android:clickable="true"
                 android:focusable="false"
                 style="@style/AppEditTextStyle" />
 
             <EditText
                 android:id="@+id/et_find_by_hall"
-                android:hint="@string/event_hall_label"
+                android:hint="@string/event_hall_hint"
                 style="@style/AppEditTextStyle" />
 
             <EditText
                 android:id="@+id/et_find_by_city"
-                android:hint="@string/event_city_label"
+                android:hint="@string/event_city_hint"
                 android:layout_marginBottom="16dp"
                 style="@style/AppEditTextStyle" />
 
@@ -76,7 +76,7 @@
 
             <EditText
                 android:id="@+id/et_find_by_keyword"
-                android:hint="@string/event_keyword_label"
+                android:hint="@string/event_keyword_hint"
                 android:layout_marginBottom="8dp"
                 style="@style/AppEditTextStyle" />
 

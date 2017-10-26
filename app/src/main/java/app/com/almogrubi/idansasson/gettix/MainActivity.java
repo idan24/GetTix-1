@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
     private ChildEventListener childEventListener;
 
     private RecyclerView recyclerView;
-    private RecyclerViewAdapter adapter;
 
     //List<Event> eventList = new ArrayList<>();
 
@@ -103,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Initializing an ArrayAdapter
+        // Initializing an ArrayAdapter for the Spinner
         final ArrayAdapter<DataUtils.Category> spinnerArrayAdapter = new ArrayAdapter<DataUtils.Category>(
                 this, R.layout.spinner_item, DataUtils.Category.values()) {
 //            @Override

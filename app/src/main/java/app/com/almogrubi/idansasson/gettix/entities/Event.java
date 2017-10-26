@@ -13,19 +13,19 @@ public class Event implements Serializable {
 
     private String id;
     private String title;
-    private String description;
     private DataUtils.Category category;
     private String hallId;
     private String city;
-    private String performer;
     private Date dateTime;
     private int duration;
-    private String image;
+    private String description;
+    private String performer;
     private int price;
+    private String image;
     private boolean hasMarkedSeats;
     private int maxCapacity;
-    private String producerId;
     private boolean isSoldOut;
+    private String producerId;
 
     // Default constructor required for calls to Firebase's DataSnapshot.getValue
     public Event() {}

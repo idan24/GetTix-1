@@ -6,10 +6,10 @@
 
     <!-- for main activity -->
     <string name="find_events_label">מצא את האירוע שלך:</string>
-    <string name="event_date_label">תאריך</string>
-    <string name="event_hall_label">מקום</string>
-    <string name="event_city_label">עיר</string>
-    <string name="event_keyword_label">מילה חופשית</string>
+    <string name="event_date_hint">תאריך</string>
+    <string name="event_hall_hint">מקום</string>
+    <string name="event_city_hint">עיר</string>
+    <string name="event_keyword_hint">מילה חופשית</string>
     <string name="search_events_button">חפש</string>
 
     <!-- for management screens -->
@@ -20,16 +20,21 @@
     <string name="reports_button">דו"חות</string>
     
     <!-- for event edit activity -->
+    <string name="event_create_title">יצירת מופע</string>
+    <string name="event_edit_title">עריכת מופע</string>
     <string name="event_title_label">שם המופע:</string>
-    <string name="event_description_label">תיאור המופע:</string>
-    <string name="event_category_label">תחום</string>
-    <string name="event_performer_label">שם האמן המבצע:</string>
+    <string name="event_category_label">תחום:</string>
+    <string name="event_hall_label">אולם:</string>
+    <string name="event_date_label">תאריך:</string>
     <string name="event_hour_label">שעה:</string>
-    <string name="event_duration_label">משך המופע:</string>
-    <string name="event_image_label">להעלאת פוסטר...</string>
+    <string name="event_duration_label">משך המופע (בדקות):</string>
+    <string name="event_description_label">תיאור המופע:</string>
+    <string name="event_performer_label">שם האמן המבצע:</string>
     <string name="event_price_label">מחיר כרטיס:</string>
+    <string name="event_image_label">להעלאת פוסטר...</string>
     <string name="event_marked_seats_label">אירוע עם מקומות מסומנים</string>
     <string name="event_max_capacity_label">תכולה מירבית:</string>
     <string name="event_sold_out_label">סולד אאוט</string>
+    <string name="save_event_button">שמור</string>
     
 </resources>
