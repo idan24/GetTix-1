@@ -1,14 +1,17 @@
 package app.com.almogrubi.idansasson.gettix.entities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+
+import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
 
 /**
  * Created by idans on 21/10/2017.
  */
 
-public class Order {
+public class Order implements Serializable {
 
     private String id;
     private String eventId;
@@ -18,14 +21,15 @@ public class Order {
     private int totalPrice;
     private String creditCard;
     private ArrayList<Seat> seats;
-    private String status;
+    private DataUtils.OrderStatus status;
+    private int ticketNum;
     private Date creationDate;
 
     // Default constructor required for calls to Firebase's DataSnapshot.getValue
     public Order() {}
 
     public Order(String id, Event event, String customerName, String customerPhone, String customerEmail,
-                    int totalPrice, String creditCard, ArrayList<Seat> seats, String status) {
+                    int totalPrice, String creditCard, ArrayList<Seat> seats) {
         this.id = id;
         this.eventId = eventId;
         this.customerName = customerName;
@@ -40,6 +44,19 @@ public class Order {
         this.status = status;
 
         this.creationDate = Calendar.getInstance().getTime();
+    }
+
+
+    public int getTicketNum() {
+        return ticketNum;
+    }
+
+    public void setTicketNum(int ticketNum) {
+        this.ticketNum = ticketNum;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
     }
 
     public String getId() {
@@ -77,11 +94,47 @@ public class Order {
         return returnedSeats;
     }
 
-    public String getStatus() {
-        return this.status;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public Date getCreationDate() {
-        return this.creationDate;
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public void setCustomerPhone(String customerPhone) {
+        this.customerPhone = customerPhone;
+    }
+
+    public void setCustomerEmail(String customerEmail) {
+        this.customerEmail = customerEmail;
+    }
+
+    public void setTotalPrice(int totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public void setCreditCard(String creditCard) {
+        this.creditCard = creditCard;
+    }
+
+    public void setSeats(ArrayList<Seat> seats) {
+        this.seats = seats;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public DataUtils.OrderStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(DataUtils.OrderStatus status) {
+        this.status = status;
     }
 }

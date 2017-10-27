@@ -62,7 +62,7 @@
 
 
                 <TextView
-                    android:id="@+id/editText"
+                    android:id="@+id/detail_text"
                     android:layout_width="344dp"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -88,7 +88,7 @@
                     android:text="Full name" />
 
                 <EditText
-                    android:id="@+id/location_edit_text"
+                    android:id="@+id/name_edit_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -115,7 +115,7 @@
                     android:text="Phone " />
 
                 <EditText
-                    android:id="@+id/name_edit_text"
+                    android:id="@+id/phone_edit_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

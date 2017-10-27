@@ -27,4 +27,20 @@ public class DataUtils {
         }
     };
 
+    public enum OrderStatus {
+        IN_PROGRESS("בתהליך"),
+        FINAL("סופי"),
+        CANCELLED("בוטל");
+
+        private String friendlyName;
+
+        private OrderStatus(String friendlyName){
+            this.friendlyName = friendlyName;
+        }
+
+        @Override public String toString(){
+            return friendlyName;
+        }
+    };
+
 }

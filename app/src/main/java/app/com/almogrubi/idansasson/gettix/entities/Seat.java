@@ -9,6 +9,11 @@ public class Seat {
     private String id;
     private int row;
     private int number;
+    private boolean isTaken;
+
+    public boolean isTaken() { return isTaken; }
+
+    public void setTaken(boolean taken) { isTaken = taken; }
 
     // Default constructor required for calls to Firebase's DataSnapshot.getValue
     public Seat() {}
@@ -17,6 +22,7 @@ public class Seat {
         this.id = id;
         this.row = row;
         this.number = number;
+        this.isTaken = false;
     }
 
     public String getId() {

@@ -13,14 +13,14 @@ import app.com.almogrubi.idansasson.gettix.entities.Event;
 
 public class DetailActivity extends AppCompatActivity {
 
-    ImageView imgTop;
-    Button pickSitsButton;
-    TextView showName;
-    TextView showDateAndTime;
-    TextView showLocation;
-    TextView description;
+    private ImageView imgTop;
+    private Button pickSitsButton;
+    private TextView showName;
+    private TextView showDateAndTime;
+    private TextView showLocation;
+    private TextView description;
 
-    Event event;
+    private Event event;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

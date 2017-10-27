@@ -13,6 +13,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import app.com.almogrubi.idansasson.gettix.entities.Event;
+import app.com.almogrubi.idansasson.gettix.entities.Order;
+import app.com.almogrubi.idansasson.gettix.entities.Seat;
 
 /**
  * Created by almogrubi on 10/20/17.
@@ -20,9 +22,21 @@ import app.com.almogrubi.idansasson.gettix.entities.Event;
 
 public class PayActivity extends AppCompatActivity {
 
+    //objects from intent
+    private Event event;
+    private Order order;
 
-    Event event;
-    int counter;
+    //setting buttons and view
+    private TextView detailText;
+    private EditText name;
+    private EditText phone;
+    private EditText email;
+    private EditText credit;
+    private EditText expiration;
+    private EditText CVV;
+    private Button next;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,19 +45,33 @@ public class PayActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final EditText to = (EditText) findViewById(R.id.email_edit_text);
-        Button next = (Button) findViewById(R.id.approveButton);
-
+        detailText = (TextView) findViewById(R.id.detail_text);
+        email = (EditText) findViewById(R.id.email_edit_text);
+        name = (EditText) findViewById(R.id.name_edit_text);
+        phone = (EditText) findViewById(R.id.phone_edit_text);
+        credit = (EditText) findViewById(R.id.credit_edit_text);
+        expiration = (EditText) findViewById(R.id.expiration_edit_text);
+        CVV = (EditText) findViewById(R.id.CVV_edit_text);
+        next = (Button) findViewById(R.id.approveButton);
 
         Intent intent = this.getIntent();
         event = (Event) intent.getSerializableExtra("eventObject");
-        counter = (int) intent.getSerializableExtra("counter");
+        order = (Order) intent.getSerializableExtra("orderObject");
+
+        detailText.setText(String.format("רכישת %d כרטיסים: %d ₪", order.getSeats().size(),order.getSeats().size()*event.getPrice()));
+
 
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
                 Intent intent = new Intent(v.getContext(), FinishingActivity.class);
-                intent.putExtra("counter", counter);
+
+                order.setCustomerName(name.getText().toString());
+                order.setCustomerPhone(phone.getText().toString());
+                order.setCustomerEmail(email.getText().toString());
+                order.setCreditCard(credit.getText().toString());
+
+                intent.putExtra("orderObject", order);
                 intent.putExtra("eventObject", event);
                 startActivity(intent);
 

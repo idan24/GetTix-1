@@ -11,6 +11,9 @@ import android.widget.LinearLayout;
 import android.widget.TableRow;
 import android.util.Log;
 
+import app.com.almogrubi.idansasson.gettix.entities.Event;
+import app.com.almogrubi.idansasson.gettix.entities.Order;
+
 /**
  * Created by almogrubi on 10/14/17.
  */
@@ -18,11 +21,11 @@ import android.util.Log;
 public class SeatsActivity extends AppCompatActivity{
 
 
-    Show show;
-    int rows;
-    int columns;
-    int price;
-    int counter;
+    private Event event;
+    private Order order;
+    private int rows;
+    private int columns;
+    private int counter;
 
 
     @Override
@@ -34,9 +37,9 @@ public class SeatsActivity extends AppCompatActivity{
         Intent intent = getIntent();
         if (intent != null) {
 
-            show = (Show) intent.getSerializableExtra("showObject");
-            rows =show.getSitsArray().length;
-            columns =show.getSitsArray().length;
+            event = (Event) intent.getSerializableExtra("eventObject");
+//            rows =event.getSitsArray().length;
+//            columns =event.getSitsArray().length;
             //fix - not on the same length
 
             for (int i = 0; i < rows; i++) {
@@ -53,15 +56,14 @@ public class SeatsActivity extends AppCompatActivity{
                     b.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View v) {
 //                                Intent intent = new Intent(v.getContext(), SeatsActivity.class);
-//                                intent.putExtra("showObject", show);
+//                                intent.putExtra("eventObject", event);
 //                                startActivity(intent);
                                 ((Button) v).setText("*");
                                 ((Button) v).setEnabled(false);
 
                                 Log.i("almog", "id is " + v.getId());
-                                price =+10;
                                 counter=+1;
-                                show.choseSit(v.getId());
+ //                               event.choseSit(v.getId());
 
 //                              add private grid for selected tickets
 
@@ -92,12 +94,12 @@ public class SeatsActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), PayActivity.class);
-                intent.putExtra("price", price);
-                intent.putExtra("showObject", show);
+                intent.putExtra("counter", counter);
+                intent.putExtra("eventObject", event);
                 startActivity(intent);
                 Log.i("almog", "id is " + v.getId());
 
-                show.choseSit(v.getId());
+//                event.choseSit(v.getId());
 
             }
         }

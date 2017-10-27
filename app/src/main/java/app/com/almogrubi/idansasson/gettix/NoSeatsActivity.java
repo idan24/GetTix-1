@@ -10,19 +10,22 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import app.com.almogrubi.idansasson.gettix.entities.Event;
+import app.com.almogrubi.idansasson.gettix.entities.Order;
+import app.com.almogrubi.idansasson.gettix.entities.Seat;
 
 
 public class NoSeatsActivity extends AppCompatActivity {
 
 
-    Event event;
-    int counter=0;
+    private Event event;
+    private int counter=0;
 
-    TextView sitsNumber;
-    TextView details;
-    Button add;
-    Button remove;
-    Button next;
+    private TextView sitsNumber;
+    private TextView details;
+    private Button add;
+    private Button remove;
+    private Button next;
+    private Order order;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,9 @@ public class NoSeatsActivity extends AppCompatActivity {
         remove = (Button) findViewById (R.id.removeButton);
         add = (Button) findViewById (R.id.addButton);
         next = (Button) findViewById (R.id.next);
+
+
+        order = new Order();
 
         add.setOnClickListener(new View.OnClickListener()
            {
@@ -69,7 +75,9 @@ public class NoSeatsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), PayActivity.class);
                 intent.putExtra("eventObject", event);
+                intent.putExtra("orderObject", order);
                 intent.putExtra("counter", counter);
+
                 startActivity(intent);
 
             }
