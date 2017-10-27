@@ -1,5 +1,7 @@
 package app.com.almogrubi.idansasson.gettix.entities;
 
+import org.joda.time.DateTime;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -14,9 +16,9 @@ public class Event implements Serializable {
     private String id;
     private String title;
     private DataUtils.Category category;
-    private String hallId;
+    private Hall hall;
     private String city;
-    private Date dateTime;
+    private DateTime dateTime;
     private int duration;
     private String description;
     private String performer;
@@ -30,14 +32,14 @@ public class Event implements Serializable {
     // Default constructor required for calls to Firebase's DataSnapshot.getValue
     public Event() {}
 
-    public Event(String id, String title, String description, DataUtils.Category category, String hallId,
-                    String city, String performer, Date dateTime, int duration, String image, int price,
+    public Event(String id, String title, String description, DataUtils.Category category, Hall hall,
+                    String city, String performer, DateTime dateTime, int duration, String image, int price,
                         boolean hasMarkedSeats, int maxCapacity, String producerId) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.category = category;
-        this.hallId = hallId;
+        this.hall = hall;
         this.city = city;
         this.performer = performer;
         this.dateTime = dateTime;
@@ -67,8 +69,8 @@ public class Event implements Serializable {
         return this.category;
     }
 
-    public String getHallId() {
-        return this.hallId;
+    public Hall getHall() {
+        return this.hall;
     }
 
     public String getCity() {
@@ -79,7 +81,7 @@ public class Event implements Serializable {
         return this.performer;
     }
 
-    public Date getDateTime() {
+    public DateTime getDateTime() {
         return this.dateTime;
     }
 

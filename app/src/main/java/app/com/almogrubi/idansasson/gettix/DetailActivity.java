@@ -47,7 +47,7 @@ public class DetailActivity extends AppCompatActivity {
             imgTop.setImageResource(idImg);
             showName.setText(event.getTitle());
             showDateAndTime.setText(event.getDateTime().toString());
-            showLocation.setText(event.getHallId());
+            showLocation.setText(event.getHall().getId());
             description.setText(event.getDescription());
 
         }

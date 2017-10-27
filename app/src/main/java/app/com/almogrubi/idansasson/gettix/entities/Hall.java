@@ -63,4 +63,9 @@ public class Hall {
     public String getCreatingProducerId() {
         return this.creatingProducerId;
     }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
 }

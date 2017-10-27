@@ -45,6 +45,7 @@ public class EventEditActivity extends ManagementScreen {
     private Button btSave;
 
     private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference eventsDatabaseReference;
     private DatabaseReference hallsDatabaseReference;
 
     private ActivityEventEditBinding binding;
@@ -67,6 +68,10 @@ public class EventEditActivity extends ManagementScreen {
         etEventMaxCapacity = findViewById(R.id.et_event_max_capacity);
         btSave = findViewById(R.id.bt_save_event);
 
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        eventsDatabaseReference = firebaseDatabase.getReference().child("events");
+        hallsDatabaseReference = firebaseDatabase.getReference().child("halls");
+
         setSpinnersAdapterSource();
         bindEventDateTime(event != null ? new DateTime(event.getDateTime()) : DateTime.now());
 
@@ -80,8 +85,19 @@ public class EventEditActivity extends ManagementScreen {
             @Override
             public void onClick(View view) {
                 // TODO: save to firebase
+                if (checkInputValidity()) {
+                    String newEventId = eventsDatabaseReference.push().getKey();
+                    String newEventTitle = binding.etEventTitle.getText().toString();
+
+                    Hall newEventHall = (Hall) binding.spEventHall.getSelectedItem();
+
+                }
             }
         });
+    }
+
+    private boolean checkInputValidity() {
+        return true;
     }
 
     public void onMarkedSeatsClicked(View view) {
@@ -104,17 +120,15 @@ public class EventEditActivity extends ManagementScreen {
         categorySpinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
         spEventCategory.setAdapter(categorySpinnerArrayAdapter);
 
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        hallsDatabaseReference = firebaseDatabase.getReference().child("halls");
         hallsDatabaseReference.orderByChild("name").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<String> halls = new ArrayList<>();
+                List<Hall> halls = new ArrayList<>();
                 for (DataSnapshot hallSnapshot : dataSnapshot.getChildren()) {
                     Hall hall = hallSnapshot.getValue(Hall.class);
-                    halls.add(hall.getName());
+                    halls.add(hall);
                 }
-                final ArrayAdapter<String> hallSpinnerArrayAdapter = new ArrayAdapter<String>(
+                final ArrayAdapter<Hall> hallSpinnerArrayAdapter = new ArrayAdapter<Hall>(
                         EventEditActivity.this, R.layout.spinner_item, halls) {};
                 hallSpinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
                 spEventHall.setAdapter(hallSpinnerArrayAdapter);
@@ -176,7 +190,7 @@ public class EventEditActivity extends ManagementScreen {
         binding.etEventTitle.setText(event.getTitle());
         binding.spEventCategory.setSelection(event.getCategory().ordinal());
 
-        hallsDatabaseReference.orderByChild("uid").equalTo(event.getHallId())
+        hallsDatabaseReference.orderByChild("uid").equalTo(event.getHall().getId())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

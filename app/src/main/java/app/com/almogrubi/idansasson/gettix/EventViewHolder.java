@@ -51,7 +51,7 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
                 dateTime.getHourOfDay(),
                 dateTime.getMinuteOfHour()));
 
-        hallView.setText(String.format("%s, %s", event.getHallId(), event.getCity()));
+        hallView.setText(String.format("%s, %s", event.getHall().getName(), event.getCity()));
 
         categoryView.setBackgroundResource(Utils.lookupImageByCategory(event.getCategory()));
 
