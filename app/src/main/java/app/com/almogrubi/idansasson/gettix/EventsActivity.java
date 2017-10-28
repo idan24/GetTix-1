@@ -2,13 +2,13 @@ package app.com.almogrubi.idansasson.gettix;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -24,22 +24,26 @@ public class EventsActivity extends ManagementScreen {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference eventsDatabaseReference;
 
+    private TextView tvWelcome;
     private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events);
-
-        recyclerView = findViewById(R.id.events_recycler_view);
-
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        eventsDatabaseReference = firebaseDatabase.getReference().child("events");
     }
 
     @Override
     protected void onSignedInInitialize(FirebaseUser user) {
         super.onSignedInInitialize(user);
+
+        tvWelcome = findViewById(R.id.tv_welcome_manager);
+        recyclerView = findViewById(R.id.events_recycler_view);
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        eventsDatabaseReference = firebaseDatabase.getReference().child("events");
+
+        tvWelcome.setText(String.format("שלום, %s", user.getDisplayName()));
 
         // Setting up query for adapter
         FirebaseRecyclerOptions<Event> options =
@@ -49,7 +53,7 @@ public class EventsActivity extends ManagementScreen {
         FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<Event, EventViewHolder>(options) {
             @Override
             public EventViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.event_list_item, parent, false);
                 view.setFocusable(true);
                 return new EventViewHolder(view);
             }

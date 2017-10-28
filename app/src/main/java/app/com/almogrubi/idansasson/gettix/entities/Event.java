@@ -16,14 +16,13 @@ public class Event implements Serializable {
     private String id;
     private String title;
     private DataUtils.Category category;
-    private Hall hall;
-    private String city;
+    private EventHall eventHall;
     private DateTime dateTime;
     private int duration;
     private String description;
     private String performer;
     private int price;
-    private String image;
+    private String posterUri;
     private boolean hasMarkedSeats;
     private int maxCapacity;
     private boolean isSoldOut;
@@ -32,24 +31,24 @@ public class Event implements Serializable {
     // Default constructor required for calls to Firebase's DataSnapshot.getValue
     public Event() {}
 
-    public Event(String id, String title, String description, DataUtils.Category category, Hall hall,
-                    String city, String performer, DateTime dateTime, int duration, String image, int price,
+    public Event(String id, String title, DataUtils.Category category, EventHall eventHall, DateTime dateTime,
+                    int duration, String description, String performer, int price, String posterUri,
                         boolean hasMarkedSeats, int maxCapacity, String producerId) {
         this.id = id;
         this.title = title;
-        this.description = description;
         this.category = category;
-        this.hall = hall;
-        this.city = city;
-        this.performer = performer;
+        this.eventHall = eventHall;
         this.dateTime = dateTime;
         this.duration = duration;
-        this.image = image;
+        this.description = description;
+        this.performer = performer;
         this.price = price;
+        this.posterUri = posterUri;
         this.hasMarkedSeats = hasMarkedSeats;
         this.maxCapacity = maxCapacity;
         this.producerId = producerId;
 
+        // Newly created event should never be already sold out
         this.isSoldOut = false;
     }
 
@@ -69,12 +68,8 @@ public class Event implements Serializable {
         return this.category;
     }
 
-    public Hall getHall() {
-        return this.hall;
-    }
-
-    public String getCity() {
-        return this.city;
+    public EventHall getEventHall() {
+        return this.eventHall;
     }
 
     public String getPerformer() {
@@ -89,8 +84,8 @@ public class Event implements Serializable {
         return this.duration;
     }
 
-    public String getImage() {
-        return this.image;
+    public String getPosterUri() {
+        return this.posterUri;
     }
 
     public int getPrice() {

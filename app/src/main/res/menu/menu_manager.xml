@@ -2,8 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_sign_out"
+        android:id="@+id/action_add_event"
         android:orderInCategory="1"
+        android:icon="@drawable/ic_add"
+        android:title="@string/action_add_event"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_sign_out"
+        android:orderInCategory="2"
         android:title="@string/action_sign_out_title"
         app:showAsAction="never" />
 </menu>

@@ -40,14 +40,14 @@ public class DetailActivity extends AppCompatActivity {
         if (intent != null){
             event = (Event) intent.getSerializableExtra("eventObject");
 
-            String imgName = event.getImage();
+            String imgName = event.getPosterUri().toString();
 
             int idImg = this.getResources().getIdentifier(imgName, "mipmap",
                     this.getPackageName());
             imgTop.setImageResource(idImg);
             showName.setText(event.getTitle());
             showDateAndTime.setText(event.getDateTime().toString());
-            showLocation.setText(event.getHall().getId());
+            showLocation.setText(event.getEventHall().getName());
             description.setText(event.getDescription());
 
         }

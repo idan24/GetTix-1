@@ -4,14 +4,19 @@ package app.com.almogrubi.idansasson.gettix;
  * Created by idans on 25/10/2017.
  */
 
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import org.joda.time.DateTime;
 
 import app.com.almogrubi.idansasson.gettix.entities.Event;
+import app.com.almogrubi.idansasson.gettix.entities.EventHall;
+import app.com.almogrubi.idansasson.gettix.entities.Hall;
 import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 
 /**
@@ -21,40 +26,45 @@ import app.com.almogrubi.idansasson.gettix.utilities.Utils;
  */
 public class EventViewHolder extends RecyclerView.ViewHolder {
 
-    private TextView titleView;
-    private TextView dateTimeView;
-    private TextView hallView;
-    private ImageView categoryView;
-    private ImageView imageView;
+    private TextView tvEventTitle;
+    private TextView tvEventDateTime;
+    private TextView tvEventHall;
+    private ImageView ivEventCategory;
+    private ImageView ivEventPoster;
 
     public View layout;
 
     public EventViewHolder(View itemView) {
         super(itemView);
         layout = itemView;
-        this.titleView = itemView.findViewById(R.id.tv_event_item_title);
-        this.dateTimeView = itemView.findViewById(R.id.tv_event_item_datetime);
-        this.hallView = itemView.findViewById(R.id.tv_event_item_hall);
-        this.categoryView = itemView.findViewById(R.id.iv_event_item_category);
-        this.imageView = itemView.findViewById(R.id.iv_event_item_image);
+        this.tvEventTitle = itemView.findViewById(R.id.tv_event_item_title);
+        this.tvEventDateTime = itemView.findViewById(R.id.tv_event_item_datetime);
+        this.tvEventHall = itemView.findViewById(R.id.tv_event_item_hall);
+        this.ivEventCategory = itemView.findViewById(R.id.iv_event_item_category);
+        this.ivEventPoster = itemView.findViewById(R.id.iv_event_item_poster);
     }
 
     public void bindEvent(Event event) {
 
-        titleView.setText(event.getTitle());
+        tvEventTitle.setText(event.getTitle());
 
         DateTime dateTime = new DateTime(event.getDateTime());
-        dateTimeView.setText(String.format("%d/%d/%d בשעה %d:%d",
+        tvEventDateTime.setText(String.format("%d/%d/%d בשעה %d:%d",
                 dateTime.getDayOfMonth(),
                 dateTime.getMonthOfYear(),
                 dateTime.getYearOfCentury(),
                 dateTime.getHourOfDay(),
                 dateTime.getMinuteOfHour()));
 
-        hallView.setText(String.format("%s, %s", event.getHall().getName(), event.getCity()));
+        EventHall eventHall = event.getEventHall();
+        tvEventHall.setText(String.format("%s, %s", eventHall.getName(), eventHall.getCity()));
 
-        categoryView.setBackgroundResource(Utils.lookupImageByCategory(event.getCategory()));
+        ivEventCategory.setBackgroundResource(Utils.lookupImageByCategory(event.getCategory()));
 
-        imageView.setBackgroundResource(R.drawable.miserables);
+        Uri photoUri = Uri.parse(event.getPosterUri());
+        Glide.with(ivEventPoster.getContext())
+                .load(photoUri)
+                .into(ivEventPoster);
+        ivEventPoster.setTag(photoUri);
     }
 }

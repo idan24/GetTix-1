@@ -1,5 +1,6 @@
 package app.com.almogrubi.idansasson.gettix.utilities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,10 +15,14 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
 
+import app.com.almogrubi.idansasson.gettix.EventEditActivity;
 import app.com.almogrubi.idansasson.gettix.R;
 
 /**
  * Created by idans on 25/10/2017.
+ *
+ * Base class for Management screens - handles user sign-in/sign-out.
+ * Client should implement onSignedInInitialize(user) and onSignedOutCleanup() if he needs to do something.
  */
 
 public class ManagementScreen extends AppCompatActivity {
@@ -93,6 +98,10 @@ public class ManagementScreen extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_sign_out) {
             AuthUI.getInstance().signOut(this);
+            return true;
+        }
+        else if (item.getItemId() == R.id.action_add_event) {
+            startActivity(new Intent(this, EventEditActivity.class));
             return true;
         }
 

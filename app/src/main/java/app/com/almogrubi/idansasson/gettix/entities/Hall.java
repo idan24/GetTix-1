@@ -1,5 +1,7 @@
 package app.com.almogrubi.idansasson.gettix.entities;
 
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 
 /**
@@ -14,24 +16,10 @@ public class Hall {
     private String city;
     private String officialWebsite;
     private ArrayList<Seat> seats;
-    private String creatingProducerId;
+    private ArrayList<DateTime> eventDateTimes;
 
     // Default constructor required for calls to Firebase's DataSnapshot.getValue
     public Hall() {}
-
-    public Hall(String id, String name, String address, String city, String officialWebsite,
-                    ArrayList<Seat> seats, String creatingProducerId) {
-        this.id = id;
-        this.name = name;
-        this.address = address;
-        this.city = city;
-        this.officialWebsite = officialWebsite;
-
-        for (Seat seat : seats)
-            this.seats.add(seat);
-
-        this.creatingProducerId = creatingProducerId;
-    }
 
     public String getId() {
         return this.id;
@@ -60,8 +48,16 @@ public class Hall {
         return returnedSeats;
     }
 
-    public String getCreatingProducerId() {
-        return this.creatingProducerId;
+    // We override equals() to that we can compare Halls quickly with no use of lambda expressions
+    // TODO: remove if unused
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Hall) {
+            Hall hall = (Hall) obj;
+            return this.name.equals(hall.getName());
+        }
+
+        return false;
     }
 
     @Override

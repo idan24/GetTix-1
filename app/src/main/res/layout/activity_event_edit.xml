@@ -128,6 +128,7 @@
                 android:layout_column="1"
                 android:layout_gravity="right"
                 android:inputType="number"
+                android:digits="0123456789"
                 style="@style/AppEditTextStyle" />
 
             <TextView
@@ -179,16 +180,26 @@
                 android:layout_column="1"
                 android:layout_gravity="right"
                 android:inputType="number"
+                android:digits="0123456789"
                 style="@style/AppEditTextStyle" />
 
-            <TextView
-                android:id="@+id/tv_event_image"
-                android:text="@string/event_image_label"
+            <Button
+                android:id="@+id/bt_load_poster"
+                android:text="@string/event_poster_label"
                 android:layout_row="10"
                 android:layout_column="0"
-                style="@style/EditScreenTextViewStyle"
+                style="@style/AppButtonStyle"
+                android:textSize="16sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
+
+            <ImageView
+                android:id="@+id/iv_event_poster"
+                android:layout_row="10"
+                android:layout_column="1"
+                android:layout_gravity="center_vertical"
+                android:layout_width="40dp"
+                android:layout_height="40dp" />
 
             <CheckBox
                 android:id="@+id/cb_event_marked_seats"
@@ -215,6 +226,7 @@
                 android:layout_column="1"
                 android:layout_gravity="right"
                 android:inputType="number"
+                android:digits="0123456789"
                 style="@style/AppEditTextStyle" />
 
             <CheckBox
