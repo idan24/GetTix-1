@@ -1,7 +1,10 @@
 package app.com.almogrubi.idansasson.gettix;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -54,8 +57,7 @@ public class PayActivity extends AppCompatActivity {
         event = (Event) intent.getSerializableExtra("eventObject");
         order = (Order) intent.getSerializableExtra("orderObject");
 
-        detailText.setText(String.format("רכישת %d כרטיסים: %d ₪", order.getEventSeats().size(),order.getEventSeats().size()*event.getPrice()));
-
+        detailText.setText(String.format("רכישת %d כרטיסים: %d ₪", order.getTicketNum(),order.getTicketNum()*event.getPrice()));
 
         next.setOnClickListener(new View.OnClickListener() {
             @Override

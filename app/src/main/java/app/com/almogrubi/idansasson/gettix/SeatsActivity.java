@@ -11,8 +11,13 @@ import android.widget.LinearLayout;
 import android.widget.TableRow;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import app.com.almogrubi.idansasson.gettix.entities.Event;
+import app.com.almogrubi.idansasson.gettix.entities.EventSeat;
 import app.com.almogrubi.idansasson.gettix.entities.Order;
+import app.com.almogrubi.idansasson.gettix.entities.Seat;
 
 /**
  * Created by almogrubi on 10/14/17.
@@ -22,11 +27,9 @@ public class SeatsActivity extends AppCompatActivity{
 
 
     private Event event;
-    private Order order;
-    private int rows;
+    private Order order = new Order();
+    private int rows = 0;
     private int columns;
-    private int counter;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,17 +41,20 @@ public class SeatsActivity extends AppCompatActivity{
         if (intent != null) {
 
             event = (Event) intent.getSerializableExtra("eventObject");
-//            rows =event.getSitsArray().length;
-//            columns =event.getSitsArray().length;
-            //fix - not on the same length
+            List<EventSeat> seatsList = event.getEventHall().getEventSeats();
+
+            rows =  event.getEventHall().getRows();
+            rows =  event.getEventHall().getColumns();
 
             for (int i = 0; i < rows; i++) {
                 LinearLayout row = new LinearLayout(this);
                 row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                     //change to size in %
                 for (int j = 0; j < columns; j++) {
+
                     Button b = new Button(this);
-                    b.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                    b.setLayoutParams(new LinearLayout.LayoutParams(100, LinearLayout.LayoutParams.WRAP_CONTENT));
+                    b.setTag(seatsList.get(i+j*columns));
                     b.setText("" + (j + 1 + (i * 10)));
                     b.setId(j + 1 + (i * 10));
                     row.addView(b);
@@ -62,10 +68,7 @@ public class SeatsActivity extends AppCompatActivity{
                                 ((Button) v).setEnabled(false);
 
                                 Log.i("almog", "id is " + v.getId());
-                                counter=+1;
- //                               event.choseSit(v.getId());
-
-//                              add private grid for selected tickets
+                                order.setTicketNum(order.getTicketNum()+1);
 
                             }
                         }
@@ -94,7 +97,7 @@ public class SeatsActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), PayActivity.class);
-                intent.putExtra("counter", counter);
+                intent.putExtra("orderObject", order);
                 intent.putExtra("eventObject", event);
                 startActivity(intent);
                 Log.i("almog", "id is " + v.getId());

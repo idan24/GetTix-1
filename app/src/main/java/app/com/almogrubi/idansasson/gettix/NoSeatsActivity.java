@@ -15,7 +15,6 @@ public class NoSeatsActivity extends AppCompatActivity {
 
 
     private Event event;
-    private int counter=0;
 
     private TextView sitsNumber;
     private TextView details;
@@ -32,9 +31,6 @@ public class NoSeatsActivity extends AppCompatActivity {
         Intent intent = this.getIntent();
         event = (Event) intent.getSerializableExtra("eventObject");
 
-//        sitsNumber.setText(String.valueOf(counter));
-
-
         sitsNumber = (TextView) findViewById (R.id.sitsNumber);
         details = (TextView) findViewById (R.id.details);
         remove = (Button) findViewById (R.id.removeButton);
@@ -48,8 +44,8 @@ public class NoSeatsActivity extends AppCompatActivity {
            {
                @Override
                public void onClick(View v){
-                   counter++;
-                   sitsNumber.setText(String.valueOf(counter));
+                   order.setTicketNum(order.getTicketNum()+1);
+                   sitsNumber.setText(String.valueOf(order.getTicketNum()));
 
            }
         }
@@ -59,9 +55,9 @@ public class NoSeatsActivity extends AppCompatActivity {
         remove.setOnClickListener(new View.OnClickListener()
            {
                 public void onClick(View v){
-                    if (counter!=0){
-                        counter--;}
-                        sitsNumber.setText(String.valueOf(counter));
+                    if (order.getTicketNum()!=0){
+                        order.setTicketNum(order.getTicketNum()+1);}
+                        sitsNumber.setText(String.valueOf(order.getTicketNum()));
                     }
            }
 
@@ -73,7 +69,6 @@ public class NoSeatsActivity extends AppCompatActivity {
                 Intent intent = new Intent(v.getContext(), PayActivity.class);
                 intent.putExtra("eventObject", event);
                 intent.putExtra("orderObject", order);
-                intent.putExtra("counter", counter);
 
                 startActivity(intent);
 
