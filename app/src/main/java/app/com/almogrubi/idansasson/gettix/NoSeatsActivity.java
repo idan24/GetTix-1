@@ -3,15 +3,12 @@ package app.com.almogrubi.idansasson.gettix;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.EventLog;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import app.com.almogrubi.idansasson.gettix.entities.Event;
 import app.com.almogrubi.idansasson.gettix.entities.Order;
-import app.com.almogrubi.idansasson.gettix.entities.Seat;
 
 
 public class NoSeatsActivity extends AppCompatActivity {

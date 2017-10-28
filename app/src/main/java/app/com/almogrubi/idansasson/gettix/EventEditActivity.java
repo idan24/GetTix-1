@@ -21,6 +21,7 @@ import android.widget.TimePicker;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -71,24 +72,23 @@ public class EventEditActivity extends ManagementScreen {
     private ActivityEventEditBinding binding;
     private Event event;
 
-    public EventEditActivity(Event event) {
-        this.event = event;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_edit);
+    }
 
-        spEventCategory = findViewById(R.id.sp_event_category);
-        spEventHall = findViewById(R.id.sp_event_hall);
-        etEventDate = findViewById(R.id.et_event_date);
-        etEventHour = findViewById(R.id.et_event_hour);
-        tvEventMaxCapacity = findViewById(R.id.tv_event_max_capacity);
-        etEventMaxCapacity = findViewById(R.id.et_event_max_capacity);
-        ivEventPoster = findViewById(R.id.iv_event_poster);
-        btLoadPoster = findViewById(R.id.bt_load_poster);
-        btSave = findViewById(R.id.bt_save_event);
+    @Override
+    protected void onSignedInInitialize(FirebaseUser user) {
+        super.onSignedInInitialize(user);
+
+        Intent intent = this.getIntent();
+
+        if (intent != null) {
+            event = (Event) intent.getSerializableExtra("eventObject");
+        }
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_event_edit);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseStorage = FirebaseStorage.getInstance();
@@ -98,7 +98,7 @@ public class EventEditActivity extends ManagementScreen {
 
         setSpinnersAdapterSource();
         bindEventDateTime(event != null ? event.getDateTime() : DateTime.now());
-        btLoadPoster.setOnClickListener(new View.OnClickListener() {
+        binding.btLoadPoster.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -107,15 +107,13 @@ public class EventEditActivity extends ManagementScreen {
                 startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
             }
         });
-        ivEventPoster.setVisibility(View.INVISIBLE);
-
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_event_edit);
+        binding.ivEventPoster.setVisibility(View.INVISIBLE);
 
         if (event != null) {
             bindEventInfo();
         }
 
-        btSave.setOnClickListener(new View.OnClickListener() {
+        binding.btSaveEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (checkInputValidity()) {
@@ -125,7 +123,11 @@ public class EventEditActivity extends ManagementScreen {
 
                     Hall selectedHall = (Hall) binding.spEventHall.getSelectedItem();
                     EventHall newEventHall =
-                            new EventHall(selectedHall.getName(), selectedHall.getCity(), selectedHall.getSeats());
+                            new EventHall(selectedHall.getName(),
+                                    selectedHall.getCity(),
+                                    selectedHall.getRows(),
+                                    selectedHall.getColumns(),
+                                    selectedHall.getSeatsAsEventSeats());
 
                     final Calendar calendar = Calendar.getInstance();
                     calendar.set(Calendar.YEAR, Integer.parseInt(binding.etEventDate.getText().toString().substring(6,9)));
@@ -148,8 +150,8 @@ public class EventEditActivity extends ManagementScreen {
                             : Integer.parseInt(binding.etEventMaxCapacity.getText().toString());
                     String newEventProducerId = EventEditActivity.super.user.getUid();
                     event = new Event(newEventId, newEventTitle, newEventCategory, newEventHall, newEventDateTime,
-                                newEventDuration, newEventDescription, newEventPerformer, newEventPrice, newEventPosterUri,
-                                    newEventHasMarkedSeats, newEventMaxCapacity, newEventProducerId);
+                            newEventDuration, newEventDescription, newEventPerformer, newEventPrice, newEventPosterUri,
+                            newEventHasMarkedSeats, newEventMaxCapacity, newEventProducerId);
                     eventsDatabaseReference.child(newEventId).setValue(event);
 
                     // Adding event's datetime to its hall's inner list of taken dates
@@ -214,19 +216,6 @@ public class EventEditActivity extends ManagementScreen {
         return isValid;
     }
 
-    public void onMarkedSeatsClicked(View view) {
-        boolean checked = ((CheckBox) view).isChecked();
-        if (view.getId() == R.id.cb_event_marked_seats) {
-            if (checked) {
-                tvEventMaxCapacity.setVisibility(View.GONE);
-                etEventMaxCapacity.setVisibility(View.GONE);
-            } else {
-                tvEventMaxCapacity.setVisibility(View.VISIBLE);
-                etEventMaxCapacity.setVisibility(View.VISIBLE);
-            }
-        }
-    }
-
     private void setSpinnersAdapterSource() {
 
         // Initializing an ArrayAdapter for the category spinner
@@ -234,7 +223,7 @@ public class EventEditActivity extends ManagementScreen {
         final ArrayAdapter<DataUtils.Category> categorySpinnerArrayAdapter = new ArrayAdapter<DataUtils.Category>(
                 this, R.layout.spinner_item, Arrays.copyOfRange(categories, 1, categories.length)) {};
         categorySpinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
-        spEventCategory.setAdapter(categorySpinnerArrayAdapter);
+        binding.spEventCategory.setAdapter(categorySpinnerArrayAdapter);
 
         hallsDatabaseReference.orderByChild("name").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -248,7 +237,7 @@ public class EventEditActivity extends ManagementScreen {
                 final ArrayAdapter<Hall> hallSpinnerArrayAdapter = new ArrayAdapter<Hall>(
                         EventEditActivity.this, R.layout.spinner_item, halls) {};
                 hallSpinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
-                spEventHall.setAdapter(hallSpinnerArrayAdapter);
+                binding.spEventHall.setAdapter(hallSpinnerArrayAdapter);
             }
 
             @Override
@@ -266,7 +255,7 @@ public class EventEditActivity extends ManagementScreen {
                 calendar.set(Calendar.MONTH, monthOfYear);
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                etEventDate.setText(sdf.format(calendar.getTime()));
+                binding.etEventDate.setText(sdf.format(calendar.getTime()));
             }
         };
         final TimePickerDialog.OnTimeSetListener timeSetListener = new TimePickerDialog.OnTimeSetListener() {
@@ -275,11 +264,11 @@ public class EventEditActivity extends ManagementScreen {
                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar.set(Calendar.MINUTE, minute);
                 SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");
-                etEventHour.setText(sdf.format(calendar.getTime()));
+                binding.etEventHour.setText(sdf.format(calendar.getTime()));
             }
         };
 
-        etEventDate.setOnClickListener(new View.OnClickListener() {
+        binding.etEventDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new DatePickerDialog(EventEditActivity.this, dateSetListener,
@@ -289,7 +278,7 @@ public class EventEditActivity extends ManagementScreen {
                         .show();
             }
         });
-        etEventHour.setOnClickListener(new View.OnClickListener() {
+        binding.etEventHour.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 new TimePickerDialog(EventEditActivity.this, timeSetListener,
@@ -350,9 +339,22 @@ public class EventEditActivity extends ManagementScreen {
             photoRef.putFile(selectedImageUri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    loadEventPoster(ivEventPoster, taskSnapshot.getDownloadUrl());
+                    loadEventPoster(binding.ivEventPoster, taskSnapshot.getDownloadUrl());
                 }
             });
+        }
+    }
+
+    public void onMarkedSeatsClicked(View view) {
+        boolean checked = ((CheckBox) view).isChecked();
+        if (view.getId() == R.id.cb_event_marked_seats) {
+            if (checked) {
+                binding.tvEventMaxCapacity.setVisibility(View.GONE);
+                binding.etEventMaxCapacity.setVisibility(View.GONE);
+            } else {
+                binding.tvEventMaxCapacity.setVisibility(View.VISIBLE);
+                binding.etEventMaxCapacity.setVisibility(View.VISIBLE);
+            }
         }
     }
 

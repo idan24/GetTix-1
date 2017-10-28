@@ -9,6 +9,7 @@
             android:layout_centerHorizontal="true"
             android:alignmentMode="alignBounds"
             android:layout_margin="3dp"
+            android:layout_marginStart="4dp"
             android:layoutDirection="rtl"
             android:columnCount="2"
             android:rowCount="15">
@@ -189,7 +190,8 @@
                 android:layout_row="10"
                 android:layout_column="0"
                 style="@style/AppButtonStyle"
-                android:textSize="16sp"
+                android:textSize="14sp"
+                android:layout_marginStart="4dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -242,6 +244,7 @@
             <Button
                 android:id="@+id/bt_save_event"
                 android:layout_row="14"
+                android:layout_marginBottom="4dp"
                 android:layout_column="0"
                 android:layout_columnSpan="2"
                 android:layout_width="wrap_content"

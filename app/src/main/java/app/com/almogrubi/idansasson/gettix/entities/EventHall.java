@@ -10,15 +10,19 @@ public class EventHall {
 
     private String name;
     private String city;
-    private ArrayList<Seat> seats;
+    private int rows;
+    private int columns;
+    private ArrayList<EventSeat> eventSeats;
 
     // Default constructor required for calls to Firebase's DataSnapshot.getValue
     public EventHall() {}
 
-    public EventHall(String name, String city, ArrayList<Seat> seats) {
+    public EventHall(String name, String city, int rows, int columns, ArrayList<EventSeat> eventSeats) {
         this.name = name;
         this.city = city;
-        this.seats = seats;
+        this.rows = rows;
+        this.columns = columns;
+        this.eventSeats = eventSeats;
     }
 
     public String getName() {
@@ -29,10 +33,14 @@ public class EventHall {
         return city;
     }
 
-    public ArrayList<Seat> getSeats() {
-        ArrayList<Seat> returnedSeats = new ArrayList<>();
-        for (Seat seat : this.seats)
-            returnedSeats.add(seat);
-        return returnedSeats;
+    public int getRows() { return rows; }
+
+    public int getColumns() { return columns; }
+
+    public ArrayList<EventSeat> getEventSeats() {
+        ArrayList<EventSeat> returnedEventSeats = new ArrayList<>();
+        for (EventSeat eventSeat : this.eventSeats)
+            returnedEventSeats.add(eventSeat);
+        return returnedEventSeats;
     }
 }

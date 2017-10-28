@@ -20,7 +20,7 @@ public class Order implements Serializable {
     private String customerEmail;
     private int totalPrice;
     private String creditCard;
-    private ArrayList<Seat> seats;
+    private ArrayList<EventSeat> eventSeats;
     private DataUtils.OrderStatus status;
     private int ticketNum;
     private Date creationDate;
@@ -29,7 +29,7 @@ public class Order implements Serializable {
     public Order() {}
 
     public Order(String id, Event event, String customerName, String customerPhone, String customerEmail,
-                    int totalPrice, String creditCard, ArrayList<Seat> seats) {
+                    int totalPrice, String creditCard, ArrayList<EventSeat> eventSeats) {
         this.id = id;
         this.eventId = eventId;
         this.customerName = customerName;
@@ -38,8 +38,8 @@ public class Order implements Serializable {
         this.totalPrice = totalPrice;
         this.creditCard = creditCard;
 
-        for (Seat seat : seats)
-            this.seats.add(seat);
+        for (EventSeat eventSeat : eventSeats)
+            this.eventSeats.add(eventSeat);
 
         this.status = status;
 
@@ -87,11 +87,11 @@ public class Order implements Serializable {
         return this.creditCard;
     }
 
-    public ArrayList<Seat> getSeats() {
-        ArrayList<Seat> returnedSeats = new ArrayList<>();
-        for (Seat seat : this.seats)
-            returnedSeats.add(seat);
-        return returnedSeats;
+    public ArrayList<EventSeat> getEventSeats() {
+        ArrayList<EventSeat> returnedEventSeats = new ArrayList<>();
+        for (EventSeat eventSeat : this.eventSeats)
+            returnedEventSeats.add(eventSeat);
+        return returnedEventSeats;
     }
 
     public void setId(String id) {
@@ -122,8 +122,8 @@ public class Order implements Serializable {
         this.creditCard = creditCard;
     }
 
-    public void setSeats(ArrayList<Seat> seats) {
-        this.seats = seats;
+    public void setEventSeats(ArrayList<EventSeat> eventSeats) {
+        this.eventSeats = eventSeats;
     }
 
     public void setCreationDate(Date creationDate) {
