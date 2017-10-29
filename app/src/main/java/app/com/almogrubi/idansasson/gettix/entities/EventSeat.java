@@ -8,7 +8,7 @@ import org.joda.time.DateTime;
 
 public class EventSeat {
 
-    private String id;
+    private String uid;
     private int row;
     private int number;
     private boolean isTaken;
@@ -18,8 +18,8 @@ public class EventSeat {
     // Default constructor required for calls to Firebase's DataSnapshot.getValue
     public EventSeat() {}
 
-    public EventSeat(String id, int row, int number) {
-        this.id = id;
+    public EventSeat(String uid, int row, int number) {
+        this.uid = uid;
         this.row = row;
         this.number = number;
         this.isTaken = false;
@@ -27,8 +27,8 @@ public class EventSeat {
         this.occupiedTimestamp = null;
     }
 
-    public String getId() {
-        return this.id;
+    public String getUid() {
+        return this.uid;
     }
 
     public int getRow() {

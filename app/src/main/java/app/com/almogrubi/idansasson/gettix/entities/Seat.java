@@ -6,12 +6,12 @@ package app.com.almogrubi.idansasson.gettix.entities;
 
 public class Seat {
 
-    private String id;
+    private String uid;
     private int row;
     private int number;
 
-    public String getId() {
-        return id;
+    public String getUid() {
+        return uid;
     }
 
     public int getRow() {
@@ -25,8 +25,8 @@ public class Seat {
     // Default constructor required for calls to Firebase's DataSnapshot.getValue
     public Seat() {}
 
-    public Seat(String id, int row, int number) {
-        this.id = id;
+    public Seat(String uid, int row, int number) {
+        this.uid = uid;
         this.row = row;
         this.number = number;
     }

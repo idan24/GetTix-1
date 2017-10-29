@@ -59,7 +59,7 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
         EventHall eventHall = event.getEventHall();
         tvEventHall.setText(String.format("%s, %s", eventHall.getName(), eventHall.getCity()));
 
-        ivEventCategory.setBackgroundResource(Utils.lookupImageByCategory(event.getCategory()));
+        ivEventCategory.setBackgroundResource(Utils.lookupImageByCategory(event.getCategoryAsEnum()));
 
         Uri photoUri = Uri.parse(event.getPosterUri());
         Glide.with(ivEventPoster.getContext())

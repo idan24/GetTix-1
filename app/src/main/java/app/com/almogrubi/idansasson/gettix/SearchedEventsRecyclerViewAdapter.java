@@ -61,7 +61,7 @@ import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 //                            if (dataSnapshot.exists()) {
 //                                //Hall hall = (Hall)dataSnapshot.getValue();
 //                                Hall hall = dataSnapshot.getChildren().iterator().next().getValue(Hall.class);
-//                                if (event.getHallId().equals(hall.getId()))
+//                                if (event.getHallId().equals(hall.getUid()))
 //                                    eventList.add(event);
 //                            }
 //                        }

@@ -3,6 +3,8 @@ package app.com.almogrubi.idansasson.gettix.entities;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by idans on 21/10/2017.
@@ -10,21 +12,22 @@ import java.util.ArrayList;
 
 public class Hall {
 
-    private String id;
+    private String uid;
     private String name;
     private String address;
     private String city;
     private String officialWebsite;
     private int rows;
     private int columns;
-    private ArrayList<Seat> seats;
+    public Map<String, Seat> seats = new HashMap<>();
+    //private ArrayList<Seat> seats;
     private ArrayList<DateTime> eventDateTimes;
 
     // Default constructor required for calls to Firebase's DataSnapshot.getValue
     public Hall() {}
 
-    public Hall(String id, String name, String address, String city, String officialWebsite, int rows, int columns, ArrayList<Seat> seats) {
-        this.id = id;
+    public Hall(String uid, String name, String address, String city, String officialWebsite, int rows, int columns, Map<String, Seat> seats) {
+        this.uid = uid;
         this.name = name;
         this.address = address;
         this.city = city;
@@ -34,8 +37,8 @@ public class Hall {
         this.seats = seats;
     }
 
-    public String getId() {
-        return this.id;
+    public String getUid() {
+        return this.uid;
     }
 
     public String getName() {
@@ -62,17 +65,15 @@ public class Hall {
         return columns;
     }
 
-    public ArrayList<Seat> getSeats() {
-        ArrayList<Seat> returnedSeats = new ArrayList<>();
-        for (Seat seat : this.seats)
-            returnedSeats.add(seat);
-        return returnedSeats;
+    public Map<String, Seat> getSeats() {
+        return this.seats;
     }
 
-    public ArrayList<EventSeat> getSeatsAsEventSeats() {
-        ArrayList<EventSeat> returnedEventSeats = new ArrayList<>();
-        for (Seat seat : this.seats) {
-            returnedEventSeats.add(new EventSeat(seat.getId(), seat.getRow(), seat.getNumber()));
+    // This method is used to create an Event's EventSeat objects from its Hall's Seat objects
+    public Map<String, EventSeat> makeEventSeats() {
+        Map<String, EventSeat> returnedEventSeats = new HashMap<>();
+        for (Seat seat : this.seats.values()) {
+            returnedEventSeats.put(seat.getUid(), new EventSeat(seat.getUid(), seat.getRow(), seat.getNumber()));
         }
         return returnedEventSeats;
     }
@@ -90,7 +91,5 @@ public class Hall {
     }
 
     @Override
-    public String toString() {
-        return this.name;
-    }
+    public String toString() { return this.name; }
 }

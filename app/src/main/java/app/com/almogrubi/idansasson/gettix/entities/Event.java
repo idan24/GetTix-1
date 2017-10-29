@@ -1,9 +1,10 @@
 package app.com.almogrubi.idansasson.gettix.entities;
 
+import com.google.firebase.database.Exclude;
+
 import org.joda.time.DateTime;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
 
@@ -13,11 +14,11 @@ import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
 
 public class Event implements Serializable {
 
-    private String id;
+    private String uid;
     private String title;
     private DataUtils.Category category;
     private EventHall eventHall;
-    private DateTime dateTime;
+    private Long dateTime;
     private int duration;
     private String description;
     private String performer;
@@ -31,10 +32,10 @@ public class Event implements Serializable {
     // Default constructor required for calls to Firebase's DataSnapshot.getValue
     public Event() {}
 
-    public Event(String id, String title, DataUtils.Category category, EventHall eventHall, DateTime dateTime,
-                    int duration, String description, String performer, int price, String posterUri,
-                        boolean hasMarkedSeats, int maxCapacity, String producerId) {
-        this.id = id;
+    public Event(String uid, String title, DataUtils.Category category, EventHall eventHall, Long dateTime,
+                 int duration, String description, String performer, int price, String posterUri,
+                 boolean hasMarkedSeats, int maxCapacity, String producerId) {
+        this.uid = uid;
         this.title = title;
         this.category = category;
         this.eventHall = eventHall;
@@ -52,8 +53,8 @@ public class Event implements Serializable {
         this.isSoldOut = false;
     }
 
-    public String getId() {
-        return this.id;
+    public String getUid() {
+        return this.uid;
     }
 
     public String getTitle() {
@@ -64,8 +65,26 @@ public class Event implements Serializable {
         return this.description;
     }
 
-    public DataUtils.Category getCategory() {
+    @Exclude
+    public DataUtils.Category getCategoryAsEnum() {
         return this.category;
+    }
+
+    // these methods are just a Firebase 9.0.0 hack to handle the enum
+    public String getCategory(){
+        if (this.category == null){
+            return null;
+        } else {
+            return this.category.name();
+        }
+    }
+
+    public void setCategory(String categoryString){
+        if (categoryString == null){
+            this.category = null;
+        } else {
+            this.category = DataUtils.Category.valueOf(categoryString);
+        }
     }
 
     public EventHall getEventHall() {
@@ -76,7 +95,7 @@ public class Event implements Serializable {
         return this.performer;
     }
 
-    public DateTime getDateTime() {
+    public Long getDateTime() {
         return this.dateTime;
     }
 

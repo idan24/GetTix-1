@@ -17,9 +17,13 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import app.com.almogrubi.idansasson.gettix.EventEditActivity;
 import app.com.almogrubi.idansasson.gettix.R;
+import app.com.almogrubi.idansasson.gettix.entities.Hall;
+import app.com.almogrubi.idansasson.gettix.entities.Seat;
 
 /**
  * Created by idans on 25/10/2017.
@@ -106,8 +110,7 @@ public class ManagementScreen extends AppCompatActivity {
         else if (item.getItemId() == R.id.action_add_event) {
             startActivity(new Intent(this, EventEditActivity.class));
 
-//            addNewHall("HALL1",
-//                    "זאפה הרצליה",
+//            addNewHall("זאפה הרצליה",
 //                    "מדינת היהודים 85",
 //                    "הרצליה",
 //                    "https://www.zappa-club.co.il/%D7%9E%D7%95%D7%A2%D7%93%D7%95%D7%9F/%D7%96%D7%90%D7%A4%D7%94-%D7%94%D7%A8%D7%A6%D7%9C%D7%99%D7%94/",
@@ -119,12 +122,25 @@ public class ManagementScreen extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void addNewHall(String id, String name, String address, String city, String officialWebsite,
+    private void addNewHall(String name, String address, String city, String officialWebsite,
                             int rows, int columns) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference hallsDatabaseReference = firebaseDatabase.getReference().child("halls");
 
-        // TODO: soon
+        String hallUid = hallsDatabaseReference.push().getKey();
+
+        Map<String, Seat> seats = new HashMap<>();
+
+        for (int i=0; i<rows; i++)
+            for (int j=0; j<columns; j++) {
+                String seatUid = String.format("%sSEAT%d-%d", hallUid, i+1, j+1);
+                seats.put(seatUid, new Seat(seatUid, i+1, j+1));
+//                hallsDatabaseReference.child(hallUid).child("seats")
+//                        .child(seatUid).setValue(new Seat(seatUid, i+1, j+1));
+            }
+
+        Hall newHall = new Hall(hallUid, name, address, city, officialWebsite, rows, columns, seats);
+        hallsDatabaseReference.child(hallUid).setValue(newHall);
     }
 
     @Override

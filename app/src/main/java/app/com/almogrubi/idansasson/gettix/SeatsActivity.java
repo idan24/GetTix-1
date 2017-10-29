@@ -63,7 +63,7 @@ public class SeatsActivity extends AppCompatActivity{
 
                                 Log.i("almog", "id is " + v.getId());
                                 counter=+1;
- //                               event.choseSit(v.getId());
+ //                               event.choseSit(v.getUid());
 
 //                              add private grid for selected tickets
 
@@ -99,7 +99,7 @@ public class SeatsActivity extends AppCompatActivity{
                 startActivity(intent);
                 Log.i("almog", "id is " + v.getId());
 
-//                event.choseSit(v.getId());
+//                event.choseSit(v.getUid());
 
             }
         }

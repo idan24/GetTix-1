@@ -36,18 +36,22 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="AppEditTextStyle" parent="android:style/Widget.EditText">
+    <style name="AppEditTextStyle" parent="Widget.AppCompat.EditText">
         <item name="android:maxLines">1</item>
         <item name="android:inputType">text</item>
         <item name="android:textDirection">anyRtl</item>
-        <item name="android:layout_width">120dp</item>
+        <item name="android:layout_width">@dimen/short_inputview_width</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">10dp</item>
         <item name="android:textStyle">italic</item>
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
-    <style name="AppCheckBoxStyle" parent="android:Widget.CompoundButton.CheckBox">
+    <style name="AppLongEditTextStyle" parent="AppTextViewStyle">
+        <item name="android:layout_width">@dimen/long_inputview_width</item>
+    </style>
+
+    <style name="AppCheckBoxStyle" parent="Widget.AppCompat.CompoundButton.CheckBox">
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">italic</item>
         <item name="android:fontFamily">sans-serif-medium</item>
@@ -61,7 +65,7 @@
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
-    <style name="SpinnerStyle" parent="android:Widget.ListView.DropDown">
+    <style name="SpinnerStyle" parent="Widget.AppCompat.ListView.DropDown">
         <item name="android:dividerHeight">1dip</item>
         <item name="android:divider">@color/wl_gray</item>
     </style>

@@ -13,7 +13,7 @@ import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
 
 public class Order implements Serializable {
 
-    private String id;
+    private String uid;
     private String eventId;
     private String customerName;
     private String customerPhone;
@@ -22,15 +22,15 @@ public class Order implements Serializable {
     private String creditCard;
     private ArrayList<EventSeat> eventSeats;
     private DataUtils.OrderStatus status;
-    private int ticketNum;
+    private int ticketsNum;
     private Date creationDate;
 
     // Default constructor required for calls to Firebase's DataSnapshot.getValue
     public Order() {}
 
-    public Order(String id, Event event, String customerName, String customerPhone, String customerEmail,
-                    int totalPrice, String creditCard, ArrayList<EventSeat> eventSeats) {
-        this.id = id;
+    public Order(String uid, Event event, String customerName, String customerPhone, String customerEmail,
+                 int totalPrice, String creditCard, ArrayList<EventSeat> eventSeats) {
+        this.uid = uid;
         this.eventId = eventId;
         this.customerName = customerName;
         this.customerPhone = customerPhone;
@@ -47,20 +47,20 @@ public class Order implements Serializable {
     }
 
 
-    public int getTicketNum() {
-        return ticketNum;
+    public int getTicketsNum() {
+        return ticketsNum;
     }
 
-    public void setTicketNum(int ticketNum) {
-        this.ticketNum = ticketNum;
+    public void setTicketsNum(int ticketsNum) {
+        this.ticketsNum = ticketsNum;
     }
 
     public Date getCreationDate() {
         return creationDate;
     }
 
-    public String getId() {
-        return this.id;
+    public String getUid() {
+        return this.uid;
     }
 
     public String getEventId() {
@@ -94,8 +94,8 @@ public class Order implements Serializable {
         return returnedEventSeats;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public void setEventId(String eventId) {
