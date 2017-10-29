@@ -26,7 +26,9 @@ public class Order implements Serializable {
     private Date creationDate;
 
     // Default constructor required for calls to Firebase's DataSnapshot.getValue
-    public Order() {}
+    public Order() {
+        this.ticketsNum= 0;
+    }
 
     public Order(String uid, Event event, String customerName, String customerPhone, String customerEmail,
                  int totalPrice, String creditCard, ArrayList<EventSeat> eventSeats) {
