@@ -126,4 +126,56 @@ public class Event implements Serializable {
     public boolean isSoldOut() {
         return this.isSoldOut;
     }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setEventHall(EventHall eventHall) {
+        this.eventHall = eventHall;
+    }
+
+    public void setDateTime(Long dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setPerformer(String performer) {
+        this.performer = performer;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public void setPosterUri(String posterUri) {
+        this.posterUri = posterUri;
+    }
+
+    public void setHasMarkedSeats(boolean hasMarkedSeats) {
+        this.hasMarkedSeats = hasMarkedSeats;
+    }
+
+    public void setMaxCapacity(int maxCapacity) {
+        this.maxCapacity = maxCapacity;
+    }
+
+    public void setSoldOut(boolean soldOut) {
+        isSoldOut = soldOut;
+    }
+
+    public void setProducerId(String producerId) {
+        this.producerId = producerId;
+    }
 }
