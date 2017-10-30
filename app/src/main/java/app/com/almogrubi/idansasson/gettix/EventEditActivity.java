@@ -7,6 +7,7 @@ import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -58,6 +59,7 @@ public class EventEditActivity extends ManagementScreen {
 
     private ActivityEventEditBinding binding;
     private Event event;
+    private Uri eventPosterUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,45 +108,46 @@ public class EventEditActivity extends ManagementScreen {
             @Override
             public void onClick(View view) {
                 if (checkInputValidity()) {
-                    String newEventId = eventsDatabaseReference.push().getKey();
-                    String newEventTitle = binding.etEventTitle.getText().toString();
-                    DataUtils.Category newEventCategory = (DataUtils.Category) binding.spEventCategory.getSelectedItem();
+                    if (event == null) {
+                        String newEventId = eventsDatabaseReference.push().getKey();
+                        String newEventTitle = binding.etEventTitle.getText().toString();
+                        DataUtils.Category newEventCategory = (DataUtils.Category) binding.spEventCategory.getSelectedItem();
 
-                    Hall selectedHall = (Hall) binding.spEventHall.getSelectedItem();
-                    EventHall newEventHall =
-                            new EventHall(selectedHall.getUid(),
-                                    selectedHall.getName(),
-                                    selectedHall.getCity(),
-                                    selectedHall.getRows(),
-                                    selectedHall.getColumns(),
-                                    selectedHall.makeEventSeats());
+                        Hall selectedHall = (Hall) binding.spEventHall.getSelectedItem();
+                        EventHall newEventHall =
+                                new EventHall(selectedHall.getUid(),
+                                        selectedHall.getName(),
+                                        selectedHall.getCity(),
+                                        selectedHall.getRows(),
+                                        selectedHall.getColumns(),
+                                        selectedHall.makeEventSeats());
 
-                    final Calendar calendar = Calendar.getInstance();
-                    calendar.set(Calendar.YEAR, Integer.parseInt(binding.etEventDate.getText().toString().substring(6,10)));
-                    calendar.set(Calendar.MONTH, Integer.parseInt(binding.etEventDate.getText().toString().substring(3,5)));
-                    calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(binding.etEventDate.getText().toString().substring(0,2)));
-                    calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(binding.etEventHour.getText().toString().substring(0,2)));
-                    calendar.set(Calendar.MINUTE, Integer.parseInt(binding.etEventHour.getText().toString().substring(3,5)));
-                    Long newEventDateTime = new DateTime(calendar.getTime()).getMillis();
+                        final Calendar calendar = Calendar.getInstance();
+                        calendar.set(Calendar.YEAR, Integer.parseInt(binding.etEventDate.getText().toString().substring(6,10)));
+                        calendar.set(Calendar.MONTH, Integer.parseInt(binding.etEventDate.getText().toString().substring(3,5)));
+                        calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(binding.etEventDate.getText().toString().substring(0,2)));
+                        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(binding.etEventHour.getText().toString().substring(0,2)));
+                        calendar.set(Calendar.MINUTE, Integer.parseInt(binding.etEventHour.getText().toString().substring(3,5)));
+                        Long newEventDateTime = new DateTime(calendar.getTime()).getMillis();
 
-                    int newEventDuration = TextUtils.isEmpty(binding.etEventDuration.getText())
-                            ? 0
-                            : Integer.parseInt(binding.etEventDuration.getText().toString());
-                    String newEventDescription = binding.etEventDescription.getText().toString();
-                    String newEventPerformer = binding.etEventPerformer.getText().toString();
-                    int newEventPrice = Integer.parseInt(binding.etEventPrice.getText().toString());
-                    String newEventPosterUri = binding.ivEventPoster.getTag().toString();
-                    boolean newEventHasMarkedSeats = binding.cbEventMarkedSeats.isChecked();
-                    int newEventMaxCapacity = newEventHasMarkedSeats
-                            ? 0
-                            : Integer.parseInt(binding.etEventMaxCapacity.getText().toString());
-                    String newEventProducerId = EventEditActivity.super.user.getUid();
-                    event = new Event(newEventId, newEventTitle, newEventCategory, newEventHall, newEventDateTime,
-                            newEventDuration, newEventDescription, newEventPerformer, newEventPrice, newEventPosterUri,
-                            newEventHasMarkedSeats, newEventMaxCapacity, newEventProducerId);
-                    eventsDatabaseReference.child(newEventId).setValue(event);
+                        int newEventDuration = TextUtils.isEmpty(binding.etEventDuration.getText())
+                                ? 0
+                                : Integer.parseInt(binding.etEventDuration.getText().toString());
+                        String newEventDescription = binding.etEventDescription.getText().toString();
+                        String newEventPerformer = binding.etEventPerformer.getText().toString();
+                        int newEventPrice = Integer.parseInt(binding.etEventPrice.getText().toString());
+                        String newEventPosterUri = eventPosterUri.toString();
+                        boolean newEventHasMarkedSeats = binding.cbEventMarkedSeats.isChecked();
+                        int newEventMaxCapacity = newEventHasMarkedSeats
+                                ? 0
+                                : Integer.parseInt(binding.etEventMaxCapacity.getText().toString());
+                        String newEventProducerId = EventEditActivity.super.user.getUid();
+                        event = new Event(newEventId, newEventTitle, newEventCategory, newEventHall, newEventDateTime,
+                                newEventDuration, newEventDescription, newEventPerformer, newEventPrice, newEventPosterUri,
+                                newEventHasMarkedSeats, newEventMaxCapacity, newEventProducerId);
+                        eventsDatabaseReference.child(newEventId).setValue(event);
 
-                    // Adding event's datetime to its hall's inner list of taken dates
+                        // Adding event's datetime to its hall's inner list of taken dates
 //                    Map<String, Object> hallDateTimeUpdate = new HashMap<>();
 //                    hallDateTimeUpdate.put(newEventDateTime.toString(), newEventDateTime);
 //                    // "halls/id/event_date_times/"
@@ -152,6 +155,7 @@ public class EventEditActivity extends ManagementScreen {
 //                            .child(selectedHall.getUid())
 //                            .child("eventDateTimes")
 //                            .updateChildren(hallDateTimeUpdate);
+                    }
                 }
             }
         });
@@ -194,7 +198,7 @@ public class EventEditActivity extends ManagementScreen {
             isValid = false;
         }
         // Checking poster file was uploaded
-        if (binding.ivEventPoster.getTag() == null) {
+        if (eventPosterUri == null) {
             binding.btLoadPoster.setError(posterErrorMessage);
             isValid = false;
         }
@@ -354,6 +358,13 @@ public class EventEditActivity extends ManagementScreen {
         Glide.with(view.getContext())
                 .load(photoUri)
                 .into(view);
-        view.setTag(photoUri);
+        eventPosterUri = photoUri;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_manager, menu);
+        menu.findItem(R.id.action_add_event).setVisible(false);
+        return true;
     }
 }

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import app.com.almogrubi.idansasson.gettix.EventEditActivity;
+import app.com.almogrubi.idansasson.gettix.MainActivity;
 import app.com.almogrubi.idansasson.gettix.R;
 import app.com.almogrubi.idansasson.gettix.entities.Hall;
 import app.com.almogrubi.idansasson.gettix.entities.Seat;
@@ -71,12 +72,6 @@ public class ManagementScreen extends AppCompatActivity {
         };
     }
 
-    protected void onSignedInInitialize(FirebaseUser user) {
-        this.user = user;
-    }
-
-    protected void onSignedOutCleanup() {}
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -95,6 +90,12 @@ public class ManagementScreen extends AppCompatActivity {
         }
     }
 
+    protected void onSignedInInitialize(FirebaseUser user) {
+        this.user = user;
+    }
+
+    protected void onSignedOutCleanup() {}
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_manager, menu);
@@ -104,43 +105,12 @@ public class ManagementScreen extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_sign_out) {
+            startActivity(new Intent(this, MainActivity.class));
             AuthUI.getInstance().signOut(this);
-            return true;
-        }
-        else if (item.getItemId() == R.id.action_add_event) {
-            startActivity(new Intent(this, EventEditActivity.class));
-
-//            addNewHall("זאפה הרצליה",
-//                    "מדינת היהודים 85",
-//                    "הרצליה",
-//                    "https://www.zappa-club.co.il/%D7%9E%D7%95%D7%A2%D7%93%D7%95%D7%9F/%D7%96%D7%90%D7%A4%D7%94-%D7%94%D7%A8%D7%A6%D7%9C%D7%99%D7%94/",
-//                    30, 15);
-
             return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void addNewHall(String name, String address, String city, String officialWebsite,
-                            int rows, int columns) {
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference hallsDatabaseReference = firebaseDatabase.getReference().child("halls");
-
-        String hallUid = hallsDatabaseReference.push().getKey();
-
-        Map<String, Seat> seats = new HashMap<>();
-
-        for (int i=0; i<rows; i++)
-            for (int j=0; j<columns; j++) {
-                String seatUid = String.format("%sSEAT%d-%d", hallUid, i+1, j+1);
-                seats.put(seatUid, new Seat(seatUid, i+1, j+1));
-//                hallsDatabaseReference.child(hallUid).child("seats")
-//                        .child(seatUid).setValue(new Seat(seatUid, i+1, j+1));
-            }
-
-        Hall newHall = new Hall(hallUid, name, address, city, officialWebsite, rows, columns, seats);
-        hallsDatabaseReference.child(hallUid).setValue(newHall);
     }
 
     @Override

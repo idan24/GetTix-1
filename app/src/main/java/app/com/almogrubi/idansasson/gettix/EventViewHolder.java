@@ -65,6 +65,5 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
         Glide.with(ivEventPoster.getContext())
                 .load(photoUri)
                 .into(ivEventPoster);
-        ivEventPoster.setTag(photoUri);
     }
 }

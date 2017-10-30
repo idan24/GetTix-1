@@ -110,8 +110,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(final EventViewHolder viewHolder,
                                             int position,
-                                            Event event) {
+                                            final Event event) {
                 viewHolder.bindEvent(event);
+                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Context context = v.getContext();
+                        Intent detailActivityIntent = new Intent(context, DetailActivity.class);
+                        detailActivityIntent.putExtra("eventObject", event);
+                        context.startActivity(detailActivityIntent);
+                    }
+                });
             }
         };
 
@@ -171,6 +180,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPause() {
+        firebaseRecyclerAdapter.stopListening();
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        firebaseRecyclerAdapter.startListening();
     }
 
     private void commentedCode() {
@@ -284,18 +305,54 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+//    public void filter(Date date, String hallName, DataUtils.Category category, String city, String keyword) {
+//        keyword = keyword.toLowerCase(Locale.getDefault());
+//        eventList.clear();
+//
+//        if (date == null && hallName.isEmpty() && category == null && city.isEmpty() && keyword.isEmpty()) {
+//            eventList.addAll(eventArrayList);
+//        }
+//        else {
+//            for (final Event event : eventArrayList) {
+//                if ((date != null) && (!date.equals(event.getDateTime())))
+//                    continue;
+//                else if (!hallName.isEmpty()) {
+//                    DatabaseReference hallsDatabaseReference = firebaseDatabase.getReference().child("halls");
+//                    Query query = hallsDatabaseReference.orderByChild("name").equalTo(hallName).limitToFirst(1);
+//                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(DataSnapshot dataSnapshot) {
+//                            if (dataSnapshot.exists()) {
+//                                //Hall hall = (Hall)dataSnapshot.getValue();
+//                                Hall hall = dataSnapshot.getChildren().iterator().next().getValue(Hall.class);
+//                                if (event.getHallId().equals(hall.getUid()))
+//                                    eventList.add(event);
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(DatabaseError databaseError) {}
+//                    });
+//                    continue;
+//                }
+//                else if ((category != null) && (category != event.getCategory()))
+//                    continue;
+//                else if ((!city.isEmpty()) && (!event.getCity().contains(city)))
+//                    continue;
+//                else if ((!keyword.isEmpty()) &&
+//                         (!event.getTitle().contains(keyword)) &&
+//                         (!event.getDescription().contains(keyword)) &&
+//                         (!event.getPerformer().contains(keyword)))
+//                    continue;
+//
+//                eventList.add(event);
+//            }
+//        }
+//
+//        notifyDataSetChanged();
+//    }
+//}
+
         //------------------------------------------------------------------------------------------
-    }
-
-    @Override
-    public void onPause() {
-        firebaseRecyclerAdapter.stopListening();
-        super.onPause();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        firebaseRecyclerAdapter.startListening();
     }
 }
