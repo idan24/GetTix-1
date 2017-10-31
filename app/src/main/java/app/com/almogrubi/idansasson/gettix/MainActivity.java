@@ -40,6 +40,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import org.joda.time.DateTime;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -59,11 +61,13 @@ public class MainActivity extends AppCompatActivity {
     private Spinner spEventCategory;
     private Button btSearchEvents;
     private RecyclerView eventsRecyclerView;
-    private LinearLayoutManager mLinearLayoutManager;
+    private LinearLayoutManager linearLayoutManager;
 
     private DatabaseReference firebaseDatabaseReference;
     private DatabaseReference eventsDatabaseReference;
     private FirebaseRecyclerAdapter<Event, EventViewHolder> firebaseRecyclerAdapter;
+
+    SnapshotParser<Event> eventSnapshotParser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,54 +83,14 @@ public class MainActivity extends AppCompatActivity {
         btSearchEvents = findViewById(R.id.bt_search_events);
         eventsRecyclerView = findViewById(R.id.searched_events_recycler_view);
 
-        mLinearLayoutManager = new LinearLayoutManager(this);
-        eventsRecyclerView.setLayoutManager(mLinearLayoutManager);
+        linearLayoutManager = new LinearLayoutManager(this);
+        eventsRecyclerView.setLayoutManager(linearLayoutManager);
 
         // New child entries
         firebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        SnapshotParser<Event> parser = new SnapshotParser<Event>() {
-            @Override
-            public Event parseSnapshot(DataSnapshot dataSnapshot) {
-                Event event = dataSnapshot.getValue(Event.class);
-                if (event != null) {
-                    event.setUid(dataSnapshot.getKey());
-                }
-                return event;
-            }
-        };
-
         eventsDatabaseReference = firebaseDatabaseReference.child("events");
-        FirebaseRecyclerOptions<Event> options =
-                new FirebaseRecyclerOptions.Builder<Event>()
-                        .setQuery(eventsDatabaseReference, parser)
-                        .build();
-        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Event, EventViewHolder>(options) {
-            @Override
-            public EventViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-                LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-                return new EventViewHolder(inflater.inflate(R.layout.event_list_item, viewGroup, false));
-            }
 
-            @Override
-            protected void onBindViewHolder(final EventViewHolder viewHolder,
-                                            int position,
-                                            final Event event) {
-                viewHolder.bindEvent(event);
-                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Context context = v.getContext();
-                        Intent detailActivityIntent = new Intent(context, DetailActivity.class);
-                        detailActivityIntent.putExtra("eventObject", event);
-                        context.startActivity(detailActivityIntent);
-                    }
-                });
-            }
-        };
-
-        firebaseRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {});
-
-        eventsRecyclerView.setAdapter(firebaseRecyclerAdapter);
+        updateWithFilter(Long.parseLong("0"),"", DataUtils.Category.ALL, "", "");
 
         //------------------------------------------------------------------------
 
@@ -158,6 +122,69 @@ public class MainActivity extends AppCompatActivity {
                 this, R.layout.spinner_item, DataUtils.Category.values()) {};
         spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
         spEventCategory.setAdapter(spinnerArrayAdapter);
+
+        btSearchEvents.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.YEAR, Integer.parseInt(etEventDate.getText().toString().substring(6,10)));
+                calendar.set(Calendar.MONTH, Integer.parseInt(etEventDate.getText().toString().substring(3,5)));
+                calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(etEventDate.getText().toString().substring(0,2)));
+
+                updateWithFilter(new DateTime(calendar.getTime()).getMillis(),
+                        etEventHall.getText().toString(),
+                        (DataUtils.Category) spEventCategory.getSelectedItem(),
+                        etEventCity.getText().toString(),
+                        etEventKeyword.getText().toString());
+            }
+        });
+    }
+
+    private void updateWithFilter(Long eventDate, String eventHallName, DataUtils.Category eventCategory,
+                                  String eventCity, String keyword) {
+        eventSnapshotParser = new SnapshotParser<Event>() {
+            @Override
+            public Event parseSnapshot(DataSnapshot dataSnapshot) {
+                Event event = dataSnapshot.getValue(Event.class);
+                if (event != null) {
+                    event.setUid(dataSnapshot.getKey());
+                }
+                return event;
+            }
+        };
+
+        FirebaseRecyclerOptions<Event> options =
+                new FirebaseRecyclerOptions.Builder<Event>()
+                        .setQuery(eventsDatabaseReference, eventSnapshotParser)
+                        .build();
+        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Event, EventViewHolder>(options) {
+            @Override
+            public EventViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+                LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+                return new EventViewHolder(inflater.inflate(R.layout.event_list_item, viewGroup, false));
+            }
+
+            @Override
+            protected void onBindViewHolder(final EventViewHolder viewHolder,
+                                            int position,
+                                            final Event event) {
+                viewHolder.bindEvent(event);
+                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Context context = v.getContext();
+                        Intent detailActivityIntent = new Intent(context, DetailActivity.class);
+                        detailActivityIntent.putExtra("eventObject", event);
+                        context.startActivity(detailActivityIntent);
+                    }
+                });
+            }
+        };
+
+        firebaseRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {});
+
+        eventsRecyclerView.setAdapter(firebaseRecyclerAdapter);
     }
 
     @Override
@@ -195,51 +222,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void commentedCode() {
-        //        eventsDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                if (dataSnapshot != null)
-//                    showEventList();
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
-
-
-
-
-        //            @Override
-//            public boolean isEnabled(int position){
-//                if(position == 0)
-//                {
-//                    // Disable the first item from Spinner
-//                    // First item will be use for hint
-//                    return false;
-//                }
-//                else
-//                {
-//                    return true;
-//                }
-//            }
-//            @Override
-//            public View getDropDownView(int position, View convertView,
-//                                        ViewGroup parent) {
-//                View view = super.getDropDownView(position, convertView, parent);
-//                TextView tv = (TextView) view;
-//
-//                if(position == 0){
-//                    // Set the hint text color gray
-//                    tv.setTextColor(Color.GRAY);
-//                }
-//                else {
-//                    tv.setTextColor(Color.BLACK);
-//                }
-//                return view;
-//            }
-
 
         //        btSearchEvents.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -252,107 +234,6 @@ public class MainActivity extends AppCompatActivity {
 //                        etEventKeyword.getText().toString());
 //            }
 //        });
-
-
-
-
-
-
-        //List<Event> showList = new ArrayList<>();
-        //Event startwars = new Event("1", "starwars","best movie ever", DataUtils.Category.THEATER, "1","Tel Aviv","",new Date(1),60,
-        //        "startwars",30, true ,16,"" );
-        //Event got = new Event("2", "game of thrones","2nd best movie ever", DataUtils.Category.THEATER, "2","Tel Aviv","",new Date(2),60,
-        //        "got",30, false ,16,"" );
-        //showList.add(startwars);
-        //showList.add(got);
-
-
-        //mAdapter = new RecyclerViewAdapter(this, showList);
-        //recyclerView.setAdapter(mAdapter);
-
-
-
-
-
-
-//        FirebaseRecyclerOptions<Event> options =
-//                new FirebaseRecyclerOptions.Builder<Event>()
-//                        .setQuery(eventsDatabaseReference, Event.class)
-//                        .build();
-//        mFirebaseAdapter = new FirebaseRecyclerAdapter<Event, EventViewHolder>(options) {
-//            @Override
-//            public EventViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-//                LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-//                return new EventViewHolder(inflater.inflate(R.layout.event_list_item, viewGroup, false));
-//            }
-//
-//            @Override
-//            protected void onBindViewHolder(final EventViewHolder viewHolder,
-//                                            int position,
-//                                            Event event) {
-//                viewHolder.bindEvent(event);
-//            }
-//        };
-//
-//        mFirebaseAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-//            @Override
-//            public void onItemRangeInserted(int positionStart, int itemCount) {
-//                super.onItemRangeInserted(positionStart, itemCount);
-//            }
-//        });
-//
-//        eventsRecyclerView.setAdapter(mFirebaseAdapter);
-
-
-
-//    public void filter(Date date, String hallName, DataUtils.Category category, String city, String keyword) {
-//        keyword = keyword.toLowerCase(Locale.getDefault());
-//        eventList.clear();
-//
-//        if (date == null && hallName.isEmpty() && category == null && city.isEmpty() && keyword.isEmpty()) {
-//            eventList.addAll(eventArrayList);
-//        }
-//        else {
-//            for (final Event event : eventArrayList) {
-//                if ((date != null) && (!date.equals(event.getDateTime())))
-//                    continue;
-//                else if (!hallName.isEmpty()) {
-//                    DatabaseReference hallsDatabaseReference = firebaseDatabase.getReference().child("halls");
-//                    Query query = hallsDatabaseReference.orderByChild("name").equalTo(hallName).limitToFirst(1);
-//                    query.addListenerForSingleValueEvent(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(DataSnapshot dataSnapshot) {
-//                            if (dataSnapshot.exists()) {
-//                                //Hall hall = (Hall)dataSnapshot.getValue();
-//                                Hall hall = dataSnapshot.getChildren().iterator().next().getValue(Hall.class);
-//                                if (event.getHallId().equals(hall.getUid()))
-//                                    eventList.add(event);
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onCancelled(DatabaseError databaseError) {}
-//                    });
-//                    continue;
-//                }
-//                else if ((category != null) && (category != event.getCategory()))
-//                    continue;
-//                else if ((!city.isEmpty()) && (!event.getCity().contains(city)))
-//                    continue;
-//                else if ((!keyword.isEmpty()) &&
-//                         (!event.getTitle().contains(keyword)) &&
-//                         (!event.getDescription().contains(keyword)) &&
-//                         (!event.getPerformer().contains(keyword)))
-//                    continue;
-//
-//                eventList.add(event);
-//            }
-//        }
-//
-//        notifyDataSetChanged();
-//    }
-//}
-
         //------------------------------------------------------------------------------------------
     }
 }

@@ -1,10 +1,12 @@
 package app.com.almogrubi.idansasson.gettix.entities;
 
+import java.io.Serializable;
+
 /**
  * Created by idans on 28/10/2017.
  */
 
-public class Seat {
+public class Seat implements Serializable {
 
     private String uid;
     private int row;

@@ -2,11 +2,13 @@ package app.com.almogrubi.idansasson.gettix.entities;
 
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
+
 /**
  * Created by idans on 21/10/2017.
  */
 
-public class EventSeat {
+public class EventSeat implements Serializable {
 
     private String uid;
     private int row;
