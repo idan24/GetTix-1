@@ -6,18 +6,15 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -33,15 +30,18 @@ import com.google.firebase.storage.UploadTask;
 
 import org.joda.time.DateTime;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import app.com.almogrubi.idansasson.gettix.databinding.ActivityEventEditBinding;
 import app.com.almogrubi.idansasson.gettix.entities.Event;
 import app.com.almogrubi.idansasson.gettix.entities.EventHall;
+import app.com.almogrubi.idansasson.gettix.entities.EventSeat;
 import app.com.almogrubi.idansasson.gettix.entities.Hall;
+import app.com.almogrubi.idansasson.gettix.entities.Seat;
 import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
 import app.com.almogrubi.idansasson.gettix.utilities.HallSpinnerAdapter;
 import app.com.almogrubi.idansasson.gettix.utilities.ManagementScreen;
@@ -55,113 +55,316 @@ public class EventEditActivity extends ManagementScreen {
     private FirebaseStorage firebaseStorage;
     private DatabaseReference eventsDatabaseReference;
     private DatabaseReference hallsDatabaseReference;
+    private DatabaseReference hallSeatsDatabaseReference;
+    private DatabaseReference hallEventsDatabaseReference;
+    private DatabaseReference hallEventDatesDatabaseReference;
+    private DatabaseReference categoryEventsDatabaseReference;
+    private DatabaseReference cityEventsDatabaseReference;
+    private DatabaseReference eventSeatsDatabaseReference;
     private StorageReference eventPostersStorageReference;
 
     private ActivityEventEditBinding binding;
-    private Event event;
     private Uri eventPosterUri;
+
+    private boolean isEdit = false;
+    private Event editedEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_edit);
-    }
 
-    @Override
-    protected void onSignedInInitialize(FirebaseUser user) {
-        super.onSignedInInitialize(user);
-
-        Intent intent = this.getIntent();
-
-        if (intent != null) {
-            event = (Event) intent.getSerializableExtra("eventObject");
+        ActionBar actionBar = this.getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_event_edit);
 
+        // Initialization of all needed Firebase database references
+        initializeDatabaseReferences();
+
+        // Initialization actions that should happen whether this is a new event or an edited existing event
+        initializeUIViews();
+
+        Intent intent = this.getIntent();
+        // If we should be in edit mode, lookup the event in the database and bind its data to UI
+        if ((intent != null) && (intent.hasExtra("eventUid"))) {
+
+            isEdit = true;
+
+            eventsDatabaseReference
+                    .child(intent.getStringExtra("eventUid"))
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            // If we have a null result, the event was somehow not found in the database
+                            if (dataSnapshot == null || !dataSnapshot.exists() || dataSnapshot.getValue() == null) {
+                                abort();
+                                return;
+                            }
+
+                            // If we reached here then the existing event was found, we'll bind it to UI
+                            editedEvent = dataSnapshot.getValue(Event.class);
+                            binding.tvEventEditTitle.setText(R.string.event_edit_title);
+                            bindExistingEventInfo();
+                            bindExistingEventDateTime(editedEvent.getDate(), editedEvent.getHour());
+                            binding.cbEventSoldOut.setVisibility(View.VISIBLE);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            abort();
+                        }
+                    });
+        }
+        // If we should be in new/create mode, initialize views accordingly
+        else {
+            bindEventDateTime();
+            binding.ivEventPoster.setVisibility(View.INVISIBLE);
+            binding.cbEventSoldOut.setVisibility(View.GONE);
+        }
+    }
+
+    private void initializeDatabaseReferences() {
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseStorage = FirebaseStorage.getInstance();
         eventsDatabaseReference = firebaseDatabase.getReference().child("events");
         hallsDatabaseReference = firebaseDatabase.getReference().child("halls");
+        hallSeatsDatabaseReference = firebaseDatabase.getReference().child("hall_seats");
+        hallEventsDatabaseReference = firebaseDatabase.getReference().child("hall_events");
+        categoryEventsDatabaseReference = firebaseDatabase.getReference().child("category_events");
+        cityEventsDatabaseReference = firebaseDatabase.getReference().child("city_events");
+        eventSeatsDatabaseReference = firebaseDatabase.getReference().child("event_seats");
+        hallEventDatesDatabaseReference = firebaseDatabase.getReference().child("hall_eventDates");
         eventPostersStorageReference = firebaseStorage.getReference().child("event_posters");
+    }
 
+    private void initializeUIViews() {
         setSpinnersAdapterSource();
-        bindEventDateTime(event != null ? new DateTime(event.getDateTime()) : DateTime.now());
+
         binding.btLoadPoster.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("image/jpeg");
                 intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
+                startActivityForResult(Intent.createChooser(intent, "השלם פעולה באמצעות..."), RC_PHOTO_PICKER);
             }
         });
-        binding.ivEventPoster.setVisibility(View.INVISIBLE);
-        binding.cbEventSoldOut.setVisibility(View.GONE);
-
-        if (event != null) {
-            bindEventInfo();
-            binding.cbEventSoldOut.setVisibility(View.VISIBLE);
-        }
 
         binding.btSaveEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (checkInputValidity()) {
-                    if (event == null) {
-                        String newEventId = eventsDatabaseReference.push().getKey();
-                        String newEventTitle = binding.etEventTitle.getText().toString();
-                        DataUtils.Category newEventCategory = (DataUtils.Category) binding.spEventCategory.getSelectedItem();
-
-                        Hall selectedHall = (Hall) binding.spEventHall.getSelectedItem();
-                        EventHall newEventHall =
-                                new EventHall(selectedHall.getUid(),
-                                        selectedHall.getName(),
-                                        selectedHall.getCity(),
-                                        selectedHall.getRows(),
-                                        selectedHall.getColumns(),
-                                        selectedHall.makeEventSeats());
-
-                        final Calendar calendar = Calendar.getInstance();
-                        calendar.set(Calendar.YEAR, Integer.parseInt(binding.etEventDate.getText().toString().substring(6,10)));
-                        calendar.set(Calendar.MONTH, Integer.parseInt(binding.etEventDate.getText().toString().substring(3,5)));
-                        calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(binding.etEventDate.getText().toString().substring(0,2)));
-                        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(binding.etEventHour.getText().toString().substring(0,2)));
-                        calendar.set(Calendar.MINUTE, Integer.parseInt(binding.etEventHour.getText().toString().substring(3,5)));
-                        Long newEventDateTime = new DateTime(calendar.getTime()).getMillis();
-
-                        int newEventDuration = TextUtils.isEmpty(binding.etEventDuration.getText())
-                                ? 0
-                                : Integer.parseInt(binding.etEventDuration.getText().toString());
-                        String newEventDescription = binding.etEventDescription.getText().toString();
-                        String newEventPerformer = binding.etEventPerformer.getText().toString();
-                        int newEventPrice = Integer.parseInt(binding.etEventPrice.getText().toString());
-                        String newEventPosterUri = eventPosterUri.toString();
-                        boolean newEventHasMarkedSeats = binding.cbEventMarkedSeats.isChecked();
-                        int newEventMaxCapacity = newEventHasMarkedSeats
-                                ? 0
-                                : Integer.parseInt(binding.etEventMaxCapacity.getText().toString());
-                        String newEventProducerId = EventEditActivity.super.user.getUid();
-                        event = new Event(newEventId, newEventTitle, newEventCategory, newEventHall, newEventDateTime,
-                                newEventDuration, newEventDescription, newEventPerformer, newEventPrice, newEventPosterUri,
-                                newEventHasMarkedSeats, newEventMaxCapacity, newEventProducerId);
-                        eventsDatabaseReference.child(newEventId).setValue(event);
-
-                        // Adding event's datetime to its hall's inner list of taken dates
-//                    Map<String, Object> hallDateTimeUpdate = new HashMap<>();
-//                    hallDateTimeUpdate.put(newEventDateTime.toString(), newEventDateTime);
-//                    // "halls/id/event_date_times/"
-//                    hallsDatabaseReference
-//                            .child(selectedHall.getUid())
-//                            .child("eventDateTimes")
-//                            .updateChildren(hallDateTimeUpdate);
-                    }
-                }
+                saveEventIfInputValid();
             }
         });
     }
 
-    private boolean checkInputValidity() {
+    private void setSpinnersAdapterSource() {
+
+        // Initializing an ArrayAdapter for the category spinner
+        DataUtils.Category[] categories = DataUtils.Category.values();
+        final ArrayAdapter<DataUtils.Category> categorySpinnerArrayAdapter = new ArrayAdapter<DataUtils.Category>(
+                this, R.layout.spinner_item, Arrays.copyOfRange(categories, 1, categories.length)) {};
+        categorySpinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
+        binding.spEventCategory.setAdapter(categorySpinnerArrayAdapter);
+
+        hallsDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                ArrayList<Hall> halls = new ArrayList<>();
+
+                if (dataSnapshot.exists())
+                    for (DataSnapshot hallSnapshot : dataSnapshot.getChildren())
+                        halls.add(hallSnapshot.getValue(Hall.class));
+
+                HallSpinnerAdapter hallSpinnerAdapter =
+                        new HallSpinnerAdapter(EventEditActivity.this, R.layout.spinner_item, halls);
+                hallSpinnerAdapter.setDropDownViewResource(R.layout.spinner_item);
+                binding.spEventHall.setAdapter(hallSpinnerAdapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        });
+    }
+
+    private void abort() {
+        String eventNotFoundErrorMessage = "המופע לא נמצא, נסה שנית";
+
+        Toast.makeText(EventEditActivity.this, eventNotFoundErrorMessage, Toast.LENGTH_SHORT);
+        startActivity(new Intent(EventEditActivity.this, EventsActivity.class));
+    }
+
+    // Used to bind date/time pickers for new event scenario
+    private void bindEventDateTime() {
+        final Calendar calendar = Calendar.getInstance();
+        final DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, monthOfYear);
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                binding.etEventDate.setText(DataUtils.UI_DATE_FORMAT.format(calendar.getTime()));
+            }
+        };
+        final TimePickerDialog.OnTimeSetListener timeSetListener = new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                calendar.set(Calendar.MINUTE, minute);
+                binding.etEventHour.setText(DataUtils.HOUR_FORMAT.format(calendar.getTime()));
+            }
+        };
+
+        binding.etEventDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(EventEditActivity.this, dateSetListener,
+                        DateTime.now().getYear(),
+                        DateTime.now().getMonthOfYear(),
+                        DateTime.now().getDayOfMonth())
+                        .show();
+            }
+        });
+        binding.etEventHour.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new TimePickerDialog(EventEditActivity.this, timeSetListener,
+                        DateTime.now().getHourOfDay(),
+                        DateTime.now().getMinuteOfHour(),
+                        true)
+                        .show();
+            }
+        });
+    }
+
+    // Used to bind date/time pickers for existing event scenario
+    private void bindExistingEventDateTime(final String date, final String hour) {
+        final Calendar calendar = Calendar.getInstance();
+        final DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, monthOfYear);
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                binding.etEventDate.setText(DataUtils.UI_DATE_FORMAT.format(calendar.getTime()));
+            }
+        };
+        final TimePickerDialog.OnTimeSetListener timeSetListener = new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                calendar.set(Calendar.MINUTE, minute);
+                binding.etEventHour.setText(DataUtils.HOUR_FORMAT.format(calendar.getTime()));
+            }
+        };
+
+        binding.etEventDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(EventEditActivity.this, dateSetListener,
+                        DataUtils.getYearFromDbDate(date),
+                        DataUtils.getMonthFromDbDate(date) - 1,
+                        DataUtils.getDayFromDbDate(date))
+                        .show();
+            }
+        });
+        binding.etEventHour.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new TimePickerDialog(EventEditActivity.this, timeSetListener,
+                        DataUtils.getHourFromDbHour(hour),
+                        DataUtils.getMinuteFromDbMinute(hour),
+                        true)
+                        .show();
+            }
+        });
+
+        binding.etEventDate.setText(DataUtils.convertToUiDateFormat(date));
+        binding.etEventHour.setText(hour);
+    }
+
+    private void bindExistingEventInfo() {
+        binding.etEventTitle.setText(this.editedEvent.getTitle());
+        binding.spEventCategory.setSelection(this.editedEvent.getCategoryAsEnum().ordinal() - 1);
+
+        hallsDatabaseReference.child(this.editedEvent.getEventHall().getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            // dataSnapshot is the "hall" node
+                            Hall hall = dataSnapshot.getValue(Hall.class);
+                            binding.spEventHall.setSelection(
+                                    ((ArrayAdapter)binding.spEventHall.getAdapter()).getPosition(hall.getName()));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {}
+                });
+
+        binding.etEventDuration.setText(String.valueOf(this.editedEvent.getDuration()));
+        binding.etEventDescription.setText(this.editedEvent.getDescription());
+        binding.etEventPerformer.setText(this.editedEvent.getPerformer());
+        binding.etEventPrice.setText(String.valueOf(this.editedEvent.getPrice()));
+
+        loadEventPoster(Uri.parse(this.editedEvent.getPosterUri()));
+
+        binding.cbEventMarkedSeats.setChecked(this.editedEvent.isMarkedSeats());
+        binding.etEventMaxCapacity.setText(String.valueOf(this.editedEvent.getMaxCapacity()));
+        changeMaxCapacityVisibility(this.editedEvent.isMarkedSeats());
+
+        binding.cbEventSoldOut.setChecked(this.editedEvent.isSoldOut());
+    }
+
+    /*
+     * The save flow is like this:
+     * - Check validity of entered fields
+     * - If new event:
+     *   - Check hall is not occupied on date
+     *   - Save event with seats and hall dates
+     * - If edited event:
+     *   - If hall/date were changed:
+     *     - Check hall is not occupied on date
+     *     - Update event with seats and hall dates
+     *   - If hall/date stayed the same:
+     *     - Update event
+     */
+    private void saveEventIfInputValid() {
+        if (checkInstantInputValidity()) {
+            // This is a new event
+            if (!isEdit) {
+                // Requires a check that the hall + date combination is not taken by another event
+                // This is the next step in the event data validation process
+                // Event save will be triggered from fireHallDateUniqueCheck() if needed
+                Hall selectedHall = (Hall) binding.spEventHall.getSelectedItem();
+                fireHallDateUniqueCheck(selectedHall.getUid());
+            }
+            // This is an edited existing event
+            else {
+                // If the event hall or event date were changed, we need to check the new hall is available
+                // on the new date
+                Hall selectedHall = (Hall) binding.spEventHall.getSelectedItem();
+                String selectedDate = binding.etEventDate.getText().toString();
+                if ((!editedEvent.getEventHall().getUid().equals(selectedHall.getUid())) ||
+                    (!editedEvent.getDate().equals(DataUtils.convertToDbDateFormat(selectedDate)))) {
+                    // Event save will be triggered from fireHallDateUniqueCheck() if needed
+                    fireHallDateUniqueCheck(selectedHall.getUid());
+                } else {
+                    // If there's no need for hall/date unique check, we trigger event save directly from here
+                    updateExistingEventAndExit();
+                }
+            }
+        }
+    }
+
+    private boolean checkInstantInputValidity() {
         final String emptyFieldErrorMessage = "יש למלא את השדה";
         final String posterErrorMessage = "יש להעלות פוסטר למופע";
         boolean isValid = true;
@@ -203,121 +406,226 @@ public class EventEditActivity extends ManagementScreen {
             isValid = false;
         }
 
-        if (!isValid) return isValid;
-
-        // TODO: check hall and date unique - query
-
         return isValid;
     }
 
-    private void setSpinnersAdapterSource() {
-
-        // Initializing an ArrayAdapter for the category spinner
-        DataUtils.Category[] categories = DataUtils.Category.values();
-        final ArrayAdapter<DataUtils.Category> categorySpinnerArrayAdapter = new ArrayAdapter<DataUtils.Category>(
-                this, R.layout.spinner_item, Arrays.copyOfRange(categories, 1, categories.length)) {};
-        categorySpinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
-        binding.spEventCategory.setAdapter(categorySpinnerArrayAdapter);
-
-        hallsDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                ArrayList<Hall> halls = new ArrayList<>();
-
-                if (dataSnapshot.exists())
-                    for (DataSnapshot hallSnapshot : dataSnapshot.getChildren())
-                        halls.add(hallSnapshot.getValue(Hall.class));
-
-                HallSpinnerAdapter hallSpinnerAdapter =
-                        new HallSpinnerAdapter(EventEditActivity.this, R.layout.spinner_item, halls);
-                hallSpinnerAdapter.setDropDownViewResource(R.layout.spinner_item);
-                binding.spEventHall.setAdapter(hallSpinnerAdapter);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });
-    }
-
-    private void bindEventDateTime(final DateTime dateTime) {
-        final Calendar calendar = Calendar.getInstance();
-        final DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                  int dayOfMonth) {
-                calendar.set(Calendar.YEAR, year);
-                calendar.set(Calendar.MONTH, monthOfYear);
-                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                binding.etEventDate.setText(sdf.format(calendar.getTime()));
-            }
-        };
-        final TimePickerDialog.OnTimeSetListener timeSetListener = new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                calendar.set(Calendar.MINUTE, minute);
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                binding.etEventHour.setText(sdf.format(calendar.getTime()));
-            }
-        };
-
-        binding.etEventDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new DatePickerDialog(EventEditActivity.this, dateSetListener,
-                        dateTime.getYear(),
-                        dateTime.getMonthOfYear(),
-                        dateTime.getDayOfMonth())
-                        .show();
-            }
-        });
-        binding.etEventHour.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new TimePickerDialog(EventEditActivity.this, timeSetListener,
-                        dateTime.getHourOfDay(),
-                        dateTime.getMinuteOfHour(),
-                        true)
-                        .show();
-            }
-        });
-    }
-
-    private void bindEventInfo() {
-        binding.tvEventEditTitle.setText(R.string.event_edit_title);
-
-        binding.etEventTitle.setText(event.getTitle());
-        binding.spEventCategory.setSelection(event.getCategoryAsEnum().ordinal());
-
-        hallsDatabaseReference.orderByChild("name").equalTo(event.getEventHall().getName()).limitToFirst(1)
+    private void fireHallDateUniqueCheck(String hallUid) {
+        hallEventDatesDatabaseReference
+                .child(hallUid)
+                .child(DataUtils.convertToDbDateFormat(binding.etEventDate.getText().toString()))
                 .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    // dataSnapshot is the "hall" node with all children with id 0
-                    Hall hall = dataSnapshot.getChildren().iterator().next().getValue(Hall.class);
-                    // do something with the individual "halls"
-                    binding.spEventHall.setSelection(
-                            ((ArrayAdapter)binding.spEventHall.getAdapter()).getPosition(hall.getName()));
+                String hallDateUniqueErrorMessage = "האולם הנבחר אינו פנוי בתאריך זה.";
+
+                // If we have a non-null result, the hall is already occupied on this date
+                if (dataSnapshot != null && dataSnapshot.exists() && dataSnapshot.getValue() != null) {
+                    binding.etEventDate.setError(hallDateUniqueErrorMessage);
+                    Toast.makeText(EventEditActivity.this, hallDateUniqueErrorMessage, Toast.LENGTH_LONG);
+                    return;
                 }
+
+                // If we reached here then all input validations are done, we can save the event
+                if (isEdit)
+                    updateExistingEventAndExit();
+                else
+                    saveNewEventAndExit();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {}
         });
+    }
 
-        binding.etEventDuration.setText(event.getDuration());
-        binding.etEventDescription.setText(event.getDescription());
-        binding.etEventPerformer.setText(event.getPerformer());
-        binding.etEventPrice.setText(event.getPrice());
+    private void saveNewEventAndExit() {
+        final String newEventUid = eventsDatabaseReference.push().getKey();
+        Event newEvent = createEventFromUI(newEventUid);
+        eventsDatabaseReference.child(newEventUid).setValue(newEvent);
 
-        loadEventPoster(binding.ivEventPoster, Uri.parse(event.getPosterUri()));
+        // If the new event is with marked seats, create event seat objects in firebase
+        if (newEvent.isMarkedSeats())
+            createEventSeats(newEvent.getEventHall().getUid(), newEventUid);
 
-        binding.cbEventMarkedSeats.setSelected(event.hasMarkedSeats());
-        binding.etEventMaxCapacity.setText(event.getMaxCapacity());
-        binding.cbEventSoldOut.setSelected(event.isSoldOut());
+        // add "hall_events / $ hallName / $ newEvent
+        hallEventsDatabaseReference
+                .child(newEvent.getEventHall().getUid())
+                .child(newEventUid)
+                .setValue(getDiminishedEventFromEvent(newEvent));
+
+        // add "category_events / $ eventCategory / $ newEvent
+        categoryEventsDatabaseReference
+                .child(newEvent.getCategory())
+                .child(newEventUid)
+                .setValue(getDiminishedEventFromEvent(newEvent));
+
+        // add "city_events / $ eventCity / $newEvent
+        cityEventsDatabaseReference
+                .child(newEvent.getCity())
+                .child(newEventUid)
+                .setValue(getDiminishedEventFromEvent(newEvent));
+
+        // add "hall_eventDates / $ newHallId / $ newEventDate"
+        hallEventDatesDatabaseReference
+                .child(newEvent.getEventHall().getUid())
+                .child(newEvent.getDate())
+                .setValue(true);
+
+
+        Toast.makeText(this, "המופע נשמר בהצלחה!", Toast.LENGTH_SHORT);
+        startActivity(new Intent(this, EventsActivity.class));
+    }
+
+    private void updateExistingEventAndExit() {
+        final String eventUid = this.editedEvent.getUid();
+        Event updatedEvent = createEventFromUI(eventUid);
+        eventsDatabaseReference.child(eventUid).setValue(updatedEvent);
+
+        // In some cases we will need to update event seats
+        updateEventSeatsIfNeeded(updatedEvent);
+
+        // If the event category was changed, we need to update "category_events" accordingly
+        // First stage would be to remove the event from the old category
+        // Second stage would be to add the event to the new category, which should happen anyway
+        // (since we need to update the saved event with the new details)
+        if (!editedEvent.getCategoryAsEnum().equals(updatedEvent.getCategoryAsEnum())) {
+            // remove "category_events / $ oldCategory / $ oldEvent"
+            categoryEventsDatabaseReference
+                    .child(editedEvent.getCategory())
+                    .child(editedEvent.getUid())
+                    .removeValue();
+        }
+        // add "category_events / $ eventCategory / $ event"
+        categoryEventsDatabaseReference
+                .child(updatedEvent.getCategory())
+                .child(updatedEvent.getUid())
+                .setValue(getDiminishedEventFromEvent(updatedEvent));
+
+        // If the event hall was changed, we need to update "hall_events" and "city_events" accordingly
+        // First stage would be to remove the event from the old hall and old city
+        // Second stage would be to add the event to the new hall and new city, which should happen anyway
+        // (since we need to update the saved event with the new details)
+        if (!editedEvent.getEventHall().getUid().equals(updatedEvent.getEventHall().getUid())) {
+            // remove "hall_events / $ oldHallId / $ oldEvent"
+            hallEventsDatabaseReference
+                    .child(editedEvent.getEventHall().getUid())
+                    .child(editedEvent.getUid())
+                    .removeValue();
+
+            // remove "city_events / $ oldCity / $ oldEvent"
+            cityEventsDatabaseReference
+                    .child(editedEvent.getCity())
+                    .child(editedEvent.getUid())
+                    .removeValue();
+        }
+        // add "hall_events / $ newHallId / $ newEvent"
+        hallEventsDatabaseReference
+                .child(updatedEvent.getEventHall().getUid())
+                .child(updatedEvent.getUid())
+                .setValue(getDiminishedEventFromEvent(updatedEvent));
+        // add "city_events / $ newCity / $ newEvent"
+        cityEventsDatabaseReference
+                .child(updatedEvent.getCity())
+                .child(updatedEvent.getUid())
+                .setValue(getDiminishedEventFromEvent(updatedEvent));
+
+        // If the event hall or event date were changed, we need to update "hall_eventDates" accordingly
+        if ((!editedEvent.getEventHall().getUid().equals(updatedEvent.getEventHall().getUid())) ||
+            (!editedEvent.getDate().equals(updatedEvent.getDate()))) {
+            // remove "halls_eventDates / $ oldHallId / $ oldEventDate"
+            hallEventDatesDatabaseReference
+                    .child(editedEvent.getEventHall().getUid())
+                    .child(editedEvent.getDate())
+                    .removeValue();
+            // add "halls_eventDates / $ newHallId / $ newEventDate"
+            hallEventDatesDatabaseReference
+                    .child(updatedEvent.getEventHall().getUid())
+                    .child(updatedEvent.getDate())
+                    .setValue(true);
+        }
+
+        Toast.makeText(this, "השינויים נשמרו בהצלחה!", Toast.LENGTH_SHORT);
+        startActivity(new Intent(this, EventsActivity.class));
+    }
+
+    private Event createEventFromUI(String eventUid) {
+        String newEventTitle = binding.etEventTitle.getText().toString();
+        DataUtils.Category newEventCategory = (DataUtils.Category) binding.spEventCategory.getSelectedItem();
+
+        final Hall selectedHall = (Hall) binding.spEventHall.getSelectedItem();
+        EventHall newEventHall =
+                new EventHall(selectedHall.getUid(),
+                        selectedHall.getName(),
+                        selectedHall.getRows(),
+                        selectedHall.getColumns());
+
+        String newEventCity = selectedHall.getCity();
+        String newEventDate = DataUtils.convertToDbDateFormat(binding.etEventDate.getText().toString());
+        String newEventHour = binding.etEventHour.getText().toString();
+
+        int newEventDuration = TextUtils.isEmpty(binding.etEventDuration.getText())
+                ? 0
+                : Integer.parseInt(binding.etEventDuration.getText().toString());
+        String newEventDescription = binding.etEventDescription.getText().toString();
+        String newEventPerformer = binding.etEventPerformer.getText().toString();
+        int newEventPrice = Integer.parseInt(binding.etEventPrice.getText().toString());
+        String newEventPosterUri = eventPosterUri.toString();
+        boolean newEventIsMarkedSeats = binding.cbEventMarkedSeats.isChecked();
+        int newEventMaxCapacity = newEventIsMarkedSeats
+                ? 0
+                : Integer.parseInt(binding.etEventMaxCapacity.getText().toString());
+        String newEventProducerId = EventEditActivity.super.user.getUid();
+        return new Event(eventUid, newEventTitle, newEventCategory, newEventHall, newEventCity,
+                newEventDate, newEventHour, newEventDuration, newEventDescription, newEventPerformer,
+                newEventPrice, newEventPosterUri, newEventIsMarkedSeats, newEventMaxCapacity,
+                newEventProducerId);
+    }
+
+    private Event getDiminishedEventFromEvent(Event event) {
+        return new Event(event.getUid(), event.getTitle(), event.getCategoryAsEnum(), event.getEventHall(),
+                event.getCity(), event.getDate(), event.getHour(), event.getDuration(), event.getPrice(),
+                event.getPosterUri(), event.isMarkedSeats(), event.getMaxCapacity());
+    }
+
+    // Used for updating event seats when editing an existing event
+    private void updateEventSeatsIfNeeded(Event updatedEvent) {
+        // If the event hall was changed, update its seats (according to event's marked-seats property)
+        if (!editedEvent.getEventHall().getUid().equals(updatedEvent.getEventHall().getUid())) {
+            if (updatedEvent.isMarkedSeats())
+                createEventSeats(updatedEvent.getEventHall().getUid(), updatedEvent.getUid());
+            else
+                eventSeatsDatabaseReference.child(updatedEvent.getUid()).removeValue();
+        }
+
+        // If the event was an event with no marked seats before, and now it should have marked seats
+        // Create event seat objects in database
+        if (!editedEvent.isMarkedSeats() && updatedEvent.isMarkedSeats())
+            createEventSeats(updatedEvent.getEventHall().getUid(), updatedEvent.getUid());
+            // If the event was an event with marked seats before, and now it shouldn't have marked seats
+            // Delete the already existing event seats from database
+        else if (editedEvent.isMarkedSeats() && !updatedEvent.isMarkedSeats())
+            eventSeatsDatabaseReference.child(updatedEvent.getUid()).removeValue();
+    }
+
+    private void createEventSeats(final String hallUid, final String eventUid) {
+        hallSeatsDatabaseReference.child(hallUid)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            Map<String, EventSeat> eventSeats = new HashMap<>();
+
+                            for (DataSnapshot seatSnapshot : dataSnapshot.getChildren()) {
+                                Seat seat = seatSnapshot.getValue(Seat.class);
+                                eventSeats.put(seat.getUid(), new EventSeat(seat.getUid(), seat.getRow(), seat.getNumber()));
+                            }
+
+                            eventSeatsDatabaseReference.child(eventUid).setValue(eventSeats);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {}
+                });
     }
 
     @Override
@@ -334,30 +642,32 @@ public class EventEditActivity extends ManagementScreen {
             photoRef.putFile(selectedImageUri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    loadEventPoster(binding.ivEventPoster, taskSnapshot.getDownloadUrl());
+                    loadEventPoster(taskSnapshot.getDownloadUrl());
                 }
             });
         }
     }
 
     public void onMarkedSeatsClicked(View view) {
-        boolean checked = ((CheckBox) view).isChecked();
-        if (view.getId() == R.id.cb_event_marked_seats) {
-            if (checked) {
-                binding.tvEventMaxCapacity.setVisibility(View.GONE);
-                binding.etEventMaxCapacity.setVisibility(View.GONE);
-            } else {
-                binding.tvEventMaxCapacity.setVisibility(View.VISIBLE);
-                binding.etEventMaxCapacity.setVisibility(View.VISIBLE);
-            }
+        if (view.getId() == R.id.cb_event_marked_seats)
+            changeMaxCapacityVisibility(((CheckBox) view).isChecked());
+    }
+
+    private void changeMaxCapacityVisibility(boolean isMarkedSeats) {
+        if (isMarkedSeats) {
+            binding.tvEventMaxCapacity.setVisibility(View.GONE);
+            binding.etEventMaxCapacity.setVisibility(View.GONE);
+        } else {
+            binding.tvEventMaxCapacity.setVisibility(View.VISIBLE);
+            binding.etEventMaxCapacity.setVisibility(View.VISIBLE);
         }
     }
 
-    private void loadEventPoster(ImageView view, Uri photoUri) {
-        view.setVisibility(View.VISIBLE);
-        Glide.with(view.getContext())
+    private void loadEventPoster(Uri photoUri) {
+        binding.ivEventPoster.setVisibility(View.VISIBLE);
+        Glide.with(binding.ivEventPoster.getContext())
                 .load(photoUri)
-                .into(view);
+                .into(binding.ivEventPoster);
         eventPosterUri = photoUri;
     }
 

@@ -2,8 +2,6 @@ package app.com.almogrubi.idansasson.gettix.entities;
 
 import com.google.firebase.database.Exclude;
 
-import org.joda.time.DateTime;
-
 import java.io.Serializable;
 
 import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
@@ -18,13 +16,15 @@ public class Event implements Serializable {
     private String title;
     private DataUtils.Category category;
     private EventHall eventHall;
-    private Long dateTime;
+    private String city;
+    private String date;
+    private String hour;
     private int duration;
     private String description;
     private String performer;
     private int price;
     private String posterUri;
-    private boolean hasMarkedSeats;
+    private boolean isMarkedSeats;
     private int maxCapacity;
     private boolean isSoldOut;
     private String producerId;
@@ -32,20 +32,42 @@ public class Event implements Serializable {
     // Default constructor required for calls to Firebase's DataSnapshot.getValue
     public Event() {}
 
-    public Event(String uid, String title, DataUtils.Category category, EventHall eventHall, Long dateTime,
-                 int duration, String description, String performer, int price, String posterUri,
-                 boolean hasMarkedSeats, int maxCapacity, String producerId) {
+    public Event(String uid, String title, DataUtils.Category category, EventHall eventHall, String city,
+                 String date, String hour, int duration, int price, String posterUri, boolean isMarkedSeats,
+                 int maxCapacity) {
         this.uid = uid;
         this.title = title;
         this.category = category;
         this.eventHall = eventHall;
-        this.dateTime = dateTime;
+        this.city = city;
+        this.date = date;
+        this.hour = hour;
+        this.duration = duration;
+        this.price = price;
+        this.posterUri = posterUri;
+        this.isMarkedSeats = isMarkedSeats;
+        this.maxCapacity = maxCapacity;
+
+        // Newly created event should never be already sold out
+        this.isSoldOut = false;
+    }
+
+    public Event(String uid, String title, DataUtils.Category category, EventHall eventHall, String city,
+                 String date, String hour, int duration, String description, String performer, int price,
+                 String posterUri, boolean isMarkedSeats, int maxCapacity, String producerId) {
+        this.uid = uid;
+        this.title = title;
+        this.category = category;
+        this.eventHall = eventHall;
+        this.city = city;
+        this.date = date;
+        this.hour = hour;
         this.duration = duration;
         this.description = description;
         this.performer = performer;
         this.price = price;
         this.posterUri = posterUri;
-        this.hasMarkedSeats = hasMarkedSeats;
+        this.isMarkedSeats = isMarkedSeats;
         this.maxCapacity = maxCapacity;
         this.producerId = producerId;
 
@@ -91,12 +113,18 @@ public class Event implements Serializable {
         return this.eventHall;
     }
 
+    public String getCity() { return this.city; }
+
     public String getPerformer() {
         return this.performer;
     }
 
-    public Long getDateTime() {
-        return this.dateTime;
+    public String getDate() {
+        return this.date;
+    }
+
+    public String getHour() {
+        return this.hour;
     }
 
     public int getDuration() {
@@ -111,9 +139,7 @@ public class Event implements Serializable {
         return this.price;
     }
 
-    public boolean hasMarkedSeats() {
-        return this.hasMarkedSeats;
-    }
+    public boolean isMarkedSeats() { return this.isMarkedSeats; }
 
     public int getMaxCapacity() {
         return this.maxCapacity;
@@ -139,8 +165,16 @@ public class Event implements Serializable {
         this.eventHall = eventHall;
     }
 
-    public void setDateTime(Long dateTime) {
-        this.dateTime = dateTime;
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setHour(String hour) {
+        this.hour = hour;
     }
 
     public void setDuration(int duration) {
@@ -163,8 +197,8 @@ public class Event implements Serializable {
         this.posterUri = posterUri;
     }
 
-    public void setHasMarkedSeats(boolean hasMarkedSeats) {
-        this.hasMarkedSeats = hasMarkedSeats;
+    public void setMarkedSeats(boolean markedSeats) {
+        this.isMarkedSeats = markedSeats;
     }
 
     public void setMaxCapacity(int maxCapacity) {
@@ -172,7 +206,7 @@ public class Event implements Serializable {
     }
 
     public void setSoldOut(boolean soldOut) {
-        isSoldOut = soldOut;
+        this.isSoldOut = soldOut;
     }
 
     public void setProducerId(String producerId) {

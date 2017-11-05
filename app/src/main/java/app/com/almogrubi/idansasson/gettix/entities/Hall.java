@@ -4,6 +4,7 @@ import org.joda.time.DateTime;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,14 +21,11 @@ public class Hall implements Serializable {
     private String officialWebsite;
     private int rows;
     private int columns;
-    public Map<String, Seat> seats = new HashMap<>();
-    //private ArrayList<Seat> seats;
-    private ArrayList<DateTime> eventDateTimes;
 
     // Default constructor required for calls to Firebase's DataSnapshot.getValue
     public Hall() {}
 
-    public Hall(String uid, String name, String address, String city, String officialWebsite, int rows, int columns, Map<String, Seat> seats) {
+    public Hall(String uid, String name, String address, String city, String officialWebsite, int rows, int columns) {
         this.uid = uid;
         this.name = name;
         this.address = address;
@@ -35,7 +33,6 @@ public class Hall implements Serializable {
         this.officialWebsite = officialWebsite;
         this.rows = rows;
         this.columns = columns;
-        this.seats = seats;
     }
 
     public String getUid() {
@@ -64,19 +61,6 @@ public class Hall implements Serializable {
 
     public int getColumns() {
         return columns;
-    }
-
-    public Map<String, Seat> getSeats() {
-        return this.seats;
-    }
-
-    // This method is used to create an Event's EventSeat objects from its Hall's Seat objects
-    public Map<String, EventSeat> makeEventSeats() {
-        Map<String, EventSeat> returnedEventSeats = new HashMap<>();
-        for (Seat seat : this.seats.values()) {
-            returnedEventSeats.put(seat.getUid(), new EventSeat(seat.getUid(), seat.getRow(), seat.getNumber()));
-        }
-        return returnedEventSeats;
     }
 
     // We override equals() to that we can compare Halls quickly with no use of lambda expressions

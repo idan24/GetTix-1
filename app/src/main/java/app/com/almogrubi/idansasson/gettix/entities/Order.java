@@ -18,12 +18,11 @@ public class Order implements Serializable {
     private String customerName;
     private String customerPhone;
     private String customerEmail;
+    private String customerCreditCard;
     private int totalPrice;
-    private String creditCard;
-    private ArrayList<EventSeat> eventSeats;
     private DataUtils.OrderStatus status;
     private int ticketsNum;
-    private Date creationDate;
+    private Long creationDate;
 
     // Default constructor required for calls to Firebase's DataSnapshot.getValue
     public Order() {
@@ -31,21 +30,17 @@ public class Order implements Serializable {
     }
 
     public Order(String uid, Event event, String customerName, String customerPhone, String customerEmail,
-                 int totalPrice, String creditCard, ArrayList<EventSeat> eventSeats) {
+                 int totalPrice, String customerCreditCard) {
         this.uid = uid;
         this.eventId = eventId;
         this.customerName = customerName;
         this.customerPhone = customerPhone;
         this.customerEmail = customerEmail;
         this.totalPrice = totalPrice;
-        this.creditCard = creditCard;
-
-        for (EventSeat eventSeat : eventSeats)
-            this.eventSeats.add(eventSeat);
-
+        this.customerCreditCard = customerCreditCard;
         this.status = status;
 
-        this.creationDate = Calendar.getInstance().getTime();
+        this.creationDate = Calendar.getInstance().getTimeInMillis();
     }
 
 
@@ -57,7 +52,7 @@ public class Order implements Serializable {
         this.ticketsNum = ticketsNum;
     }
 
-    public Date getCreationDate() {
+    public Long getCreationDate() {
         return creationDate;
     }
 
@@ -85,15 +80,8 @@ public class Order implements Serializable {
         return this.totalPrice;
     }
 
-    public String getCreditCard() {
-        return this.creditCard;
-    }
-
-    public ArrayList<EventSeat> getEventSeats() {
-        ArrayList<EventSeat> returnedEventSeats = new ArrayList<>();
-        for (EventSeat eventSeat : this.eventSeats)
-            returnedEventSeats.add(eventSeat);
-        return returnedEventSeats;
+    public String getCustomerCreditCard() {
+        return this.customerCreditCard;
     }
 
     public void setUid(String uid) {
@@ -120,15 +108,11 @@ public class Order implements Serializable {
         this.totalPrice = totalPrice;
     }
 
-    public void setCreditCard(String creditCard) {
-        this.creditCard = creditCard;
+    public void setCustomerCreditCard(String customerCreditCard) {
+        this.customerCreditCard = customerCreditCard;
     }
 
-    public void setEventSeats(ArrayList<EventSeat> eventSeats) {
-        this.eventSeats = eventSeats;
-    }
-
-    public void setCreationDate(Date creationDate) {
+    public void setCreationDate(Long creationDate) {
         this.creationDate = creationDate;
     }
 

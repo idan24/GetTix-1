@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -43,10 +44,14 @@ import com.google.firebase.storage.StorageReference;
 import org.joda.time.DateTime;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import app.com.almogrubi.idansasson.gettix.entities.Event;
+import app.com.almogrubi.idansasson.gettix.entities.Hall;
 import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
+import app.com.almogrubi.idansasson.gettix.utilities.HallSpinnerAdapter;
 
 /**
  * Created by almogrubi on 10/14/17.
@@ -55,7 +60,7 @@ import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
 public class MainActivity extends AppCompatActivity {
 
     private EditText etEventDate;
-    private EditText etEventHall;
+    private AutoCompleteTextView etEventHall;
     private EditText etEventCity;
     private EditText etEventKeyword;
     private Spinner spEventCategory;
@@ -65,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
     private DatabaseReference firebaseDatabaseReference;
     private DatabaseReference eventsDatabaseReference;
+    private DatabaseReference hallsDatabaseReference;
     private FirebaseRecyclerAdapter<Event, EventViewHolder> firebaseRecyclerAdapter;
 
     SnapshotParser<Event> eventSnapshotParser;
@@ -89,10 +95,7 @@ public class MainActivity extends AppCompatActivity {
         // New child entries
         firebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
         eventsDatabaseReference = firebaseDatabaseReference.child("events");
-
-        updateWithFilter(Long.parseLong("0"),"", DataUtils.Category.ALL, "", "");
-
-        //------------------------------------------------------------------------
+        hallsDatabaseReference = firebaseDatabaseReference.child("halls");
 
         final Calendar calendar = Calendar.getInstance();
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
@@ -102,8 +105,7 @@ public class MainActivity extends AppCompatActivity {
                 calendar.set(Calendar.YEAR, year);
                 calendar.set(Calendar.MONTH, monthOfYear);
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                etEventDate.setText(sdf.format(calendar.getTime()));
+                etEventDate.setText(DataUtils.UI_DATE_FORMAT.format(calendar.getTime()));
             }
         };
         etEventDate.setOnClickListener(new View.OnClickListener() {
@@ -115,6 +117,26 @@ public class MainActivity extends AppCompatActivity {
                         calendar.get(Calendar.DAY_OF_MONTH))
                         .show();
             }
+        });
+
+        hallsDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                ArrayList<Hall> halls = new ArrayList<>();
+
+                if (dataSnapshot.exists())
+                    for (DataSnapshot hallSnapshot : dataSnapshot.getChildren())
+                        halls.add(hallSnapshot.getValue(Hall.class));
+
+                HallSpinnerAdapter hallSpinnerAdapter =
+                        new HallSpinnerAdapter(MainActivity.this, R.layout.spinner_item, halls);
+                hallSpinnerAdapter.setDropDownViewResource(R.layout.spinner_item);
+                etEventHall.setAdapter(hallSpinnerAdapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
         });
 
         // Initializing an ArrayAdapter for the Spinner
@@ -139,6 +161,8 @@ public class MainActivity extends AppCompatActivity {
                         etEventKeyword.getText().toString());
             }
         });
+
+        updateWithFilter(Long.parseLong("0"),"", DataUtils.Category.ALL, "", "");
     }
 
     private void updateWithFilter(Long eventDate, String eventHallName, DataUtils.Category eventCategory,
@@ -154,9 +178,13 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        String nowDateString = DataUtils.createDbStringFromDate(new Date(DateTime.now().getMillis()));
+
         FirebaseRecyclerOptions<Event> options =
                 new FirebaseRecyclerOptions.Builder<Event>()
-                        .setQuery(eventsDatabaseReference, eventSnapshotParser)
+                        .setQuery(eventsDatabaseReference
+                                .orderByChild("date").startAt(nowDateString),
+                                eventSnapshotParser)
                         .build();
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Event, EventViewHolder>(options) {
             @Override
@@ -211,29 +239,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onPause() {
-        firebaseRecyclerAdapter.stopListening();
+        if (firebaseRecyclerAdapter != null)
+            firebaseRecyclerAdapter.stopListening();
         super.onPause();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        firebaseRecyclerAdapter.startListening();
-    }
-
-    private void commentedCode() {
-
-        //        btSearchEvents.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                adapter.filter(
-//                        Date.valueOf(etEventDate.getText().toString()),
-//                        etEventHall.getText().toString(),
-//                        (DataUtils.Category) spEventCategory.getSelectedItem(),
-//                        etEventCity.getText().toString(),
-//                        etEventKeyword.getText().toString());
-//            }
-//        });
-        //------------------------------------------------------------------------------------------
+        if (firebaseRecyclerAdapter != null)
+            firebaseRecyclerAdapter.startListening();
     }
 }

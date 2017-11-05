@@ -41,7 +41,8 @@ public class SeatsActivity extends AppCompatActivity{
         if (intent != null) {
 
             event = (Event) intent.getSerializableExtra("eventObject");
-            List<EventSeat> seatsList = new ArrayList<>(event.getEventHall().getEventSeats().values());
+            // TODO: uncomment and replace with query
+            //List<EventSeat> seatsList = new ArrayList<>(event.getEventHall().getEventSeats().values());
 
             rows =  event.getEventHall().getRows();
             rows =  event.getEventHall().getColumns();
@@ -54,7 +55,8 @@ public class SeatsActivity extends AppCompatActivity{
 
                     Button b = new Button(this);
                     b.setLayoutParams(new LinearLayout.LayoutParams(100, LinearLayout.LayoutParams.WRAP_CONTENT));
-                    b.setTag(seatsList.get(i+j*columns));
+                    // TODO: uncomment after replacing with query
+                    //b.setTag(seatsList.get(i+j*columns));
                     b.setText("" + (j + 1 + (i * 10)));
                     b.setId(j + 1 + (i * 10));
                     row.addView(b);

@@ -17,6 +17,7 @@ import org.joda.time.DateTime;
 import app.com.almogrubi.idansasson.gettix.entities.Event;
 import app.com.almogrubi.idansasson.gettix.entities.EventHall;
 import app.com.almogrubi.idansasson.gettix.entities.Hall;
+import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
 import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 
 /**
@@ -31,6 +32,7 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
     private TextView tvEventHall;
     private ImageView ivEventCategory;
     private ImageView ivEventPoster;
+    private ImageView ivEventSoldout;
 
     public View layout;
 
@@ -42,22 +44,18 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
         this.tvEventHall = itemView.findViewById(R.id.tv_event_item_hall);
         this.ivEventCategory = itemView.findViewById(R.id.iv_event_item_category);
         this.ivEventPoster = itemView.findViewById(R.id.iv_event_item_poster);
+        this.ivEventSoldout = itemView.findViewById(R.id.iv_event_item_soldout);
     }
 
     public void bindEvent(Event event) {
 
         tvEventTitle.setText(event.getTitle());
 
-        DateTime dateTime = new DateTime(event.getDateTime());
-        tvEventDateTime.setText(String.format("%d/%d/%d בשעה %d:%d",
-                dateTime.getDayOfMonth(),
-                dateTime.getMonthOfYear(),
-                dateTime.getYearOfCentury(),
-                dateTime.getHourOfDay(),
-                dateTime.getMinuteOfHour()));
+        tvEventDateTime.setText(String.format("%s בשעה %s",
+                DataUtils.convertToUiDateFormat(event.getDate()),
+                event.getHour()));
 
-        EventHall eventHall = event.getEventHall();
-        tvEventHall.setText(String.format("%s, %s", eventHall.getName(), eventHall.getCity()));
+        tvEventHall.setText(String.format("%s, %s", event.getEventHall().getName(), event.getCity()));
 
         ivEventCategory.setBackgroundResource(Utils.lookupImageByCategory(event.getCategoryAsEnum()));
 
@@ -65,5 +63,12 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
         Glide.with(ivEventPoster.getContext())
                 .load(photoUri)
                 .into(ivEventPoster);
+
+        if (event.isSoldOut()) {
+            ivEventSoldout.setVisibility(View.VISIBLE);
+            ivEventPoster.setAlpha((float) 0.7);
+        } else {
+            ivEventSoldout.setVisibility(View.INVISIBLE);
+        }
     }
 }

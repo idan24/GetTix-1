@@ -46,7 +46,7 @@ public class DetailActivity extends AppCompatActivity {
                     this.getPackageName());
             imgTop.setImageResource(idImg);
             showName.setText(event.getTitle());
-            showDateAndTime.setText(event.getDateTime().toString());
+            showDateAndTime.setText(event.getDate().toString());
             showLocation.setText(event.getEventHall().getName());
             description.setText(event.getDescription());
 
@@ -57,14 +57,14 @@ public class DetailActivity extends AppCompatActivity {
                 public void onClick(View v) {
                 Intent intent;
 
-                if (event.hasMarkedSeats())
+                if (event.isMarkedSeats())
                     {
                     intent = new Intent(v.getContext(), NoSeatsActivity.class);
                         intent.putExtra("eventObject", event);
                         startActivity(intent);
 
                     }
-                if (!event.hasMarkedSeats())
+                if (!event.isMarkedSeats())
                     {
                     intent = new Intent(v.getContext(), SeatsActivity.class);
                     intent.putExtra("eventObject", event);

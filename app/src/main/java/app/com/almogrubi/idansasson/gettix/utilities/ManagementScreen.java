@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -107,6 +108,10 @@ public class ManagementScreen extends AppCompatActivity {
         if (item.getItemId() == R.id.action_sign_out) {
             startActivity(new Intent(this, MainActivity.class));
             AuthUI.getInstance().signOut(this);
+            return true;
+        }
+        else if (item.getItemId() == android.R.id.home) {
+            NavUtils.navigateUpFromSameTask(this);
             return true;
         }
 

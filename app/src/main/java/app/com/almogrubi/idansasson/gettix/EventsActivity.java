@@ -77,7 +77,9 @@ public class EventsActivity extends ManagementScreen {
         // Displaying all events produced by the signed-in user
         FirebaseRecyclerOptions<Event> options =
                 new FirebaseRecyclerOptions.Builder<Event>()
-                        .setQuery(eventsDatabaseReference.orderByChild("producerId").equalTo(user.getUid()), parser)
+                        .setQuery(eventsDatabaseReference
+                                .orderByChild("producerId").equalTo(user.getUid()),
+                                parser)
                         .build();
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Event, EventViewHolder>(options) {
             @Override
@@ -96,7 +98,7 @@ public class EventsActivity extends ManagementScreen {
                     public void onClick(View v) {
                         Context context = v.getContext();
                         Intent eventEditActivityIntent = new Intent(context, EventEditActivity.class);
-                        eventEditActivityIntent.putExtra("eventObject", event);
+                        eventEditActivityIntent.putExtra("eventUid", event.getUid());
                         context.startActivity(eventEditActivityIntent);
                     }
                 });
@@ -133,6 +135,7 @@ public class EventsActivity extends ManagementScreen {
                             int rows, int columns) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference hallsDatabaseReference = firebaseDatabase.getReference().child("halls");
+        DatabaseReference hallSeatsDatabaseReference = firebaseDatabase.getReference().child("hall_seats");
 
         String hallUid = hallsDatabaseReference.push().getKey();
 
@@ -142,18 +145,16 @@ public class EventsActivity extends ManagementScreen {
             for (int j=0; j<columns; j++) {
                 String seatUid = String.format("%sSEAT%d-%d", hallUid, i+1, j+1);
                 seats.put(seatUid, new Seat(seatUid, i+1, j+1));
-//                hallsDatabaseReference.child(hallUid).child("seats")
-//                        .child(seatUid).setValue(new Seat(seatUid, i+1, j+1));
             }
 
-        Hall newHall = new Hall(hallUid, name, address, city, officialWebsite, rows, columns, seats);
+        Hall newHall = new Hall(hallUid, name, address, city, officialWebsite, rows, columns);
         hallsDatabaseReference.child(hallUid).setValue(newHall);
+        hallSeatsDatabaseReference.child(hallUid).setValue(seats);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         if (firebaseRecyclerAdapter != null)
             firebaseRecyclerAdapter.startListening();
     }

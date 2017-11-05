@@ -9,13 +9,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".EventsActivity"
+            android:label="@string/events_screen_title"
+            android:parentActivityName=".MainActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".EventEditActivity"
+            android:parentActivityName=".EventsActivity"></activity>
         <activity
             android:name=".DetailActivity"
             android:label="@string/title_activity_detail"
@@ -30,8 +40,6 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".NoSeatsActivity" />
         <activity android:name=".FinishingActivity" />
-        <activity android:name=".EventsActivity" />
-        <activity android:name=".EventEditActivity"></activity>
     </application>
 
 </manifest>

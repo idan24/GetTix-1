@@ -13,21 +13,17 @@ public class EventHall implements Serializable {
 
     private String uid;
     private String name;
-    private String city;
     private int rows;
     private int columns;
-    public Map<String, EventSeat> eventSeats = new HashMap<>();
 
     // Default constructor required for calls to Firebase's DataSnapshot.getValue
     public EventHall() {}
 
-    public EventHall(String uid, String name, String city, int rows, int columns, Map<String, EventSeat> eventSeats) {
+    public EventHall(String uid, String name, int rows, int columns) {
         this.uid = uid;
         this.name = name;
-        this.city = city;
         this.rows = rows;
         this.columns = columns;
-        this.eventSeats = eventSeats;
     }
 
     public String getUid() { return uid; }
@@ -36,15 +32,7 @@ public class EventHall implements Serializable {
         return name;
     }
 
-    public String getCity() {
-        return city;
-    }
-
     public int getRows() { return rows; }
 
     public int getColumns() { return columns; }
-
-    public Map<String, EventSeat> getEventSeats() {
-        return this.eventSeats;
-    }
 }

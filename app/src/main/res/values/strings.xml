@@ -14,8 +14,9 @@
 
     <!-- for management screens -->
     <string name="action_management_title">למסכי ניהול והפקה</string>
-    <string name="action_add_event">אירוע חדש</string>
     <string name="action_sign_out_title">התנתק...</string>
+    <string name="action_add_event">אירוע חדש</string>
+    <string name="events_screen_title">מסך מפיק</string>
     <string name="your_events_label">האירועים שלך:</string>
     
     <!-- for event edit activity -->

@@ -47,10 +47,12 @@
                 android:focusable="false"
                 style="@style/AppEditTextStyle" />
 
-            <EditText
+            <AutoCompleteTextView
                 android:id="@+id/et_find_by_hall"
-                android:hint="@string/event_hall_hint"
-                style="@style/AppEditTextStyle" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="מקום"
+                android:ems="10" />
 
             <EditText
                 android:id="@+id/et_find_by_city"

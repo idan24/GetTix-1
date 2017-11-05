@@ -67,7 +67,7 @@ public class PayActivity extends AppCompatActivity {
                 order.setCustomerName(name.getText().toString());
                 order.setCustomerPhone(phone.getText().toString());
                 order.setCustomerEmail(email.getText().toString());
-                order.setCreditCard(credit.getText().toString());
+                order.setCustomerCreditCard(credit.getText().toString());
 
                 intent.putExtra("orderObject", order);
                 intent.putExtra("eventObject", event);

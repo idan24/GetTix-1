@@ -15,7 +15,7 @@ public class EventSeat implements Serializable {
     private int number;
     private boolean isTaken;
     private boolean isOccupied;
-    private DateTime occupiedTimestamp;
+    private Long occupiedTimestamp;
 
     // Default constructor required for calls to Firebase's DataSnapshot.getValue
     public EventSeat() {}
@@ -51,9 +51,7 @@ public class EventSeat implements Serializable {
         isOccupied = occupied;
     }
 
-    public DateTime getOccupiedTimestamp() { return occupiedTimestamp; }
+    public Long getOccupiedTimestamp() { return occupiedTimestamp; }
 
-    public void setOccupiedTimestamp(DateTime occupiedTimestamp) {
-        this.occupiedTimestamp = occupiedTimestamp;
-    }
+    public void setOccupiedTimestamp(Long occupiedTimestamp) { this.occupiedTimestamp = occupiedTimestamp; }
 }
