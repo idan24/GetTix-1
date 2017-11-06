@@ -203,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         Context context = v.getContext();
                         Intent detailActivityIntent = new Intent(context, DetailActivity.class);
-                        detailActivityIntent.putExtra("eventObject", event);
+                        detailActivityIntent.putExtra("eventUid", event.getUid());
                         context.startActivity(detailActivityIntent);
                     }
                 });
