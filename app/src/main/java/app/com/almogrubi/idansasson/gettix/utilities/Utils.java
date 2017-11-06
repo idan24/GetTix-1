@@ -8,6 +8,8 @@ import app.com.almogrubi.idansasson.gettix.R;
 
 public class Utils {
 
+    public static String INDEXED_KEY_DIVIDER = "~";
+
     public static int lookupImageByCategory(DataUtils.Category category) {
         switch (category) {
             case MUSIC:

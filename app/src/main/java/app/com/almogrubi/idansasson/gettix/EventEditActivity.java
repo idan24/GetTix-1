@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,6 +44,8 @@ import app.com.almogrubi.idansasson.gettix.entities.Seat;
 import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
 import app.com.almogrubi.idansasson.gettix.utilities.HallSpinnerAdapter;
 import app.com.almogrubi.idansasson.gettix.utilities.ManagementScreen;
+
+import static app.com.almogrubi.idansasson.gettix.utilities.Utils.INDEXED_KEY_DIVIDER;
 
 public class EventEditActivity extends ManagementScreen {
 
@@ -471,15 +472,15 @@ public class EventEditActivity extends ManagementScreen {
 
         // add "category_date_events / $ eventCategory_eventDate / $ newEvent
         updateEventInIndexedTable(categoryDateEventsDatabaseReference,
-                newEvent.getCategory() + "" + newEvent.getDate(), diminishedEvent);
+                newEvent.getCategory() + INDEXED_KEY_DIVIDER + newEvent.getDate(), diminishedEvent);
 
         // add "category_city_events / $ eventCategory_eventCity / $ newEvent
         updateEventInIndexedTable(categoryCityEventsDatabaseReference,
-                newEvent.getCategory() + "" + newEvent.getCity(), diminishedEvent);
+                newEvent.getCategory() + INDEXED_KEY_DIVIDER + newEvent.getCity(), diminishedEvent);
 
         // add "category_hall_events / $ eventCategory_eventHallUid / $ newEvent
         updateEventInIndexedTable(categoryHallEventsDatabaseReference,
-                newEvent.getCategory() + "" + newEvent.getEventHall().getUid(), diminishedEvent);
+                newEvent.getCategory() + INDEXED_KEY_DIVIDER + newEvent.getEventHall().getUid(), diminishedEvent);
 
         // add "hall_eventDates / $ newHallId / $ newEventDate"
         hallEventDatesDatabaseReference
@@ -513,13 +514,13 @@ public class EventEditActivity extends ManagementScreen {
             removeEventFromIndexedTable(categoryEventsDatabaseReference, editedEvent.getCategory(), eventUid);
             // remove "category_date_events / $ oldCategory_oldDate / $ oldEvent
             removeEventFromIndexedTable(categoryDateEventsDatabaseReference,
-                    editedEvent.getCategory() + "" + editedEvent.getDate(), eventUid);
+                    editedEvent.getCategory() + INDEXED_KEY_DIVIDER + editedEvent.getDate(), eventUid);
             // remove "category_hall_events / $ oldCategory_oldHallUid / $ oldEvent
             removeEventFromIndexedTable(categoryHallEventsDatabaseReference,
-                    editedEvent.getCategory() + "" + editedEvent.getEventHall().getUid(), eventUid);
+                    editedEvent.getCategory() + INDEXED_KEY_DIVIDER + editedEvent.getEventHall().getUid(), eventUid);
             // remove "category_city_events / $ oldCategory_oldCity / $ oldEvent
             removeEventFromIndexedTable(categoryCityEventsDatabaseReference,
-                    editedEvent.getCategory() + "" + editedEvent.getCity(), eventUid);
+                    editedEvent.getCategory() + INDEXED_KEY_DIVIDER + editedEvent.getCity(), eventUid);
         }
 
         // If the event hall was changed, we need to update "hall_events" and "city_events" + their category index
@@ -532,12 +533,12 @@ public class EventEditActivity extends ManagementScreen {
             removeEventFromIndexedTable(hallEventsDatabaseReference, editedEvent.getEventHall().getUid(), eventUid);
             // remove "city_events / $ oldCity / $ oldEvent"
             removeEventFromIndexedTable(cityEventsDatabaseReference, editedEvent.getCity(), eventUid);
-            // remove "category_hall_events / $ oldCategory_oldHallName / $ oldEvent
+            // remove "category_hall_events / $ oldCategory_oldHallUid / $ oldEvent
             removeEventFromIndexedTable(categoryHallEventsDatabaseReference,
-                    editedEvent.getCategory() + "" + editedEvent.getEventHall().getUid(), eventUid);
+                    editedEvent.getCategory() + INDEXED_KEY_DIVIDER + editedEvent.getEventHall().getUid(), eventUid);
             // remove "category_city_events / $ oldCategory_oldCity / $ oldEvent
             removeEventFromIndexedTable(categoryCityEventsDatabaseReference,
-                    editedEvent.getCategory() + "" + editedEvent.getCity(), eventUid);
+                    editedEvent.getCategory() + INDEXED_KEY_DIVIDER + editedEvent.getCity(), eventUid);
 
             // If the event hall or event date were changed, we need to update "hall_eventDates" accordingly
             updateHallEventDate(editedEvent.getEventHall().getUid(), updatedEvent.getEventHall().getUid(),
@@ -553,7 +554,7 @@ public class EventEditActivity extends ManagementScreen {
             removeEventFromIndexedTable(dateEventsDatabaseReference, editedEvent.getDate(), eventUid);
             // remove "category_date_events / $ oldCategory_oldDate / $ oldEvent
             removeEventFromIndexedTable(categoryDateEventsDatabaseReference,
-                    editedEvent.getCategory() + "" + editedEvent.getDate(), eventUid);
+                    editedEvent.getCategory() + INDEXED_KEY_DIVIDER + editedEvent.getDate(), eventUid);
 
             // If the event hall or event date were changed, we need to update "hall_eventDates" accordingly
             updateHallEventDate(editedEvent.getEventHall().getUid(), updatedEvent.getEventHall().getUid(),
@@ -570,13 +571,13 @@ public class EventEditActivity extends ManagementScreen {
         updateEventInIndexedTable(cityEventsDatabaseReference, updatedEvent.getCity(), diminishedEvent);
         // update "category_date_events / $ eventCategory_eventDate / $ newEvent
         updateEventInIndexedTable(categoryDateEventsDatabaseReference,
-                updatedEvent.getCategory() + "" + updatedEvent.getDate(), diminishedEvent);
+                updatedEvent.getCategory() + INDEXED_KEY_DIVIDER + updatedEvent.getDate(), diminishedEvent);
         // update "category_city_events / $ eventCategory_eventCity / $ newEvent
         updateEventInIndexedTable(categoryCityEventsDatabaseReference,
-                updatedEvent.getCategory() + "" + updatedEvent.getCity(), diminishedEvent);
-        // update "category_hall_events / $ eventCategory_eventHallName / $ newEvent
+                updatedEvent.getCategory() + INDEXED_KEY_DIVIDER + updatedEvent.getCity(), diminishedEvent);
+        // update "category_hall_events / $ eventCategory_eventHallUid / $ newEvent
         updateEventInIndexedTable(categoryHallEventsDatabaseReference,
-                updatedEvent.getCategory() + "" + updatedEvent.getEventHall().getName(), diminishedEvent);
+                updatedEvent.getCategory() + INDEXED_KEY_DIVIDER + updatedEvent.getEventHall().getUid(), diminishedEvent);
 
         Toast.makeText(this, "השינויים נשמרו בהצלחה!", Toast.LENGTH_SHORT);
         startActivity(new Intent(this, EventsActivity.class));
