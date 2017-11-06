@@ -22,7 +22,6 @@ import app.com.almogrubi.idansasson.gettix.entities.Event;
 
 public class DetailActivity extends AppCompatActivity {
 
-
     private FirebaseDatabase firebaseDatabase;
     private FirebaseStorage firebaseStorage;
     private DatabaseReference eventsDatabaseReference;
