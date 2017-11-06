@@ -58,8 +58,12 @@ public class EventEditActivity extends ManagementScreen {
     private DatabaseReference hallSeatsDatabaseReference;
     private DatabaseReference hallEventsDatabaseReference;
     private DatabaseReference hallEventDatesDatabaseReference;
-    private DatabaseReference categoryEventsDatabaseReference;
+    private DatabaseReference dateEventsDatabaseReference;
     private DatabaseReference cityEventsDatabaseReference;
+    private DatabaseReference categoryEventsDatabaseReference;
+    private DatabaseReference categoryDateEventsDatabaseReference;
+    private DatabaseReference categoryCityEventsDatabaseReference;
+    private DatabaseReference categoryHallEventsDatabaseReference;
     private DatabaseReference eventSeatsDatabaseReference;
     private StorageReference eventPostersStorageReference;
 
@@ -133,8 +137,12 @@ public class EventEditActivity extends ManagementScreen {
         hallsDatabaseReference = firebaseDatabase.getReference().child("halls");
         hallSeatsDatabaseReference = firebaseDatabase.getReference().child("hall_seats");
         hallEventsDatabaseReference = firebaseDatabase.getReference().child("hall_events");
-        categoryEventsDatabaseReference = firebaseDatabase.getReference().child("category_events");
+        dateEventsDatabaseReference = firebaseDatabase.getReference().child("date_events");
         cityEventsDatabaseReference = firebaseDatabase.getReference().child("city_events");
+        categoryEventsDatabaseReference = firebaseDatabase.getReference().child("category_events");
+        categoryDateEventsDatabaseReference = firebaseDatabase.getReference().child("category_date_events");
+        categoryCityEventsDatabaseReference = firebaseDatabase.getReference().child("category_city_events");
+        categoryHallEventsDatabaseReference = firebaseDatabase.getReference().child("category_hall_events");
         eventSeatsDatabaseReference = firebaseDatabase.getReference().child("event_seats");
         hallEventDatesDatabaseReference = firebaseDatabase.getReference().child("hall_eventDates");
         eventPostersStorageReference = firebaseStorage.getReference().child("event_posters");
@@ -446,23 +454,32 @@ public class EventEditActivity extends ManagementScreen {
         if (newEvent.isMarkedSeats())
             createEventSeats(newEvent.getEventHall().getUid(), newEventUid);
 
-        // add "hall_events / $ hallName / $ newEvent
-        hallEventsDatabaseReference
-                .child(newEvent.getEventHall().getUid())
-                .child(newEventUid)
-                .setValue(getDiminishedEventFromEvent(newEvent));
+        // We use a less detailed event for the indexed tables
+        Event diminishedEvent = getDiminishedEventFromEvent(newEvent);
 
-        // add "category_events / $ eventCategory / $ newEvent
-        categoryEventsDatabaseReference
-                .child(newEvent.getCategory())
-                .child(newEventUid)
-                .setValue(getDiminishedEventFromEvent(newEvent));
+        // add "date_events / $ date / $ newEvent
+        updateEventInIndexedTable(dateEventsDatabaseReference, newEvent.getDate(), diminishedEvent);
 
         // add "city_events / $ eventCity / $newEvent
-        cityEventsDatabaseReference
-                .child(newEvent.getCity())
-                .child(newEventUid)
-                .setValue(getDiminishedEventFromEvent(newEvent));
+        updateEventInIndexedTable(cityEventsDatabaseReference, newEvent.getCity(), diminishedEvent);
+
+        // add "hall_events / $ hallUid / $ newEvent
+        updateEventInIndexedTable(hallEventsDatabaseReference, newEvent.getEventHall().getUid(), diminishedEvent);
+
+        // add "category_events / $ eventCategory / $ newEvent
+        updateEventInIndexedTable(categoryEventsDatabaseReference, newEvent.getCategory(), diminishedEvent);
+
+        // add "category_date_events / $ eventCategory_eventDate / $ newEvent
+        updateEventInIndexedTable(categoryDateEventsDatabaseReference,
+                newEvent.getCategory() + "" + newEvent.getDate(), diminishedEvent);
+
+        // add "category_city_events / $ eventCategory_eventCity / $ newEvent
+        updateEventInIndexedTable(categoryCityEventsDatabaseReference,
+                newEvent.getCategory() + "" + newEvent.getCity(), diminishedEvent);
+
+        // add "category_hall_events / $ eventCategory_eventHallUid / $ newEvent
+        updateEventInIndexedTable(categoryHallEventsDatabaseReference,
+                newEvent.getCategory() + "" + newEvent.getEventHall().getUid(), diminishedEvent);
 
         // add "hall_eventDates / $ newHallId / $ newEventDate"
         hallEventDatesDatabaseReference
@@ -483,65 +500,83 @@ public class EventEditActivity extends ManagementScreen {
         // In some cases we will need to update event seats
         updateEventSeatsIfNeeded(updatedEvent);
 
-        // If the event category was changed, we need to update "category_events" accordingly
+        // We use a less detailed event for the indexed tables
+        Event diminishedEvent = getDiminishedEventFromEvent(updatedEvent);
+
+        // If the event category was changed, we need to update "category_events" and all other
+        // category-indexed "tables" accordingly.
         // First stage would be to remove the event from the old category
-        // Second stage would be to add the event to the new category, which should happen anyway
-        // (since we need to update the saved event with the new details)
+        // Second stage would be to add the event to the new category in all index tables, which should happen
+        // anyway (since we need to update the saved event with the new details)
         if (!editedEvent.getCategoryAsEnum().equals(updatedEvent.getCategoryAsEnum())) {
             // remove "category_events / $ oldCategory / $ oldEvent"
-            categoryEventsDatabaseReference
-                    .child(editedEvent.getCategory())
-                    .child(editedEvent.getUid())
-                    .removeValue();
+            removeEventFromIndexedTable(categoryEventsDatabaseReference, editedEvent.getCategory(), eventUid);
+            // remove "category_date_events / $ oldCategory_oldDate / $ oldEvent
+            removeEventFromIndexedTable(categoryDateEventsDatabaseReference,
+                    editedEvent.getCategory() + "" + editedEvent.getDate(), eventUid);
+            // remove "category_hall_events / $ oldCategory_oldHallUid / $ oldEvent
+            removeEventFromIndexedTable(categoryHallEventsDatabaseReference,
+                    editedEvent.getCategory() + "" + editedEvent.getEventHall().getUid(), eventUid);
+            // remove "category_city_events / $ oldCategory_oldCity / $ oldEvent
+            removeEventFromIndexedTable(categoryCityEventsDatabaseReference,
+                    editedEvent.getCategory() + "" + editedEvent.getCity(), eventUid);
         }
-        // add "category_events / $ eventCategory / $ event"
-        categoryEventsDatabaseReference
-                .child(updatedEvent.getCategory())
-                .child(updatedEvent.getUid())
-                .setValue(getDiminishedEventFromEvent(updatedEvent));
 
-        // If the event hall was changed, we need to update "hall_events" and "city_events" accordingly
+        // If the event hall was changed, we need to update "hall_events" and "city_events" + their category index
+        // tables accordingly
         // First stage would be to remove the event from the old hall and old city
-        // Second stage would be to add the event to the new hall and new city, which should happen anyway
-        // (since we need to update the saved event with the new details)
+        // Second stage would be to add the event to the new hall and new city in all index tables, which should
+        // happen anyway (since we need to update the saved event with the new details)
         if (!editedEvent.getEventHall().getUid().equals(updatedEvent.getEventHall().getUid())) {
-            // remove "hall_events / $ oldHallId / $ oldEvent"
-            hallEventsDatabaseReference
-                    .child(editedEvent.getEventHall().getUid())
-                    .child(editedEvent.getUid())
-                    .removeValue();
-
+            // remove "hall_events / $ oldHallUid / $ oldEvent"
+            removeEventFromIndexedTable(hallEventsDatabaseReference, editedEvent.getEventHall().getUid(), eventUid);
             // remove "city_events / $ oldCity / $ oldEvent"
-            cityEventsDatabaseReference
-                    .child(editedEvent.getCity())
-                    .child(editedEvent.getUid())
-                    .removeValue();
-        }
-        // add "hall_events / $ newHallId / $ newEvent"
-        hallEventsDatabaseReference
-                .child(updatedEvent.getEventHall().getUid())
-                .child(updatedEvent.getUid())
-                .setValue(getDiminishedEventFromEvent(updatedEvent));
-        // add "city_events / $ newCity / $ newEvent"
-        cityEventsDatabaseReference
-                .child(updatedEvent.getCity())
-                .child(updatedEvent.getUid())
-                .setValue(getDiminishedEventFromEvent(updatedEvent));
+            removeEventFromIndexedTable(cityEventsDatabaseReference, editedEvent.getCity(), eventUid);
+            // remove "category_hall_events / $ oldCategory_oldHallName / $ oldEvent
+            removeEventFromIndexedTable(categoryHallEventsDatabaseReference,
+                    editedEvent.getCategory() + "" + editedEvent.getEventHall().getUid(), eventUid);
+            // remove "category_city_events / $ oldCategory_oldCity / $ oldEvent
+            removeEventFromIndexedTable(categoryCityEventsDatabaseReference,
+                    editedEvent.getCategory() + "" + editedEvent.getCity(), eventUid);
 
-        // If the event hall or event date were changed, we need to update "hall_eventDates" accordingly
-        if ((!editedEvent.getEventHall().getUid().equals(updatedEvent.getEventHall().getUid())) ||
-            (!editedEvent.getDate().equals(updatedEvent.getDate()))) {
-            // remove "halls_eventDates / $ oldHallId / $ oldEventDate"
-            hallEventDatesDatabaseReference
-                    .child(editedEvent.getEventHall().getUid())
-                    .child(editedEvent.getDate())
-                    .removeValue();
-            // add "halls_eventDates / $ newHallId / $ newEventDate"
-            hallEventDatesDatabaseReference
-                    .child(updatedEvent.getEventHall().getUid())
-                    .child(updatedEvent.getDate())
-                    .setValue(true);
+            // If the event hall or event date were changed, we need to update "hall_eventDates" accordingly
+            updateHallEventDate(editedEvent.getEventHall().getUid(), updatedEvent.getEventHall().getUid(),
+                    editedEvent.getDate(), updatedEvent.getDate());
         }
+
+        // If the event date was changed, we need to update "date_events" and its category index table accordingly
+        // First stage would be to remove the event from the old date
+        // Second stage would be to add the event to the new date in all index tables, which should happen
+        // anyway (since we need to update the saved event with the new details)
+        if (!editedEvent.getDate().equals(updatedEvent.getDate())) {
+            // remove "date_events / $ oldDate / $oldEvent
+            removeEventFromIndexedTable(dateEventsDatabaseReference, editedEvent.getDate(), eventUid);
+            // remove "category_date_events / $ oldCategory_oldDate / $ oldEvent
+            removeEventFromIndexedTable(categoryDateEventsDatabaseReference,
+                    editedEvent.getCategory() + "" + editedEvent.getDate(), eventUid);
+
+            // If the event hall or event date were changed, we need to update "hall_eventDates" accordingly
+            updateHallEventDate(editedEvent.getEventHall().getUid(), updatedEvent.getEventHall().getUid(),
+                    editedEvent.getDate(), updatedEvent.getDate());
+        }
+
+        // update "category_events / $ eventCategory / $ event"
+        updateEventInIndexedTable(categoryEventsDatabaseReference, updatedEvent.getCategory(), diminishedEvent);
+        // update "date_events / $ eventDate / $ event"
+        updateEventInIndexedTable(dateEventsDatabaseReference, updatedEvent.getDate(), diminishedEvent);
+        // update "hall_events / $ eventHallUid / $ event"
+        updateEventInIndexedTable(hallEventsDatabaseReference, updatedEvent.getEventHall().getUid(), diminishedEvent);
+        // update "city_events / $ eventCity / $ event"
+        updateEventInIndexedTable(cityEventsDatabaseReference, updatedEvent.getCity(), diminishedEvent);
+        // update "category_date_events / $ eventCategory_eventDate / $ newEvent
+        updateEventInIndexedTable(categoryDateEventsDatabaseReference,
+                updatedEvent.getCategory() + "" + updatedEvent.getDate(), diminishedEvent);
+        // update "category_city_events / $ eventCategory_eventCity / $ newEvent
+        updateEventInIndexedTable(categoryCityEventsDatabaseReference,
+                updatedEvent.getCategory() + "" + updatedEvent.getCity(), diminishedEvent);
+        // update "category_hall_events / $ eventCategory_eventHallName / $ newEvent
+        updateEventInIndexedTable(categoryHallEventsDatabaseReference,
+                updatedEvent.getCategory() + "" + updatedEvent.getEventHall().getName(), diminishedEvent);
 
         Toast.makeText(this, "השינויים נשמרו בהצלחה!", Toast.LENGTH_SHORT);
         startActivity(new Intent(this, EventsActivity.class));
@@ -626,6 +661,21 @@ public class EventEditActivity extends ManagementScreen {
                     @Override
                     public void onCancelled(DatabaseError databaseError) {}
                 });
+    }
+
+    private void removeEventFromIndexedTable(DatabaseReference table, String index, String eventUid) {
+        table.child(index).child(eventUid).removeValue();
+    }
+
+    private void updateEventInIndexedTable(DatabaseReference table, String index, Event event) {
+        table.child(index).child(event.getUid()).setValue(event);
+    }
+
+    private void updateHallEventDate(String oldHallUid, String newHallUid, String oldDate, String newDate) {
+        // remove "halls_eventDates / $ oldHallId / $ oldEventDate"
+        hallEventDatesDatabaseReference.child(oldHallUid).child(oldDate).removeValue();
+        // add "halls_eventDates / $ newHallId / $ newEventDate"
+        hallEventDatesDatabaseReference.child(newHallUid).child(newDate).setValue(true);
     }
 
     @Override
