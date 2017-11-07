@@ -50,6 +50,18 @@ public class DataUtils {
         }
     };
 
+    // Represents all ways events are indexed in the database
+    public enum EventIndexKey {
+        ALL,
+        CATEGORY,
+        DATE,
+        HALL,
+        CITY,
+        CATEGORY_DATE,
+        CATEGORY_HALL,
+        CATEGORY_CITY
+    }
+
     public static SimpleDateFormat DB_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     public static SimpleDateFormat UI_DATE_FORMAT = new SimpleDateFormat("dd/MM/yy");
     public static SimpleDateFormat HOUR_FORMAT = new SimpleDateFormat("HH:mm");

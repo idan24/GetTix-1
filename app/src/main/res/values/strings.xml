@@ -6,10 +6,12 @@
 
     <!-- for main activity -->
     <string name="find_events_label">מצא את האירוע שלך:</string>
+    <string name="filter_events_label">סינון נוסף לפי...</string>
+    <string name="filter_events_selected">סינון נוסף לפי</string>
+    <string name="filter_events_colon">:</string>
     <string name="event_date_hint">תאריך</string>
-    <string name="event_hall_hint">מקום</string>
+    <string name="event_hall_hint">אולם</string>
     <string name="event_city_hint">עיר</string>
-    <string name="event_keyword_hint">מילה חופשית</string>
     <string name="search_events_button">חפש</string>
 
     <!-- for management screens -->

@@ -1,5 +1,7 @@
 package app.com.almogrubi.idansasson.gettix.utilities;
 
+import android.widget.TextView;
+
 import app.com.almogrubi.idansasson.gettix.R;
 
 /**
@@ -29,5 +31,10 @@ public class Utils {
             default:
                 return -1;
         }
+    }
+
+    // Useful for validation of text input views (EditText, AutoCompleteTextView etc.)
+    public static boolean isTextViewEmpty(TextView textView) {
+        return textView.getText().toString().trim().isEmpty();
     }
 }

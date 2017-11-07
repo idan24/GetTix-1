@@ -44,6 +44,7 @@ import app.com.almogrubi.idansasson.gettix.entities.Seat;
 import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
 import app.com.almogrubi.idansasson.gettix.utilities.HallSpinnerAdapter;
 import app.com.almogrubi.idansasson.gettix.utilities.ManagementScreen;
+import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 
 import static app.com.almogrubi.idansasson.gettix.utilities.Utils.INDEXED_KEY_DIVIDER;
 
@@ -379,33 +380,33 @@ public class EventEditActivity extends ManagementScreen {
         boolean isValid = true;
 
         // Checking title was filled
-        if (TextUtils.isEmpty(binding.etEventTitle.getText().toString())) {
+        if (Utils.isTextViewEmpty(binding.etEventTitle)) {
             binding.etEventTitle.setError(emptyFieldErrorMessage);
             isValid = false;
         }
         // Checking date was picked
-        if (TextUtils.isEmpty(binding.etEventDate.getText().toString())) {
+        if (Utils.isTextViewEmpty(binding.etEventDate)) {
             binding.etEventDate.setError(emptyFieldErrorMessage);
             isValid = false;
         }
         // Checking time was picked
-        if (TextUtils.isEmpty(binding.etEventHour.getText().toString())) {
+        if (Utils.isTextViewEmpty(binding.etEventHour)) {
             binding.etEventHour.setError(emptyFieldErrorMessage);
             isValid = false;
         }
         // Checking description was filled
-        if (TextUtils.isEmpty(binding.etEventDescription.getText().toString())) {
+        if (Utils.isTextViewEmpty(binding.etEventDescription)) {
             binding.etEventDescription.setError(emptyFieldErrorMessage);
             isValid = false;
         }
         // Checking price was filled
-        if (TextUtils.isEmpty(binding.etEventPrice.getText().toString())) {
+        if (Utils.isTextViewEmpty(binding.etEventPrice)) {
             binding.etEventPrice.setError(emptyFieldErrorMessage);
             isValid = false;
         }
         // If the event is not an event with marked seats, checking max capacity was filled
         if (!binding.cbEventMarkedSeats.isChecked() &&
-                TextUtils.isEmpty(binding.etEventMaxCapacity.getText().toString())) {
+                Utils.isTextViewEmpty(binding.etEventMaxCapacity)) {
             binding.etEventMaxCapacity.setError(emptyFieldErrorMessage);
             isValid = false;
         }

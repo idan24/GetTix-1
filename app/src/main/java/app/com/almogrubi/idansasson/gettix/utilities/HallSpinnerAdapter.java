@@ -33,6 +33,13 @@ public class HallSpinnerAdapter extends ArrayAdapter<Hall> {
         return values.size();
     }
 
+    public ArrayList<Hall> getValues() {
+        ArrayList<Hall> returnedValues = new ArrayList<>(values.size());
+        for (Hall hall : values)
+            returnedValues.add(hall);
+        return returnedValues;
+    }
+
     @Nullable
     @Override
     public Hall getItem(int position) {
