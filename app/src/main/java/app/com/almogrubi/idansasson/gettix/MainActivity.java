@@ -206,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         selectedHall = hallSpinnerAdapter.getItem(position);
+                        etEventHall.setError(null);
                     }
                 });
                 etEventHall.addTextChangedListener(new TextWatcher() {
@@ -219,6 +220,7 @@ public class MainActivity extends AppCompatActivity {
                         for (Hall hall : halls) {
                             if (hall.getName().equals(s.toString())) {
                                 selectedHall = hall;
+                                etEventHall.setError(null);
                                 return;
                             }
                         }
@@ -229,7 +231,8 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void afterTextChanged(Editable s) {}
+                    public void afterTextChanged(Editable s) {
+                    }
                 });
             }
 
@@ -439,7 +442,7 @@ public class MainActivity extends AppCompatActivity {
         if (!cbFilter.isChecked()) return true;
 
         String DateNotSelectedErrorMessage = "באיזה תאריך תרצה ללכת?";
-        String hallNotSelectedErrorMessage = "בחר אולם מהרשימה";
+        String hallNotSelectedErrorMessage = "הקלד ובחר אולם מרשימת ההצעות";
         String emptyCityErrorMessage = "לאיזו עיר תרצה לצאת?";
 
         FilterKey filterKey = (FilterKey) spFilterKey.getSelectedItem();
