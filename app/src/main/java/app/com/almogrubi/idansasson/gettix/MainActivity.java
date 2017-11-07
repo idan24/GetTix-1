@@ -450,18 +450,21 @@ public class MainActivity extends AppCompatActivity {
                     etEventDate.setError(DateNotSelectedErrorMessage);
                     return false;
                 }
+                etEventDate.setError(null);
                 return true;
             case HALL:
                 if (selectedHall == null) {
                     etEventHall.setError(hallNotSelectedErrorMessage);
                     return false;
                 }
+                etEventHall.setError(null);
                 return true;
             case CITY:
                 if (Utils.isTextViewEmpty(etEventCity)) {
                     etEventCity.setError(emptyCityErrorMessage);
                     return false;
                 }
+                etEventCity.setError(null);
                 return true;
             default:
                 return false;
@@ -536,6 +539,11 @@ public class MainActivity extends AppCompatActivity {
     public void onPause() {
         if (firebaseRecyclerAdapter != null)
             firebaseRecyclerAdapter.stopListening();
+
+        etEventDate.setError(null);
+        etEventHall.setError(null);
+        etEventCity.setError(null);
+
         super.onPause();
     }
 
