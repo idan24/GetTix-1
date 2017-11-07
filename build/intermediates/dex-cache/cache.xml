@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="C:\Users\almog\app\GetTix-1\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="b0840483dca5605cb0a48822851835649b8d780f">
+        <dex dex="C:\Users\almog\app\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run-bootstrap_b61c2495c581d1c8c6dc6af2a98d0e525b837763\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\almog\.android\build-cache\5556d377806360b67a81687cd3ca8be36369feab\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="52339832d252da4328c5ffcacbc205268346362a">
+        <dex dex="C:\Users\almog\app\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_c4fafa80d0b0e0767ab128fdc09cfdfecf608c33\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\almog\.android\build-cache\4f69c2909d294cfb75a05c34f3a3c5c2cc93677e\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="97fb40924e83775c91374180494801cb022aa008">
+        <dex dex="C:\Users\almog\app\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_6964f22cfd0e0b5bc17e52bc80d89faf2b898061\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\almog\.gradle\caches\modules-2\files-2.1\com.github.bumptech.glide\disklrucache\4.2.0\fd3a444cc7987b5fa2a60fabb116395ca2a4da1c\disklrucache-4.2.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="fd3a444cc7987b5fa2a60fabb116395ca2a4da1c">
+        <dex dex="C:\Users\almog\app\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\disklrucache-4.2.0_26e81d9966145ff10adea835a73884fc8b21fac1\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\almog\.android\build-cache\a367cadb32663223c5fe5819a2753f97abed367a\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="73c80b05a390e8319d1ef7a236739cd610c8f774">
+        <dex dex="C:\Users\almog\app\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_85b89282c4796cb4119f721071b6e443fff27938\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\almog\.android\build-cache\92dafbe4b455bfe1316c03ca127aaf5077c6fabf\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="c88bd2d95ec2fe819a00506817fb43251d68cdb7">
+        <dex dex="C:\Users\almog\app\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_1738d2654c997c63fae4c73e02cc10e96e744654\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\almog\.android\build-cache\9c5c4c24b3c873ba7a331561d133fd17862b967b\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="2d45b277afdf55bcfdc005c03c0c2f1733aaa1b0">
+        <dex dex="C:\Users\almog\app\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_44b4d6e4757357f377fef7977263b0194eb51bbf\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\almog\.android\build-cache\fe06728a20ff6dd5b4f26267f7c14710e67e643f\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="bed98ea7af8c5c4202820875e856dd3eb296e22d">
+        <dex dex="C:\Users\almog\app\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_6aefc19d2cb84945432c6453d022c411936d6e82\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\almog\app\GetTix-1\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="3be78ebc2706b2e1fe2f12d5726887a92d6c183b">
+        <dex dex="C:\Users\almog\app\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run_eae48877def10e8a8963508c405fbb964975e321\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\almog\.gradle\caches\modules-2\files-2.1\com.android.support\support-annotations\26.0.2\8b68a849722b44f584e2d68c451c5e3844c10380\support-annotations-26.0.2.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="8b68a849722b44f584e2d68c451c5e3844c10380">
+        <dex dex="C:\Users\almog\app\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-26.0.2_4c25ce2af2f0ed7f26a479c2129745c45985b3a8\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\almog\.gradle\caches\modules-2\files-2.1\com.github.bumptech.glide\gifdecoder\4.2.0\f196283dab426e09559bfe7385f162b2b254cf72\gifdecoder-4.2.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="f196283dab426e09559bfe7385f162b2b254cf72">
+        <dex dex="C:\Users\almog\app\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\gifdecoder-4.2.0_ce4250bb59cd2d972ee22750cb8b5c2ea9f674b9\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\almog\.android\build-cache\22c5a6f9b566c9761b5395266d992f8df6ab0217\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="643a2fd3bd06c44be5d20efc0ba4ca02036d2c8a">
+        <dex dex="C:\Users\almog\app\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_28584b5dd72b0c407b4175a9c1daad9eb19f3a9b\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\almog\.android\build-cache\88513246196d5d171bcf32288f5f0a9ee02cecdf\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="8040d53ecd4bd895360eafdc25e1c1cc9479e6aa">
+        <dex dex="C:\Users\almog\app\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_155beb2e5d4785e0f994ed76e6bc41db70d9c644\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\almog\.android\build-cache\5d7bd21d2848262981de5d85fc625ef450614801\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="6e6b94b72d7912a627fb1629c310b2bca9261f06">
+        <dex dex="C:\Users\almog\app\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_62e5fe0cb3e75cdb9a73bb40cfdf13dc8dc450e2\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\almog\.android\build-cache\95211d7e0fc3685479999f51db3b7ad53ccf85ec\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="5f519b8c692038a47ee404b6ea6b847f6402000c">
+        <dex dex="C:\Users\almog\app\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_2a811b703e830c5d0bb8363cca2dd97cde2d5d99\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\almog\.android\build-cache\df3067c840c0f55afcacddc19aa992c30f9bc5ca\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="3e1185bdde08224bf1275f6b4f9771df5e738e1b">
+        <dex dex="C:\Users\almog\app\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_c06661ccc099246297abc23a60a5e6e30dece92c\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\almog\app\GetTix-1\app\lib\joda-time-2.9.9.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="f7b520c458572890807d143670c9b24f4de90897">
+        <dex dex="C:\Users\almog\app\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\2\joda-time-2.9.9_5527e5097ef5ae6f13ab37097638c8d81d7358e7\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\almog\.gradle\caches\modules-2\files-2.1\com.github.bumptech.glide\glide\4.2.0\b76d4269b06b8bda96aac32342a05843b4c0be41\glide-4.2.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="b76d4269b06b8bda96aac32342a05843b4c0be41">
+        <dex dex="C:\Users\almog\app\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\glide-4.2.0_d8b27e7eaad886223d4017e61ebd14f6384434db\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\almog\.android\build-cache\c4eb48a3f06d269adc5d92454d8871b0b456e6de\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="c2cadea4d8a1a5b5c4e5f0dc99a99a43774f5e6e">
+        <dex dex="C:\Users\almog\app\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_c550de4ea82a742fb3cd874a5a2ad2e1630a6669\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\almog\.android\build-cache\3dec846b7af23084d18b8deaedbba60433d582a2\output\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="20d6aa9a18ea9833cd2bee95dff7cd303cdb80e4">
+        <dex dex="C:\Users\almog\app\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\classes_09222cc650062a8fef9f8d1d5aceb11a81f50bd6\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\almog\.gradle\caches\modules-2\files-2.1\com.github.bumptech.glide\annotations\4.2.0\1d6fc29f2af61d8fdc31018416040c560423c4b3\annotations-4.2.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="1d6fc29f2af61d8fdc31018416040c560423c4b3">
+        <dex dex="C:\Users\almog\app\GetTix-1\app\build\intermediates\transforms\dex\debug\folders\1000\10\annotations-4.2.0_1edbd2d0cd36760d2f57dd1d644b7b486cf72e46\classes.dex" />
+    </item>
+
+</items>
