@@ -1,5 +1,7 @@
 package app.com.almogrubi.idansasson.gettix.entities;
 
+import com.google.firebase.database.Exclude;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -116,11 +118,29 @@ public class Order implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public DataUtils.OrderStatus getStatus() {
-        return status;
-    }
-
     public void setStatus(DataUtils.OrderStatus status) {
         this.status = status;
+    }
+
+    @Exclude
+    public DataUtils.OrderStatus getStatusAsEnum() {
+        return this.status;
+    }
+
+    // these methods are just a Firebase 9.0.0 hack to handle the enum
+    public String getStatus(){
+        if (this.status == null){
+            return null;
+        } else {
+            return this.status.name();
+        }
+    }
+
+    public void setStatus(String statusString){
+        if (statusString == null){
+            this.status = null;
+        } else {
+            this.status = DataUtils.OrderStatus.valueOf(statusString);
+        }
     }
 }

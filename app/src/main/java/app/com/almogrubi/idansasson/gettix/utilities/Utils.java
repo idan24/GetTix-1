@@ -1,5 +1,7 @@
 package app.com.almogrubi.idansasson.gettix.utilities;
 
+import android.text.SpannableString;
+import android.text.style.LeadingMarginSpan;
 import android.widget.TextView;
 
 import app.com.almogrubi.idansasson.gettix.R;
@@ -11,6 +13,8 @@ import app.com.almogrubi.idansasson.gettix.R;
 public class Utils {
 
     public static String INDEXED_KEY_DIVIDER = "~";
+    public static int FIRST_LINE_INDENT = 0;
+    public static int PARAGRAPH_INDENT = 10;
 
     public static int lookupImageByCategory(DataUtils.Category category) {
         switch (category) {
@@ -36,5 +40,11 @@ public class Utils {
     // Useful for validation of text input views (EditText, AutoCompleteTextView etc.)
     public static boolean isTextViewEmpty(TextView textView) {
         return textView.getText().toString().trim().isEmpty();
+    }
+
+    public static SpannableString createIndentedText(String text, int marginFirstLine, int marginNextLines) {
+        SpannableString result = new SpannableString(text);
+        result.setSpan(new LeadingMarginSpan.Standard(marginFirstLine, marginNextLines),0, text.length(),0);
+        return result;
     }
 }

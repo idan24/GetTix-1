@@ -27,9 +27,9 @@
             android:name=".EventEditActivity"
             android:parentActivityName=".EventsActivity"></activity>
         <activity
-            android:name=".DetailActivity"
+            android:name=".EventDetailsActivity"
             android:label="@string/title_activity_detail"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".SeatsActivity"
             android:label="@string/title_activity_sits"
@@ -40,6 +40,10 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".NoSeatsActivity" />
         <activity android:name=".FinishingActivity" />
+
+        <meta-data
+            android:name="CLOUDINARY_URL"
+            android:value="cloudinary://idansass"/>
     </application>
 
 </manifest>

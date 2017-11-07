@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">GetTix</string>
-    <string name="title_activity_detail">DetailActivity</string>
+    <string name="title_activity_detail">פרטי מופע</string>
     <string name="title_activity_sits">SitsActivity</string>
     <string name="title_activity_pay">PayActivity</string>
+    <string name="events_screen_title">מסך מפיק</string>
 
     <!-- for main activity -->
     <string name="find_events_label">מצא את האירוע שלך:</string>
@@ -14,11 +15,13 @@
     <string name="event_city_hint">עיר</string>
     <string name="search_events_button">חפש</string>
 
+    <!-- for events details activity -->
+    <string name="book_tickets_button">הזמן כרטיסים</string>
+
     <!-- for management screens -->
     <string name="action_management_title">למסכי ניהול והפקה</string>
     <string name="action_sign_out_title">התנתק...</string>
     <string name="action_add_event">אירוע חדש</string>
-    <string name="events_screen_title">מסך מפיק</string>
     <string name="your_events_label">האירועים שלך:</string>
     
     <!-- for event edit activity -->

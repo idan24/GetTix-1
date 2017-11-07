@@ -1,6 +1,9 @@
 <resources>
+    <dimen name="half_tab_margin">4dp</dimen>
     <dimen name="tab_margin">8dp</dimen>
+    <dimen name="semidouble_tab_margin">12dp</dimen>
     <dimen name="double_tab_margin">16dp</dimen>
+    <dimen name="triple_tab_margin">24dp</dimen>
     <dimen name="quadruple_tab_margin">32dp</dimen>
     <dimen name="short_inputview_width">120dp</dimen>
     <dimen name="short_medium_inputview_width">140dp</dimen>
@@ -8,5 +11,8 @@
     <dimen name="medium_long_inputview_width">180dp</dimen>
     <dimen name="long_inputview_width">200dp</dimen>
     <dimen name="main_flow_text_size">18sp</dimen>
+    <dimen name="common_text_size">16sp</dimen>
+    <dimen name="small_text_size">13sp</dimen>
+    <dimen name="large_text_size">22sp</dimen>
     <dimen name="management_text_size">16sp</dimen>
 </resources>

@@ -26,6 +26,7 @@ public class Event implements Serializable {
     private String posterUri;
     private boolean isMarkedSeats;
     private int maxCapacity;
+    private int leftTicketsNum;
     private boolean isSoldOut;
     private String producerId;
 
@@ -48,6 +49,10 @@ public class Event implements Serializable {
         this.isMarkedSeats = isMarkedSeats;
         this.maxCapacity = maxCapacity;
 
+        // Calculate number of tickets left from its details
+        this.leftTicketsNum = isMarkedSeats ?
+                eventHall.getRows() * eventHall.getColumns() :
+                maxCapacity;
         // Newly created event should never be already sold out
         this.isSoldOut = false;
     }
@@ -71,6 +76,10 @@ public class Event implements Serializable {
         this.maxCapacity = maxCapacity;
         this.producerId = producerId;
 
+        // Calculate number of tickets left from its details
+        this.leftTicketsNum = isMarkedSeats ?
+                eventHall.getRows() * eventHall.getColumns() :
+                maxCapacity;
         // Newly created event should never be already sold out
         this.isSoldOut = false;
     }
@@ -145,6 +154,8 @@ public class Event implements Serializable {
         return this.maxCapacity;
     }
 
+    public int getLeftTicketsNum() { return leftTicketsNum; }
+
     public String getProducerId() {
         return this.producerId;
     }
@@ -204,6 +215,8 @@ public class Event implements Serializable {
     public void setMaxCapacity(int maxCapacity) {
         this.maxCapacity = maxCapacity;
     }
+
+    public void setLeftTicketsNum(int leftTicketsNum) { this.leftTicketsNum = leftTicketsNum; }
 
     public void setSoldOut(boolean soldOut) {
         this.isSoldOut = soldOut;
