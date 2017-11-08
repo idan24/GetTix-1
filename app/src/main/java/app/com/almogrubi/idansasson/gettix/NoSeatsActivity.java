@@ -25,18 +25,6 @@ public class NoSeatsActivity extends AppCompatActivity {
     private FirebaseDatabase firebaseDatabase;
     private FirebaseStorage firebaseStorage;
     private DatabaseReference eventsDatabaseReference;
-    private DatabaseReference hallsDatabaseReference;
-    private DatabaseReference hallSeatsDatabaseReference;
-    private DatabaseReference hallEventsDatabaseReference;
-    private DatabaseReference hallEventDatesDatabaseReference;
-    private DatabaseReference dateEventsDatabaseReference;
-    private DatabaseReference cityEventsDatabaseReference;
-    private DatabaseReference categoryEventsDatabaseReference;
-    private DatabaseReference categoryDateEventsDatabaseReference;
-    private DatabaseReference categoryCityEventsDatabaseReference;
-    private DatabaseReference categoryHallEventsDatabaseReference;
-    private DatabaseReference eventSeatsDatabaseReference;
-    private StorageReference eventPostersStorageReference;
 
     private String eventUid;
     private Event event;
@@ -133,18 +121,6 @@ public class NoSeatsActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseStorage = FirebaseStorage.getInstance();
         eventsDatabaseReference = firebaseDatabase.getReference().child("events");
-        hallsDatabaseReference = firebaseDatabase.getReference().child("halls");
-        hallSeatsDatabaseReference = firebaseDatabase.getReference().child("hall_seats");
-        hallEventsDatabaseReference = firebaseDatabase.getReference().child("hall_events");
-        dateEventsDatabaseReference = firebaseDatabase.getReference().child("date_events");
-        cityEventsDatabaseReference = firebaseDatabase.getReference().child("city_events");
-        categoryEventsDatabaseReference = firebaseDatabase.getReference().child("category_events");
-        categoryDateEventsDatabaseReference = firebaseDatabase.getReference().child("category_date_events");
-        categoryCityEventsDatabaseReference = firebaseDatabase.getReference().child("category_city_events");
-        categoryHallEventsDatabaseReference = firebaseDatabase.getReference().child("category_hall_events");
-        eventSeatsDatabaseReference = firebaseDatabase.getReference().child("event_seats");
-        hallEventDatesDatabaseReference = firebaseDatabase.getReference().child("hall_eventDates");
-        eventPostersStorageReference = firebaseStorage.getReference().child("event_posters");
     }
 
     private void abort() {

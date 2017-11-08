@@ -10,6 +10,15 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TableRow;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +35,11 @@ import app.com.almogrubi.idansasson.gettix.entities.Seat;
 public class SeatsActivity extends AppCompatActivity{
 
 
+    private FirebaseDatabase firebaseDatabase;
+    private FirebaseStorage firebaseStorage;
+    private DatabaseReference eventsDatabaseReference;
+
+
     private Event event;
     private Order order = new Order();
     private int rows = 0;
@@ -37,12 +51,39 @@ public class SeatsActivity extends AppCompatActivity{
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
 
-        Intent intent = getIntent();
-        if (intent != null) {
+        // Initialization of all needed Firebase database references
+        initializeDatabaseReferences();
 
-            event = (Event) intent.getSerializableExtra("eventObject");
+        Intent intent = getIntent();
+        if ((intent != null) && (intent.hasExtra("eventUid"))) {
+
+            eventsDatabaseReference
+                    .child(intent.getStringExtra("eventUid"))
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            // If we have a null result, the event was somehow not found in the database
+                            if (dataSnapshot == null || !dataSnapshot.exists() || dataSnapshot.getValue() == null) {
+                                abort();
+                                return;
+                            }
+
+                            // If we reached here then the existing event was found, we'll bind it to UI
+                            event = dataSnapshot.getValue(Event.class);
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            abort();
+                        }
+                    });
+
+
             // TODO: uncomment and replace with query
-            //List<EventSeat> seatsList = new ArrayList<>(event.getEventHall().getEventSeats().values());
+            //List<EventSeat> seatsList = new ArrayList<EventSeat>(event.getEventHall().getEventSeat().values());
+
+
 
             rows =  event.getEventHall().getRows();
             rows =  event.getEventHall().getColumns();
@@ -86,6 +127,8 @@ public class SeatsActivity extends AppCompatActivity{
             //setContentView(R.layout.main);
         }
 
+        else{ abort(); }
+
 
         LinearLayout row = new LinearLayout(this);
         row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -102,7 +145,7 @@ public class SeatsActivity extends AppCompatActivity{
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), PayActivity.class);
                 intent.putExtra("orderObject", order);
-                intent.putExtra("eventObject", event);
+                intent.putExtra("eventUid", event.getUid());
                 startActivity(intent);
                 Log.i("almog", "id is " + v.getId());
 
@@ -114,4 +157,18 @@ public class SeatsActivity extends AppCompatActivity{
         );
 
     }
+
+    private void initializeDatabaseReferences() {
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        firebaseStorage = FirebaseStorage.getInstance();
+        eventsDatabaseReference = firebaseDatabase.getReference().child("events");
+    }
+
+    private void abort() {
+        String eventNotFoundErrorMessage = "המופע לא נמצא, נסה שנית";
+
+        Toast.makeText(this, eventNotFoundErrorMessage, Toast.LENGTH_SHORT);
+        startActivity(new Intent(this, MainActivity.class));
+    }
+
 }
