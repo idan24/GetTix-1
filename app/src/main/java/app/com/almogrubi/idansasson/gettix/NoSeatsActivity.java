@@ -22,6 +22,17 @@ public class NoSeatsActivity extends AppCompatActivity {
 
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference eventsDatabaseReference;
+    private DatabaseReference hallsDatabaseReference;
+    private DatabaseReference hallSeatsDatabaseReference;
+    private DatabaseReference hallEventsDatabaseReference;
+    private DatabaseReference hallEventDatesDatabaseReference;
+    private DatabaseReference dateEventsDatabaseReference;
+    private DatabaseReference cityEventsDatabaseReference;
+    private DatabaseReference categoryEventsDatabaseReference;
+    private DatabaseReference categoryDateEventsDatabaseReference;
+    private DatabaseReference categoryCityEventsDatabaseReference;
+    private DatabaseReference categoryHallEventsDatabaseReference;
+    private DatabaseReference eventSeatsDatabaseReference;
 
     private Event event;
 
