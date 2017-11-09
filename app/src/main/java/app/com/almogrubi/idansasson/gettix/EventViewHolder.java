@@ -65,7 +65,7 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
 
         if (event.isSoldOut()) {
             ivEventSoldout.setVisibility(View.VISIBLE);
-            ivEventPoster.setAlpha((float) 0.7);
+            ivEventPoster.setAlpha((float) 0.5);
         } else {
             ivEventSoldout.setVisibility(View.INVISIBLE);
         }

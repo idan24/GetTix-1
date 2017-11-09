@@ -119,7 +119,6 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         binding.ivEventCategory.setBackgroundResource(Utils.lookupImageByCategory(event.getCategoryAsEnum()));
 
-        binding.tvTicketsLeft.setText(String.format("נותרו %s כרטיסים למופע", event.getLeftTicketsNum()));
         binding.tvEventPrice.setText(String.format("%s₪", event.getPrice()));
         binding.tvEventDescription.setText(event.getDescription());
 
@@ -140,6 +139,17 @@ public class EventDetailsActivity extends AppCompatActivity {
                 }
             }
         });
+
+        if (event.isSoldOut()) {
+            Toast.makeText(this, "לא נותרו כרטיסים למופע זה", Toast.LENGTH_LONG);
+            binding.ivEventSoldout.setVisibility(View.VISIBLE);
+            binding.tvTicketsLeft.setText("לא נותרו כרטיסים למופע זה.");
+            binding.btBookTickets.setVisibility(View.GONE);
+        } else if (event.getLeftTicketsNum() < 100) {
+            binding.tvTicketsLeft.setText(String.format("נותרו %s כרטיסים למופע", event.getLeftTicketsNum()));
+        } else {
+            binding.tvTicketsLeft.setText("נותרו כרטיסים למופע!");
+        }
     }
 
     private void abort() {

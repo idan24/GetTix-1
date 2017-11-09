@@ -27,6 +27,20 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:src="@android:drawable/star_big_on" />
+                <ImageView
+                    android:id="@+id/iv_event_soldout"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:layout_gravity="right|bottom"
+                    android:layout_marginStart="@dimen/double_tab_margin"
+                    android:layout_row="0"
+                    android:layout_column="0"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_event_poster"
+                    app:layout_constraintEnd_toEndOf="@+id/iv_event_poster"
+                    app:layout_constraintStart_toStartOf="@+id/iv_event_poster"
+                    app:layout_constraintTop_toTopOf="@+id/iv_event_poster"
+                    android:visibility="invisible"
+                    android:src="@drawable/ic_sold_out" />
             </GridLayout>
 
             <TextView
@@ -99,7 +113,9 @@
                 android:id="@+id/tv_event_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
+                android:layout_marginTop="@dimen/tab_margin"
+                android:layout_marginEnd="@dimen/tab_margin"
+                android:padding="@dimen/tab_margin"
                 android:textColor="@color/Black"
                 android:textDirection="anyRtl"
                 android:textSize="@dimen/large_text_size"
