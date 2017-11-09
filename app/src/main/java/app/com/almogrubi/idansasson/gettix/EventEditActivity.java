@@ -17,15 +17,15 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.cloudinary.android.MediaManager;
+import com.cloudinary.android.callback.ErrorInfo;
+import com.cloudinary.android.callback.UploadCallback;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import org.joda.time.DateTime;
 
@@ -54,7 +54,6 @@ public class EventEditActivity extends ManagementScreen {
     private static final int RC_PHOTO_PICKER =  2;
 
     private FirebaseDatabase firebaseDatabase;
-    private FirebaseStorage firebaseStorage;
     private DatabaseReference eventsDatabaseReference;
     private DatabaseReference hallsDatabaseReference;
     private DatabaseReference hallSeatsDatabaseReference;
@@ -67,10 +66,9 @@ public class EventEditActivity extends ManagementScreen {
     private DatabaseReference categoryCityEventsDatabaseReference;
     private DatabaseReference categoryHallEventsDatabaseReference;
     private DatabaseReference eventSeatsDatabaseReference;
-    private StorageReference eventPostersStorageReference;
 
     private ActivityEventEditBinding binding;
-    private Uri eventPosterUri;
+    private String eventPosterUri;
 
     private boolean isEdit = false;
     private Event editedEvent;
@@ -134,7 +132,6 @@ public class EventEditActivity extends ManagementScreen {
 
     private void initializeDatabaseReferences() {
         firebaseDatabase = FirebaseDatabase.getInstance();
-        firebaseStorage = FirebaseStorage.getInstance();
         eventsDatabaseReference = firebaseDatabase.getReference().child("events");
         hallsDatabaseReference = firebaseDatabase.getReference().child("halls");
         hallSeatsDatabaseReference = firebaseDatabase.getReference().child("hall_seats");
@@ -147,7 +144,6 @@ public class EventEditActivity extends ManagementScreen {
         categoryHallEventsDatabaseReference = firebaseDatabase.getReference().child("category_hall_events");
         eventSeatsDatabaseReference = firebaseDatabase.getReference().child("event_seats");
         hallEventDatesDatabaseReference = firebaseDatabase.getReference().child("hall_eventDates");
-        eventPostersStorageReference = firebaseStorage.getReference().child("event_posters");
     }
 
     private void initializeUIViews() {
@@ -324,7 +320,7 @@ public class EventEditActivity extends ManagementScreen {
         binding.etEventPerformer.setText(this.editedEvent.getPerformer());
         binding.etEventPrice.setText(String.valueOf(this.editedEvent.getPrice()));
 
-        loadEventPoster(Uri.parse(this.editedEvent.getPosterUri()));
+        loadEventPoster(this.editedEvent.getPosterUri());
 
         binding.cbEventMarkedSeats.setChecked(this.editedEvent.isMarkedSeats());
         binding.etEventMaxCapacity.setText(String.valueOf(this.editedEvent.getMaxCapacity()));
@@ -605,7 +601,7 @@ public class EventEditActivity extends ManagementScreen {
         String newEventDescription = binding.etEventDescription.getText().toString();
         String newEventPerformer = binding.etEventPerformer.getText().toString();
         int newEventPrice = Integer.parseInt(binding.etEventPrice.getText().toString());
-        String newEventPosterUri = eventPosterUri.toString();
+        String newEventPosterUri = eventPosterUri;
         boolean newEventIsMarkedSeats = binding.cbEventMarkedSeats.isChecked();
         int newEventMaxCapacity = newEventIsMarkedSeats
                 ? 0
@@ -681,22 +677,33 @@ public class EventEditActivity extends ManagementScreen {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, final int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
             Uri selectedImageUri = data.getData();
 
-            // Get a reference to store file at event_posters/<FILENAME>
-            StorageReference photoRef = eventPostersStorageReference.child(selectedImageUri.getLastPathSegment());
+            MediaManager.get().upload(selectedImageUri)
+                    .unsigned(Utils.CLOUDINARY_PRESET)
+                    .callback(new UploadCallback() {
+                        @Override
+                        public void onStart(String requestId) {}
 
-            // Upload file to Firebase Storage
-            photoRef.putFile(selectedImageUri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    loadEventPoster(taskSnapshot.getDownloadUrl());
-                }
-            });
+                        @Override
+                        public void onProgress(String requestId, long bytes, long totalBytes) {}
+
+                        @Override
+                        public void onSuccess(String requestId, Map resultData) {
+                            loadEventPoster(Uri.parse(resultData.get("url").toString()).getLastPathSegment());
+                        }
+
+                        @Override
+                        public void onError(String requestId, ErrorInfo error) {}
+
+                        @Override
+                        public void onReschedule(String requestId, ErrorInfo error) {}
+                    })
+                    .dispatch();
         }
     }
 
@@ -715,10 +722,10 @@ public class EventEditActivity extends ManagementScreen {
         }
     }
 
-    private void loadEventPoster(Uri photoUri) {
+    private void loadEventPoster(String photoUri) {
         binding.ivEventPoster.setVisibility(View.VISIBLE);
         Glide.with(binding.ivEventPoster.getContext())
-                .load(photoUri)
+                .load(Utils.getTransformedCloudinaryImageUrl(50, 50, photoUri, "thumb"))
                 .into(binding.ivEventPoster);
         eventPosterUri = photoUri;
     }

@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //MediaManager.init(this);
+        MediaManager.init(this);
 
         // Initialize references to views
         cbFilter = findViewById(R.id.cb_filter);

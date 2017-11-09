@@ -4,6 +4,9 @@ import android.text.SpannableString;
 import android.text.style.LeadingMarginSpan;
 import android.widget.TextView;
 
+import com.cloudinary.Transformation;
+import com.cloudinary.android.MediaManager;
+
 import app.com.almogrubi.idansasson.gettix.R;
 
 /**
@@ -35,6 +38,14 @@ public class Utils {
             default:
                 return -1;
         }
+    }
+
+    public static String CLOUDINARY_PRESET = "idansass_preset";
+
+    public static String getTransformedCloudinaryImageUrl(int width, int height, String imageUrl, String cropMode) {
+        return MediaManager.get().url()
+                .transformation(new Transformation().width(width).height(height).crop(cropMode).gravity("faces"))
+                .generate(imageUrl);
     }
 
     // Useful for validation of text input views (EditText, AutoCompleteTextView etc.)

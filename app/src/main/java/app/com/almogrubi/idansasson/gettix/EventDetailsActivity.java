@@ -13,14 +13,11 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.cloudinary.Transformation;
-import com.cloudinary.android.MediaManager;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
 
 import app.com.almogrubi.idansasson.gettix.databinding.ActivityEventDetailsBinding;
 import app.com.almogrubi.idansasson.gettix.entities.Event;
@@ -85,14 +82,9 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     private void bindEventToUI(final Event event) {
 
-        Uri posterUri = Uri.parse(event.getPosterUri());
         Glide.with(binding.ivEventPoster.getContext())
-                .load(posterUri)
+                .load(Utils.getTransformedCloudinaryImageUrl(450, 200, event.getPosterUri(), "fill"))
                 .into(binding.ivEventPoster);
-
-//        MediaManager.get().url()
-//                .transformation(new Transformation().width(100).height(150).crop("fill").gravity("faces"))
-//                .generate("Banai288X245_part7_gnrs2c.jpg");
 
         binding.tvEventTitle.setText(Utils.createIndentedText(event.getTitle(),
                 Utils.FIRST_LINE_INDENT, Utils.PARAGRAPH_INDENT));
