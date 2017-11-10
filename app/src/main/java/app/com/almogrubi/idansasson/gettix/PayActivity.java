@@ -62,6 +62,7 @@ public class PayActivity extends AppCompatActivity {
         credit = (EditText) findViewById(R.id.credit_edit_text);
         expiration = (EditText) findViewById(R.id.expiration_edit_text);
         CVV = (EditText) findViewById(R.id.CVV_edit_text);
+        next = (Button) findViewById(R.id.approveButton);
 
 
         // Initialization of all needed Firebase database references
@@ -84,7 +85,30 @@ public class PayActivity extends AppCompatActivity {
 
                             // If we reached here then the existing event was found, we'll bind it to UI
                             event = dataSnapshot.getValue(Event.class);
+                            Log.i("almog", String.valueOf(order.getTicketsNum()));
+                            //dosnt get event price
+                            Log.i("almog", String.valueOf(event.getPrice()));
 
+
+                            detailText.setText(String.format("רכישת %d כרטיסים: %d ₪", order.getTicketsNum(),order.getTicketsNum()*event.getPrice()));
+
+                            next.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v){
+                                    Intent intent = new Intent(v.getContext(), FinishingActivity.class);
+
+                                    order.setCustomerName(name.getText().toString());
+                                    order.setCustomerPhone(phone.getText().toString());
+                                    order.setCustomerEmail(email.getText().toString());
+                                    order.setCustomerCreditCard(credit.getText().toString());
+
+                                    intent.putExtra("orderObject", order);
+                                    intent.putExtra("eventUid", event.getUid());
+                                    startActivity(intent);
+
+                                }
+                            }
+                            );
                         }
 
                         @Override
@@ -95,32 +119,6 @@ public class PayActivity extends AppCompatActivity {
 
         }
 
-        //TODO fix price query
-        event.setPrice(10);
-
-        Log.i("almog", String.valueOf(order.getTicketsNum()));
-        //dosnt get event price
-        Log.i("almog", String.valueOf(event.getPrice()));
-
-        detailText.setText(String.format("רכישת %d כרטיסים: %d ₪", order.getTicketsNum(),order.getTicketsNum()*event.getPrice()));
-
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v){
-                Intent intent = new Intent(v.getContext(), FinishingActivity.class);
-
-                order.setCustomerName(name.getText().toString());
-                order.setCustomerPhone(phone.getText().toString());
-                order.setCustomerEmail(email.getText().toString());
-                order.setCustomerCreditCard(credit.getText().toString());
-
-                intent.putExtra("orderObject", order);
-                intent.putExtra("eventUid", event.getUid());
-                startActivity(intent);
-
-            }
-         }
-        );
 
     }
 

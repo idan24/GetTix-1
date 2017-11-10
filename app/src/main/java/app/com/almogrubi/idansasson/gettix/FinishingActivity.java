@@ -49,6 +49,7 @@ public class FinishingActivity extends AppCompatActivity {
 
                             // If we reached here then the existing event was found, we'll bind it to UI
                             event = dataSnapshot.getValue(Event.class);
+                            
                         }
 
                         @Override

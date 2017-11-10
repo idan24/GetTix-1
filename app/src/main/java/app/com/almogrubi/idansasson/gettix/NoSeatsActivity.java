@@ -22,17 +22,6 @@ public class NoSeatsActivity extends AppCompatActivity {
 
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference eventsDatabaseReference;
-    private DatabaseReference hallsDatabaseReference;
-    private DatabaseReference hallSeatsDatabaseReference;
-    private DatabaseReference hallEventsDatabaseReference;
-    private DatabaseReference hallEventDatesDatabaseReference;
-    private DatabaseReference dateEventsDatabaseReference;
-    private DatabaseReference cityEventsDatabaseReference;
-    private DatabaseReference categoryEventsDatabaseReference;
-    private DatabaseReference categoryDateEventsDatabaseReference;
-    private DatabaseReference categoryCityEventsDatabaseReference;
-    private DatabaseReference categoryHallEventsDatabaseReference;
-    private DatabaseReference eventSeatsDatabaseReference;
 
     private Event event;
 
@@ -71,9 +60,7 @@ public class NoSeatsActivity extends AppCompatActivity {
 
                         // If we reached here then the existing event was found, we'll bind it to UI
                         event = dataSnapshot.getValue(Event.class);
-
                     }
-
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         abort();
@@ -95,7 +82,6 @@ public class NoSeatsActivity extends AppCompatActivity {
         }
 
         );
-
         remove.setOnClickListener(new View.OnClickListener()
            {
                 public void onClick(View v){
@@ -110,11 +96,11 @@ public class NoSeatsActivity extends AppCompatActivity {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), PayActivity.class);
-                intent.putExtra("eventUid", event.getUid());
-                intent.putExtra("orderObject", order);
+                Intent payActivity = new Intent(v.getContext(), PayActivity.class);
+                payActivity.putExtra("eventUid", event.getUid());
+                payActivity.putExtra("orderObject", order);
 
-                startActivity(intent);
+                startActivity(payActivity);
 
             }
         }
