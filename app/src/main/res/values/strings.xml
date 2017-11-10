@@ -21,9 +21,12 @@
     <!-- for management screens -->
     <string name="action_management_title">למסכי ניהול והפקה</string>
     <string name="action_sign_out_title">התנתק...</string>
-    <string name="action_add_event">אירוע חדש</string>
+    <string name="action_add_item">צור חדש</string>
     <string name="your_events_label">האירועים שלך:</string>
-    
+    <string name="events_button">מופעים</string>
+    <string name="halls_button">אולמות</string>
+    <string name="reports_button">דו""חות</string>
+
     <!-- for event edit activity -->
     <string name="event_create_title">יצירת מופע</string>
     <string name="event_edit_title">עריכת מופע</string>
@@ -41,5 +44,16 @@
     <string name="event_max_capacity_label">תכולה מירבית:</string>
     <string name="event_sold_out_label">סולד אאוט</string>
     <string name="save_event_button">שמור</string>
-    
+
+    <!-- for hall edit activity -->
+    <string name="hall_create_title">יצירת אולם</string>
+    <string name="hall_edit_title">עריכת אולם</string>
+    <string name="hall_name_label">שם האולם:</string>
+    <string name="hall_address_label">כתובת:</string>
+    <string name="hall_city_label">עיר:</string>
+    <string name="hall_official_website_label">אתר רשמי:</string>
+    <string name="hall_rows_label">מספר שורות:</string>
+    <string name="hall_columns_label">מספר מושבים בשורה:</string>
+    <string name="save_hall_button">שמור</string>
+
 </resources>

@@ -148,7 +148,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         } else if (event.getLeftTicketsNum() < 100) {
             binding.tvTicketsLeft.setText(String.format("נותרו %s כרטיסים למופע", event.getLeftTicketsNum()));
         } else {
-            binding.tvTicketsLeft.setText("נותרו כרטיסים למופע!");
+            binding.tvTicketsLeft.setText("נותרו כרטיסים למופע !");
         }
     }
 

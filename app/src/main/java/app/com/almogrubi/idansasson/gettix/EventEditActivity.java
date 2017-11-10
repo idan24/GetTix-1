@@ -733,7 +733,7 @@ public class EventEditActivity extends ManagementScreen {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_manager, menu);
-        menu.findItem(R.id.action_add_event).setVisible(false);
+        menu.findItem(R.id.action_add_item).setVisible(false);
         return true;
     }
 }

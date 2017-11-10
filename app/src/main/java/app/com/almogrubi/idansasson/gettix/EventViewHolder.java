@@ -34,11 +34,8 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
     private ImageView ivEventPoster;
     private ImageView ivEventSoldout;
 
-    public View layout;
-
     public EventViewHolder(View itemView) {
         super(itemView);
-        layout = itemView;
         this.tvEventTitle = itemView.findViewById(R.id.tv_event_item_title);
         this.tvEventDateTime = itemView.findViewById(R.id.tv_event_item_datetime);
         this.tvEventHall = itemView.findViewById(R.id.tv_event_item_hall);

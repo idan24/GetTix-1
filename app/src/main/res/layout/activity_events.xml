@@ -8,16 +8,17 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <TextView
-        android:id="@+id/tv_welcome_manager"
+        android:id="@+id/tv_events_headline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="@style/TextAppearance.AppCompat.Headline"
-        tools:text="שלום, עידן ששון"
+        android:text="@string/events_button"
+        android:textStyle="italic"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp" />
+        android:layout_marginEnd="@dimen/tab_margin"
+        android:layout_marginStart="@dimen/tab_margin" />
 
     <TextView
         android:id="@+id/tv_your_events"
@@ -30,8 +31,8 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="@dimen/tab_margin"
+        android:layout_marginBottom="@dimen/tab_margin"
         android:background="@color/colorPrimary" />
 
     <ScrollView

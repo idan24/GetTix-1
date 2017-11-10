@@ -63,16 +63,32 @@ public class Hall implements Serializable {
         return columns;
     }
 
-    // We override equals() to that we can compare Halls quickly with no use of lambda expressions
-    // TODO: remove if unused
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Hall) {
-            Hall hall = (Hall) obj;
-            return this.name.equals(hall.getName());
-        }
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 
-        return false;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setOfficialWebsite(String officialWebsite) {
+        this.officialWebsite = officialWebsite;
+    }
+
+    public void setRows(int rows) {
+        this.rows = rows;
+    }
+
+    public void setColumns(int columns) {
+        this.columns = columns;
     }
 
     @Override

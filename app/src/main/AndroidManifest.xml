@@ -19,13 +19,28 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".EventsActivity"
+            android:name=".ManagementActivity"
             android:label="@string/events_screen_title"
-            android:parentActivityName=".MainActivity"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".EventsActivity"
+            android:label="@string/events_button"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ManagementActivity" />
         <activity
             android:name=".EventEditActivity"
-            android:parentActivityName=".EventsActivity"></activity>
+            android:label="@string/event_edit_title"
+            android:parentActivityName=".EventsActivity" />
+        <activity
+            android:name=".HallsActivity"
+            android:label="@string/halls_button"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ManagementActivity" />
+        <activity
+            android:name=".HallEditActivity"
+            android:label="@string/hall_edit_title"
+            android:parentActivityName=".HallsActivity" />
         <activity
             android:name=".EventDetailsActivity"
             android:label="@string/title_activity_detail"
@@ -43,7 +58,7 @@
 
         <meta-data
             android:name="CLOUDINARY_URL"
-            android:value="cloudinary://idansass"/>
+            android:value="cloudinary://idansass" />
     </application>
 
 </manifest>

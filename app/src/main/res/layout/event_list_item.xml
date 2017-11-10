@@ -34,7 +34,7 @@
         android:id="@+id/tv_event_item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="@dimen/tab_margin"
         android:gravity="right"
         android:textDirection="anyRtl"
         android:textSize="18sp"

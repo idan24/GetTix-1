@@ -520,7 +520,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_management) {
-            startActivity(new Intent(this, EventsActivity.class));
+            startActivity(new Intent(this, ManagementActivity.class));
             return true;
         }
 
