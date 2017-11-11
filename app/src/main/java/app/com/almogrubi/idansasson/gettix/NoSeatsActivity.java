@@ -1,6 +1,7 @@
 package app.com.almogrubi.idansasson.gettix;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -20,7 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import app.com.almogrubi.idansasson.gettix.entities.Event;
-import app.com.almogrubi.idansasson.gettix.entities.Order;
+import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 
 
 public class NoSeatsActivity extends AppCompatActivity {
@@ -29,12 +30,14 @@ public class NoSeatsActivity extends AppCompatActivity {
     private DatabaseReference eventsDatabaseReference;
 
     private Event event;
+    private boolean isCouponUsed = false;
 
     private TextView tvEventTitle;
     private ImageView ivPlus;
     private ImageView ivMinus;
     private TextView tvTicketsNum;
     private TextView tvFriendlyTicketsNum;
+    private TextView tvCouponCode;
     private EditText etCouponCode;
     private Button btCheckCoupon;
     private Button btNext;
@@ -54,6 +57,7 @@ public class NoSeatsActivity extends AppCompatActivity {
         ivMinus = findViewById(R.id.iv_minus);
         tvTicketsNum = findViewById(R.id.tv_tickets_num);
         tvFriendlyTicketsNum = findViewById(R.id.tv_friendly_tickets_num);
+        tvCouponCode = findViewById(R.id.tv_coupon_code);
         etCouponCode = findViewById(R.id.et_coupon_code);
         btCheckCoupon = findViewById(R.id.bt_check_coupon);
         btNext = findViewById(R.id.bt_next);
@@ -104,25 +108,34 @@ public class NoSeatsActivity extends AppCompatActivity {
                 decrementTicketsNum();
             }
         });
-//
-//        next.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent payActivity = new Intent(v.getContext(), PayActivity.class);
-//                payActivity.putExtra("eventUid", event.getUid());
-//                payActivity.putExtra("orderObject", order);
-//
-//                startActivity(payActivity);
-//
-//            }
-//        }
 
+        btCheckCoupon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isEnteredCouponCodeValid())
+                    onValidCouponEntered();
+            }
+        });
+
+        btNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: this is where we create Order in the database, and update event's leftTicketsNum
+                // TODO: this is also where we create a service to return the tickets if after 10 min order is
+                // not finished
+
+                Intent paymentActivity = new Intent(v.getContext(), PaymentActivity.class);
+                paymentActivity.putExtra("eventUid", event.getUid());
+                //paymentActivity.putExtra("orderUid", newOrderUid);
+                startActivity(paymentActivity);
+            }
+        });
     }
 
     private void abort() {
         String eventNotFoundErrorMessage = "המופע לא נמצא, נסה שנית";
 
-        Toast.makeText(this, eventNotFoundErrorMessage, Toast.LENGTH_SHORT);
+        Toast.makeText(this, eventNotFoundErrorMessage, Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, EventDetailsActivity.class));
     }
 
@@ -143,9 +156,45 @@ public class NoSeatsActivity extends AppCompatActivity {
     }
 
     private void updateTicketsNumUI(int ticketsNums) {
-        int newTotalPrice = ticketsNums * event.getPrice();
+        int newTotalPrice = isCouponUsed
+                ? ticketsNums * event.getDiscountedPrice()
+                : ticketsNums * event.getPrice();
         tvTicketsNum.setText(String.valueOf(ticketsNums));
         tvFriendlyTicketsNum.setText(String.format("רכישת %d כרטיסים: %d ₪", ticketsNums, newTotalPrice));
+    }
+
+    private boolean isEnteredCouponCodeValid() {
+        final String emptyFieldErrorMessage = "יש למלא קוד קופון";
+        final String wrongCodeErrorMessage = "קוד זה אינו תקף עבור המופע";
+
+        if (Utils.isTextViewEmpty(etCouponCode)) {
+            etCouponCode.setError(emptyFieldErrorMessage);
+            return false;
+        }
+
+        int enteredCode = Integer.parseInt(etCouponCode.getText().toString());
+        if (enteredCode != this.event.getCouponCode()) {
+            etCouponCode.setError(wrongCodeErrorMessage);
+            return false;
+        }
+
+        return true;
+    }
+
+    private void onValidCouponEntered() {
+        final String validCouponMessage = "הקופון הוזן בהצלחה!";
+        Toast.makeText(NoSeatsActivity.this, validCouponMessage, Toast.LENGTH_LONG).show();
+
+        // Should be set before updating tickets num UI
+        isCouponUsed = true;
+
+        updateTicketsNumUI(Integer.parseInt(tvTicketsNum.getText().toString()));
+
+        tvCouponCode.setTextColor(Color.GRAY);
+        etCouponCode.setEnabled(false);
+        btCheckCoupon.setEnabled(false);
+        btCheckCoupon.setBackgroundColor(Color.LTGRAY);
+        btCheckCoupon.setTextColor(Color.GRAY);
     }
 
     @Override

@@ -114,7 +114,7 @@ public class HallEditActivity extends ManagementScreen {
     private void abort() {
         String hallNotFoundErrorMessage = "האולם לא נמצא, נסה שנית";
 
-        Toast.makeText(HallEditActivity.this, hallNotFoundErrorMessage, Toast.LENGTH_SHORT);
+        Toast.makeText(HallEditActivity.this, hallNotFoundErrorMessage, Toast.LENGTH_SHORT).show();
         startActivity(new Intent(HallEditActivity.this, HallsActivity.class));
     }
 
@@ -197,7 +197,7 @@ public class HallEditActivity extends ManagementScreen {
         // Create hall seat objects in firebase
         createHallSeats(newHall);
 
-        Toast.makeText(this, "האולם נשמר בהצלחה!", Toast.LENGTH_SHORT);
+        Toast.makeText(this, "האולם נשמר בהצלחה!", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, HallsActivity.class));
     }
 
@@ -209,7 +209,7 @@ public class HallEditActivity extends ManagementScreen {
         // Create hall seat objects in firebase
         createHallSeats(updatedHall);
 
-        Toast.makeText(this, "השינויים נשמרו בהצלחה!", Toast.LENGTH_SHORT);
+        Toast.makeText(this, "השינויים נשמרו בהצלחה!", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, HallsActivity.class));
     }
 

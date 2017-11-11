@@ -140,22 +140,27 @@ public class EventDetailsActivity extends AppCompatActivity {
             }
         });
 
+        final String noTicketsLeft = "לא נותרו כרטיסים למופע זה";
+        final String someTicketsLeft = "נותרו %d כרטיסים למופע";
+        final String manyTicketsLeft = "נותרו כרטיסים למופע !";
+
         if (event.isSoldOut()) {
-            Toast.makeText(this, "לא נותרו כרטיסים למופע זה", Toast.LENGTH_LONG);
             binding.ivEventSoldout.setVisibility(View.VISIBLE);
-            binding.tvTicketsLeft.setText("לא נותרו כרטיסים למופע זה.");
+            binding.tvTicketsLeft.setText(noTicketsLeft + ".");
             binding.btBookTickets.setVisibility(View.GONE);
+            Toast.makeText(EventDetailsActivity.this, noTicketsLeft, Toast.LENGTH_LONG).show();
+
         } else if (event.getLeftTicketsNum() < 100) {
-            binding.tvTicketsLeft.setText(String.format("נותרו %s כרטיסים למופע", event.getLeftTicketsNum()));
+            binding.tvTicketsLeft.setText(String.format(someTicketsLeft, event.getLeftTicketsNum()));
         } else {
-            binding.tvTicketsLeft.setText("נותרו כרטיסים למופע !");
+            binding.tvTicketsLeft.setText(manyTicketsLeft);
         }
     }
 
     private void abort() {
         String eventNotFoundErrorMessage = "המופע לא נמצא, נסה שנית";
 
-        Toast.makeText(this, eventNotFoundErrorMessage, Toast.LENGTH_SHORT);
+        Toast.makeText(this, eventNotFoundErrorMessage, Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, MainActivity.class));
     }
 

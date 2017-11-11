@@ -1,14 +1,11 @@
 package app.com.almogrubi.idansasson.gettix;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TableRow;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -18,13 +15,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import app.com.almogrubi.idansasson.gettix.entities.Event;
-import app.com.almogrubi.idansasson.gettix.entities.EventSeat;
 import app.com.almogrubi.idansasson.gettix.entities.Order;
-import app.com.almogrubi.idansasson.gettix.entities.Seat;
 
 /**
  * Created by almogrubi on 10/14/17.
@@ -139,7 +131,7 @@ public class SeatsActivity extends AppCompatActivity{
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), PayActivity.class);
+                Intent intent = new Intent(v.getContext(), PaymentActivity.class);
                 intent.putExtra("orderObject", order);
                 intent.putExtra("eventUid", event.getUid());
                 startActivity(intent);
@@ -162,7 +154,7 @@ public class SeatsActivity extends AppCompatActivity{
     private void abort() {
         String eventNotFoundErrorMessage = "המופע לא נמצא, נסה שנית";
 
-        Toast.makeText(this, eventNotFoundErrorMessage, Toast.LENGTH_SHORT);
+        Toast.makeText(this, eventNotFoundErrorMessage, Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, MainActivity.class));
     }
 

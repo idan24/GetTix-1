@@ -27,7 +27,7 @@ import app.com.almogrubi.idansasson.gettix.entities.Order;
  * Created by almogrubi on 10/20/17.
  */
 
-public class PayActivity extends AppCompatActivity {
+public class PaymentActivity extends AppCompatActivity {
 
     //objects from intent
     private Event event;
@@ -130,7 +130,7 @@ public class PayActivity extends AppCompatActivity {
     private void abort() {
         String eventNotFoundErrorMessage = "המופע לא נמצא, נסה שנית";
 
-        Toast.makeText(this, eventNotFoundErrorMessage, Toast.LENGTH_SHORT);
+        Toast.makeText(this, eventNotFoundErrorMessage, Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, MainActivity.class));
     }
 

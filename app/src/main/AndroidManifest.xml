@@ -55,7 +55,7 @@
             android:label="@string/title_activity_seats"
             android:parentActivityName=".EventDetailsActivity" />
         <activity
-            android:name=".PayActivity"
+            android:name=".PaymentActivity"
             android:label="@string/title_activity_pay" />
         <activity android:name=".FinishingActivity" />
 

@@ -72,7 +72,7 @@ public class FinishingActivity extends AppCompatActivity {
     private void abort() {
         String eventNotFoundErrorMessage = "המופע לא נמצא, נסה שנית";
 
-        Toast.makeText(this, eventNotFoundErrorMessage, Toast.LENGTH_SHORT);
+        Toast.makeText(this, eventNotFoundErrorMessage, Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, MainActivity.class));
     }
 

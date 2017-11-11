@@ -199,7 +199,7 @@ public class EventEditActivity extends ManagementScreen {
     private void abort() {
         String eventNotFoundErrorMessage = "המופע לא נמצא, נסה שנית";
 
-        Toast.makeText(EventEditActivity.this, eventNotFoundErrorMessage, Toast.LENGTH_SHORT);
+        Toast.makeText(EventEditActivity.this, eventNotFoundErrorMessage, Toast.LENGTH_SHORT).show();
         startActivity(new Intent(EventEditActivity.this, EventsActivity.class));
     }
 
@@ -446,7 +446,7 @@ public class EventEditActivity extends ManagementScreen {
                 // If we have a non-null result, the hall is already occupied on this date
                 if (dataSnapshot != null && dataSnapshot.exists() && dataSnapshot.getValue() != null) {
                     binding.etEventDate.setError(hallDateUniqueErrorMessage);
-                    Toast.makeText(EventEditActivity.this, hallDateUniqueErrorMessage, Toast.LENGTH_LONG);
+                    Toast.makeText(EventEditActivity.this, hallDateUniqueErrorMessage, Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -505,7 +505,7 @@ public class EventEditActivity extends ManagementScreen {
                 .setValue(true);
 
 
-        Toast.makeText(this, "המופע נשמר בהצלחה!", Toast.LENGTH_SHORT);
+        Toast.makeText(this, "המופע נשמר בהצלחה!", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, EventsActivity.class));
     }
 
@@ -595,7 +595,7 @@ public class EventEditActivity extends ManagementScreen {
         updateEventInIndexedTable(categoryHallEventsDatabaseReference,
                 updatedEvent.getCategory() + INDEXED_KEY_DIVIDER + updatedEvent.getEventHall().getUid(), diminishedEvent);
 
-        Toast.makeText(this, "השינויים נשמרו בהצלחה!", Toast.LENGTH_SHORT);
+        Toast.makeText(this, "השינויים נשמרו בהצלחה!", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, EventsActivity.class));
     }
 
