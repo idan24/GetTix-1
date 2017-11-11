@@ -20,7 +20,6 @@ import com.bumptech.glide.Glide;
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -320,6 +319,11 @@ public class EventEditActivity extends ManagementScreen {
         binding.etEventPerformer.setText(this.editedEvent.getPerformer());
         binding.etEventPrice.setText(String.valueOf(this.editedEvent.getPrice()));
 
+        if (this.editedEvent.getCouponCode() != 0) {
+            binding.etEventCouponCode.setText(String.valueOf(this.editedEvent.getCouponCode()));
+            binding.etEventDiscountedPrice.setText(String.valueOf(this.editedEvent.getDiscountedPrice()));
+        }
+
         loadEventPoster(this.editedEvent.getPosterUri());
 
         binding.cbEventMarkedSeats.setChecked(this.editedEvent.isMarkedSeats());
@@ -372,6 +376,7 @@ public class EventEditActivity extends ManagementScreen {
 
     private boolean checkInstantInputValidity() {
         final String emptyFieldErrorMessage = "יש למלא את השדה";
+        final String invalidDiscountedPrice = "יש למלא מחיר מוזל תקין עבור הקופון";
         final String posterErrorMessage = "יש להעלות פוסטר למופע";
         boolean isValid = true;
 
@@ -410,6 +415,20 @@ public class EventEditActivity extends ManagementScreen {
         if (eventPosterUri == null) {
             binding.btLoadPoster.setError(posterErrorMessage);
             isValid = false;
+        }
+        // If producer entered a coupon code for the event
+        if (!Utils.isTextViewEmpty(binding.etEventCouponCode)) {
+            // Discounted price must be filled accordingly
+            if (Utils.isTextViewEmpty(binding.etEventDiscountedPrice)) {
+                binding.etEventDiscountedPrice.setError(invalidDiscountedPrice);
+                isValid = false;
+            }
+            // Discounted price should not be higher the original price
+            else if (Integer.parseInt(binding.etEventDiscountedPrice.getText().toString()) >
+                     Integer.parseInt(binding.etEventPrice.getText().toString())) {
+                binding.etEventDiscountedPrice.setError(invalidDiscountedPrice);
+                isValid = false;
+            }
         }
 
         return isValid;
@@ -601,6 +620,14 @@ public class EventEditActivity extends ManagementScreen {
         String newEventDescription = binding.etEventDescription.getText().toString();
         String newEventPerformer = binding.etEventPerformer.getText().toString();
         int newEventPrice = Integer.parseInt(binding.etEventPrice.getText().toString());
+        int newEventCouponCode = 0;
+        int newEventDiscountedPrice = 0;
+
+        if (!Utils.isTextViewEmpty(binding.etEventCouponCode)) {
+            newEventCouponCode = Integer.parseInt(binding.etEventCouponCode.getText().toString());
+            newEventDiscountedPrice = Integer.parseInt(binding.etEventDiscountedPrice.getText().toString());
+        }
+
         String newEventPosterUri = eventPosterUri;
         boolean newEventIsMarkedSeats = binding.cbEventMarkedSeats.isChecked();
         int newEventMaxCapacity = newEventIsMarkedSeats
@@ -609,8 +636,8 @@ public class EventEditActivity extends ManagementScreen {
         String newEventProducerId = EventEditActivity.super.user.getUid();
         return new Event(eventUid, newEventTitle, newEventCategory, newEventHall, newEventCity,
                 newEventDate, newEventHour, newEventDuration, newEventDescription, newEventPerformer,
-                newEventPrice, newEventPosterUri, newEventIsMarkedSeats, newEventMaxCapacity,
-                newEventProducerId);
+                newEventPrice, newEventCouponCode, newEventDiscountedPrice, newEventPosterUri,
+                newEventIsMarkedSeats, newEventMaxCapacity, newEventProducerId);
     }
 
     private Event getDiminishedEventFromEvent(Event event) {

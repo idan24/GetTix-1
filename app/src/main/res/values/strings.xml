@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">GetTix</string>
     <string name="title_activity_detail">פרטי מופע</string>
-    <string name="title_activity_sits">SitsActivity</string>
+    <string name="title_activity_seats">הזמנת כרטיסים</string>
+    <string name="title_activity_no_seats">הזמנת כרטיסים</string>
     <string name="title_activity_pay">PayActivity</string>
     <string name="events_screen_title">מסך מפיק</string>
 
@@ -17,6 +18,12 @@
 
     <!-- for events details activity -->
     <string name="book_tickets_button">הזמן כרטיסים</string>
+
+    <!-- for seats / no seats activity -->
+    <string name="enter_coupon_code_label">אם ברשותך קוד קופון הזן אותו כעת:</string>
+    <string name="coupon_code_hint">קוד קופון</string>
+    <string name="check_coupon_button">שלח</string>
+    <string name="next_button">הבא</string>
 
     <!-- for management screens -->
     <string name="action_management_title">למסכי ניהול והפקה</string>
@@ -39,6 +46,8 @@
     <string name="event_description_label">תיאור המופע:</string>
     <string name="event_performer_label">שם האמן המבצע:</string>
     <string name="event_price_label">מחיר כרטיס:</string>
+    <string name="event_coupon_code_label">קוד קופון (אם יש):</string>
+    <string name="event_discounted_price_label">מחיר כרטיס מוזל:</string>
     <string name="event_poster_label">להעלאת פוסטר...</string>
     <string name="event_marked_seats_label">אירוע עם מקומות מסומנים</string>
     <string name="event_max_capacity_label">תכולה מירבית:</string>

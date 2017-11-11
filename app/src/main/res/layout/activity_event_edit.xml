@@ -12,7 +12,7 @@
             android:layout_marginStart="4dp"
             android:layoutDirection="rtl"
             android:columnCount="2"
-            android:rowCount="15">
+            android:rowCount="17">
 
             <TextView
                 android:id="@+id/tv_event_edit_title"
@@ -207,10 +207,50 @@
                 android:textSize="@dimen/management_text_size"
                 style="@style/AppEditTextStyle" />
 
+            <TextView
+                android:id="@+id/tv_event_coupon_code"
+                android:text="@string/event_coupon_code_label"
+                android:layout_row="10"
+                android:layout_column="0"
+                android:textSize="@dimen/management_text_size"
+                style="@style/EditScreenTextViewStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/et_event_coupon_code"
+                android:layout_row="10"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:inputType="number"
+                android:digits="0123456789"
+                android:textSize="@dimen/management_text_size"
+                style="@style/AppEditTextStyle" />
+
+            <TextView
+                android:id="@+id/tv_event_discounted_price"
+                android:text="@string/event_discounted_price_label"
+                android:layout_row="11"
+                android:layout_column="0"
+                android:textSize="@dimen/management_text_size"
+                style="@style/EditScreenTextViewStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/et_event_discounted_price"
+                android:layout_row="11"
+                android:layout_column="1"
+                android:layout_gravity="right"
+                android:inputType="number"
+                android:digits="0123456789"
+                android:textSize="@dimen/management_text_size"
+                style="@style/AppEditTextStyle" />
+
             <Button
                 android:id="@+id/bt_load_poster"
                 android:text="@string/event_poster_label"
-                android:layout_row="10"
+                android:layout_row="12"
                 android:layout_column="0"
                 android:textSize="@dimen/management_text_size"
                 style="@style/AppButtonStyle"
@@ -220,7 +260,7 @@
 
             <ImageView
                 android:id="@+id/iv_event_poster"
-                android:layout_row="10"
+                android:layout_row="12"
                 android:layout_column="1"
                 android:layout_gravity="center_vertical"
                 android:layout_width="40dp"
@@ -229,7 +269,7 @@
             <CheckBox
                 android:id="@+id/cb_event_marked_seats"
                 android:text="@string/event_marked_seats_label"
-                android:layout_row="11"
+                android:layout_row="13"
                 android:layout_column="0"
                 android:layout_columnSpan="2"
                 android:textSize="@dimen/management_text_size"
@@ -241,7 +281,7 @@
                 android:id="@+id/tv_event_max_capacity"
                 android:text="@string/event_max_capacity_label"
                 android:textSize="@dimen/management_text_size"
-                android:layout_row="12"
+                android:layout_row="14"
                 android:layout_column="0"
                 style="@style/EditScreenTextViewStyle"
                 android:layout_width="wrap_content"
@@ -249,7 +289,7 @@
 
             <EditText
                 android:id="@+id/et_event_max_capacity"
-                android:layout_row="12"
+                android:layout_row="14"
                 android:layout_column="1"
                 android:layout_gravity="right"
                 android:inputType="number"
@@ -261,7 +301,7 @@
                 android:id="@+id/cb_event_sold_out"
                 android:text="@string/event_sold_out_label"
                 android:enabled="false"
-                android:layout_row="13"
+                android:layout_row="15"
                 android:layout_column="0"
                 android:layout_columnSpan="2"
                 android:textSize="@dimen/management_text_size"
@@ -270,7 +310,7 @@
 
             <Button
                 android:id="@+id/bt_save_event"
-                android:layout_row="14"
+                android:layout_row="16"
                 android:layout_marginBottom="4dp"
                 android:layout_column="0"
                 android:layout_columnSpan="2"

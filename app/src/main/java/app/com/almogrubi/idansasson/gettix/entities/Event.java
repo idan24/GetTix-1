@@ -23,6 +23,8 @@ public class Event implements Serializable {
     private String description;
     private String performer;
     private int price;
+    private int couponCode;
+    private int discountedPrice;
     private String posterUri;
     private boolean isMarkedSeats;
     private int maxCapacity;
@@ -59,7 +61,8 @@ public class Event implements Serializable {
 
     public Event(String uid, String title, DataUtils.Category category, EventHall eventHall, String city,
                  String date, String hour, int duration, String description, String performer, int price,
-                 String posterUri, boolean isMarkedSeats, int maxCapacity, String producerId) {
+                 int couponCode, int discountedPrice, String posterUri, boolean isMarkedSeats, int maxCapacity,
+                 String producerId) {
         this.uid = uid;
         this.title = title;
         this.category = category;
@@ -71,6 +74,8 @@ public class Event implements Serializable {
         this.description = description;
         this.performer = performer;
         this.price = price;
+        this.couponCode = couponCode;
+        this.discountedPrice = discountedPrice;
         this.posterUri = posterUri;
         this.isMarkedSeats = isMarkedSeats;
         this.maxCapacity = maxCapacity;
@@ -148,6 +153,14 @@ public class Event implements Serializable {
         return this.price;
     }
 
+    public int getCouponCode() {
+        return this.couponCode;
+    }
+
+    public int getDiscountedPrice() {
+        return this.discountedPrice;
+    }
+
     public boolean isMarkedSeats() { return this.isMarkedSeats; }
 
     public int getMaxCapacity() {
@@ -202,6 +215,14 @@ public class Event implements Serializable {
 
     public void setPrice(int price) {
         this.price = price;
+    }
+
+    public void setCouponCode(int couponCode) {
+        this.couponCode = couponCode;
+    }
+
+    public void setDiscountedPrice(int discountedPrice) {
+        this.discountedPrice = discountedPrice;
     }
 
     public void setPosterUri(String posterUri) {
