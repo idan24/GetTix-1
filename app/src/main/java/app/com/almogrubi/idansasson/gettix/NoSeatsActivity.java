@@ -20,7 +20,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import app.com.almogrubi.idansasson.gettix.entities.Event;
+import app.com.almogrubi.idansasson.gettix.entities.Order;
+import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
 import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 
 
@@ -28,6 +33,7 @@ public class NoSeatsActivity extends AppCompatActivity {
 
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference eventsDatabaseReference;
+    private DatabaseReference ordersDatabaseReference;
 
     private Event event;
     private boolean isCouponUsed = false;
@@ -65,6 +71,7 @@ public class NoSeatsActivity extends AppCompatActivity {
         // Initialize all needed Firebase database references
         firebaseDatabase = FirebaseDatabase.getInstance();
         eventsDatabaseReference = firebaseDatabase.getReference().child("events");
+        ordersDatabaseReference = firebaseDatabase.getReference().child("orders");
 
         Intent intent = this.getIntent();
         // Lookup the event in the database and bind its data to UI
@@ -120,13 +127,30 @@ public class NoSeatsActivity extends AppCompatActivity {
         btNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: this is where we create Order in the database, and update event's leftTicketsNum
+                // Create a new order in database
+                final String newOrderUid = ordersDatabaseReference.push().getKey();
+                Order newOrder = createNewOrderFromUI(newOrderUid);
+                // orders / $ eventUid / $ newOrderUid / newOrder
+                ordersDatabaseReference.child(event.getUid()).child(newOrderUid).setValue(newOrder);
+
+                int newLeftTicketsNum = event.getLeftTicketsNum() - newOrder.getTicketsNum();
+                Map newEventData = new HashMap();
+                newEventData.put("leftTicketsNum", newLeftTicketsNum);
+
+                if (newLeftTicketsNum == 0) {
+                    newEventData.put("soldOut", true);
+                }
+
+                eventsDatabaseReference.child(event.getUid()).updateChildren(newEventData);
+
                 // TODO: this is also where we create a service to return the tickets if after 10 min order is
                 // not finished
 
                 Intent paymentActivity = new Intent(v.getContext(), PaymentActivity.class);
                 paymentActivity.putExtra("eventUid", event.getUid());
-                //paymentActivity.putExtra("orderUid", newOrderUid);
+                paymentActivity.putExtra("eventTitle", event.getTitle());
+                paymentActivity.putExtra("eventMarkedSeats", false);
+                paymentActivity.putExtra("orderObject", newOrder);
                 startActivity(paymentActivity);
             }
         });
@@ -197,6 +221,16 @@ public class NoSeatsActivity extends AppCompatActivity {
         btCheckCoupon.setEnabled(false);
         btCheckCoupon.setBackgroundColor(Color.LTGRAY);
         btCheckCoupon.setTextColor(Color.GRAY);
+    }
+
+    private Order createNewOrderFromUI(String orderUid) {
+        int newOrderTicketsNum = Integer.parseInt(tvTicketsNum.getText().toString());
+        int newOrderTotalPrice = isCouponUsed
+                ? newOrderTicketsNum * event.getDiscountedPrice()
+                : newOrderTicketsNum * event.getPrice();
+
+        return new Order(orderUid, newOrderTicketsNum, isCouponUsed, newOrderTotalPrice,
+                DataUtils.OrderStatus.IN_PROGRESS);
     }
 
     @Override

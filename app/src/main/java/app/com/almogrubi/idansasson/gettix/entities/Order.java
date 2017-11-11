@@ -1,11 +1,13 @@
 package app.com.almogrubi.idansasson.gettix.entities;
 
 import com.google.firebase.database.Exclude;
+import com.google.firebase.database.ServerValue;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
 
@@ -13,125 +15,100 @@ import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
  * Created by idans on 21/10/2017.
  */
 
+// Indexed in database by Event uid
 public class Order implements Serializable {
 
     private String uid;
-    private String eventId;
-    private String customerName;
-    private String customerPhone;
-    private String customerEmail;
-    private String customerCreditCard;
+    private Customer customer;
+    private String creditCardToken;
+    private int ticketsNum;
     private boolean isCouponUsed;
     private int totalPrice;
     private DataUtils.OrderStatus status;
-    private int ticketsNum;
-    private Long creationDate;
+    private HashMap<String, Object> creationDate;
 
     // Default constructor required for calls to Firebase's DataSnapshot.getValue
-    public Order() {
-        this.ticketsNum= 0;
-    }
+    public Order() {}
 
-    public Order(String uid, Event event, String customerName, String customerPhone, String customerEmail,
-                 boolean isCouponUsed, int totalPrice, String customerCreditCard) {
+    public Order(String uid, int ticketsNum, boolean isCouponUsed, int totalPrice, DataUtils.OrderStatus status) {
         this.uid = uid;
-        this.eventId = eventId;
-        this.customerName = customerName;
-        this.customerPhone = customerPhone;
-        this.customerEmail = customerEmail;
+        this.ticketsNum = ticketsNum;
         this.isCouponUsed = isCouponUsed;
         this.totalPrice = totalPrice;
-        this.customerCreditCard = customerCreditCard;
         this.status = status;
 
-        this.creationDate = Calendar.getInstance().getTimeInMillis();
+        // Creation date will always be set to ServerValue.TIMESTAMP
+        HashMap<String, Object> nowTimestamp = new HashMap<>();
+        nowTimestamp.put("timestamp", ServerValue.TIMESTAMP);
+        this.creationDate = nowTimestamp;
     }
 
+    public Order(String uid, Customer customer, String creditCardToken, int ticketsNum, boolean isCouponUsed,
+                 int totalPrice, DataUtils.OrderStatus status) {
+        this.uid = uid;
+        this.customer = customer;
+        this.creditCardToken = creditCardToken;
+        this.ticketsNum = ticketsNum;
+        this.isCouponUsed = isCouponUsed;
+        this.totalPrice = totalPrice;
+        this.status = status;
+
+        // Creation date will always be set to ServerValue.TIMESTAMP
+        HashMap<String, Object> nowTimestamp = new HashMap<>();
+        nowTimestamp.put("timestamp", ServerValue.TIMESTAMP);
+        this.creationDate = nowTimestamp;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public String getCreditCardToken() {
+        return creditCardToken;
+    }
 
     public int getTicketsNum() {
         return ticketsNum;
+    }
+
+    public boolean isCouponUsed() {
+        return isCouponUsed;
+    }
+
+    public int getTotalPrice() {
+        return totalPrice;
     }
 
     public void setTicketsNum(int ticketsNum) {
         this.ticketsNum = ticketsNum;
     }
 
-    public Long getCreationDate() {
-        return creationDate;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
-    public String getUid() {
-        return this.uid;
+    public void setCreditCardToken(String creditCardToken) {
+        this.creditCardToken = creditCardToken;
     }
 
-    public String getEventId() {
-        return this.eventId;
-    }
+    public HashMap<String, Object> getCreationDate() { return creationDate; }
 
-    public String getCustomerName() {
-        return this.customerName;
-    }
-
-    public String getCustomerPhone() {
-        return this.customerPhone;
-    }
-
-    public String getCustomerEmail() {
-        return this.customerEmail;
-    }
-
-    public boolean isCouponUsed() { return this.isCouponUsed; }
-
-    public int getTotalPrice() {
-        return this.totalPrice;
-    }
-
-    public String getCustomerCreditCard() {
-        return this.customerCreditCard;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
-
-    public void setEventId(String eventId) {
-        this.eventId = eventId;
-    }
-
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
-
-    public void setCustomerPhone(String customerPhone) {
-        this.customerPhone = customerPhone;
-    }
-
-    public void setCustomerEmail(String customerEmail) {
-        this.customerEmail = customerEmail;
-    }
-
-    public void setCouponUsed(boolean isCouponUsed) { this.isCouponUsed = isCouponUsed; }
-
-    public void setTotalPrice(int totalPrice) {
-        this.totalPrice = totalPrice;
-    }
-
-    public void setCustomerCreditCard(String customerCreditCard) {
-        this.customerCreditCard = customerCreditCard;
-    }
-
-    public void setCreationDate(Long creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public void setStatus(DataUtils.OrderStatus status) {
-        this.status = status;
+    // Use the method to get the long value from the creation date object
+    @Exclude
+    public long getCreationDateLong() {
+        return (long)creationDate.get("timestamp");
     }
 
     @Exclude
     public DataUtils.OrderStatus getStatusAsEnum() {
         return this.status;
     }
+
+    public void setStatusAsEnum(DataUtils.OrderStatus status) { this.status = status; }
 
     // these methods are just a Firebase 9.0.0 hack to handle the enum
     public String getStatus(){

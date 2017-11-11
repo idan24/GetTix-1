@@ -48,6 +48,8 @@ public class Utils {
                 .generate(imageUrl);
     }
 
+    public static String STRIPE_PUBLISHABLE_KEY = "pk_test_n0iIsmn8y14YOk399U74T4sO";
+
     // Useful for validation of text input views (EditText, AutoCompleteTextView etc.)
     public static boolean isTextViewEmpty(TextView textView) {
         return textView.getText().toString().trim().isEmpty();

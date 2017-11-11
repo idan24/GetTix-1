@@ -15,7 +15,7 @@ import app.com.almogrubi.idansasson.gettix.entities.Event;
 import app.com.almogrubi.idansasson.gettix.entities.Order;
 
 
-public class FinishingActivity extends AppCompatActivity {
+public class ConfirmationActivity extends AppCompatActivity {
 
 
     private Event event;
@@ -28,7 +28,7 @@ public class FinishingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_finishing);
+        setContentView(R.layout.activity_confirmation);
 
         // Initialization of all needed Firebase database references
         initializeDatabaseReferences();

@@ -364,7 +364,7 @@ public class EventEditActivity extends ManagementScreen {
                 String selectedDate = binding.etEventDate.getText().toString();
                 if ((!editedEvent.getEventHall().getUid().equals(selectedHall.getUid())) ||
                     (!editedEvent.getDate().equals(DataUtils.convertToDbDateFormat(selectedDate)))) {
-                    // Event save will be triggered from fireHallDateUniqueCheck() if needed
+                    // Event save will be triggered from callback inside fireHallDateUniqueCheck() if needed
                     fireHallDateUniqueCheck(selectedHall.getUid());
                 } else {
                     // If there's no need for hall/date unique check, we trigger event save directly from here

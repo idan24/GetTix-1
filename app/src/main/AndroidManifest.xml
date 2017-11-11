@@ -49,15 +49,17 @@
         <activity
             android:name=".NoSeatsActivity"
             android:label="@string/title_activity_no_seats"
+            android:launchMode="singleTop"
             android:parentActivityName=".EventDetailsActivity" />
         <activity
             android:name=".SeatsActivity"
             android:label="@string/title_activity_seats"
+            android:launchMode="singleTop"
             android:parentActivityName=".EventDetailsActivity" />
         <activity
             android:name=".PaymentActivity"
-            android:label="@string/title_activity_pay" />
-        <activity android:name=".FinishingActivity" />
+            android:label="@string/title_activity_payment" />
+        <activity android:name=".ConfirmationActivity" />
 
         <meta-data
             android:name="CLOUDINARY_URL"
