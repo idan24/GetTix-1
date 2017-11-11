@@ -21,6 +21,7 @@ public class Order implements Serializable {
     private String customerPhone;
     private String customerEmail;
     private String customerCreditCard;
+    private boolean isCouponUsed;
     private int totalPrice;
     private DataUtils.OrderStatus status;
     private int ticketsNum;
@@ -32,12 +33,13 @@ public class Order implements Serializable {
     }
 
     public Order(String uid, Event event, String customerName, String customerPhone, String customerEmail,
-                 int totalPrice, String customerCreditCard) {
+                 boolean isCouponUsed, int totalPrice, String customerCreditCard) {
         this.uid = uid;
         this.eventId = eventId;
         this.customerName = customerName;
         this.customerPhone = customerPhone;
         this.customerEmail = customerEmail;
+        this.isCouponUsed = isCouponUsed;
         this.totalPrice = totalPrice;
         this.customerCreditCard = customerCreditCard;
         this.status = status;
@@ -78,6 +80,8 @@ public class Order implements Serializable {
         return this.customerEmail;
     }
 
+    public boolean isCouponUsed() { return this.isCouponUsed; }
+
     public int getTotalPrice() {
         return this.totalPrice;
     }
@@ -105,6 +109,8 @@ public class Order implements Serializable {
     public void setCustomerEmail(String customerEmail) {
         this.customerEmail = customerEmail;
     }
+
+    public void setCouponUsed(boolean isCouponUsed) { this.isCouponUsed = isCouponUsed; }
 
     public void setTotalPrice(int totalPrice) {
         this.totalPrice = totalPrice;
