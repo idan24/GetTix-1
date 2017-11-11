@@ -173,7 +173,9 @@ public class NoSeatsActivity extends AppCompatActivity {
         }
 
         int enteredCode = Integer.parseInt(etCouponCode.getText().toString());
-        if (enteredCode != this.event.getCouponCode()) {
+
+        // If the event does not offer any coupons or the entered coupon code is wrong
+        if ((this.event.getCouponCode() == 0) || (enteredCode != this.event.getCouponCode())) {
             etCouponCode.setError(wrongCodeErrorMessage);
             return false;
         }

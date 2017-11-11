@@ -51,6 +51,11 @@ public class HallSpinnerAdapter extends ArrayAdapter<Hall> {
         return position;
     }
 
+    @Override
+    public int getPosition(@Nullable Hall item) {
+        return values.indexOf(item);
+    }
+
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

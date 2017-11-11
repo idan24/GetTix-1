@@ -306,7 +306,7 @@ public class EventEditActivity extends ManagementScreen {
                             // dataSnapshot is the "hall" node
                             Hall hall = dataSnapshot.getValue(Hall.class);
                             binding.spEventHall.setSelection(
-                                    ((ArrayAdapter)binding.spEventHall.getAdapter()).getPosition(hall.getName()));
+                                    ((HallSpinnerAdapter)binding.spEventHall.getAdapter()).getPosition(hall));
                         }
                     }
 

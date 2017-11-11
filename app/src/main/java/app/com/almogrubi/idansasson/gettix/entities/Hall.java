@@ -93,4 +93,11 @@ public class Hall implements Serializable {
 
     @Override
     public String toString() { return this.name; }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Hall)) return false;
+
+        return this.uid.equals(((Hall)obj).getUid());
+    }
 }
