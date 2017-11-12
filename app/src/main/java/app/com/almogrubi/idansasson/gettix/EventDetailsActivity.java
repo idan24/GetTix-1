@@ -5,9 +5,11 @@ import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v4.app.ShareCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -116,6 +118,8 @@ public class EventDetailsActivity extends AppCompatActivity {
                                 Intent intent = new Intent(Intent.ACTION_VIEW, addressUri);
                                 if (intent.resolveActivity(getPackageManager()) != null)
                                     startActivity(intent);
+                                else
+                                    Toast.makeText(EventDetailsActivity.this, "יש להתקין יישום מפות", Toast.LENGTH_LONG).show();
                             }
                         });
                     }
@@ -173,10 +177,37 @@ public class EventDetailsActivity extends AppCompatActivity {
         startActivity(new Intent(this, MainActivity.class));
     }
 
+    private Intent createShareEventIntent() {
+
+        String newLine = System.getProperty("line.separator");
+        String sharedMessage = String.format("היי! רציתי שתסתכל על המופע הזה:%s%s%sחפש אותו ב-GetTix!",
+                newLine + newLine, this.event.toString(), newLine + newLine);
+
+        Intent shareIntent =
+                ShareCompat.IntentBuilder
+                        .from(this)
+                        .setType("text/plain")
+                        .setChooserTitle("שתף אירוע")
+                        .setText(sharedMessage)
+                        .getIntent();
+
+        return shareIntent;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_event_details, menu);
+        return true;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             NavUtils.navigateUpFromSameTask(this);
+            return true;
+        }
+        else if (item.getItemId() == R.id.action_share) {
+            startActivity(createShareEventIntent());
             return true;
         }
 

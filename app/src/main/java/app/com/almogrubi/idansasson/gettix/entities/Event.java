@@ -246,4 +246,13 @@ public class Event implements Serializable {
     public void setProducerId(String producerId) {
         this.producerId = producerId;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s בתאריך %s שעה %s, ב%s",
+                this.title,
+                DataUtils.convertToUiDateFormat(this.date),
+                this.hour,
+                this.eventHall.getName());
+    }
 }

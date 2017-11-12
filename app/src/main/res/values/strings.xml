@@ -18,6 +18,7 @@
 
     <!-- for events details activity -->
     <string name="book_tickets_button">הזמן כרטיסים</string>
+    <string name="action_share">שתף</string>
 
     <!-- for seats / no seats activity -->
     <string name="enter_coupon_code_label">אם ברשותך קוד קופון הזן אותו כעת:</string>
