@@ -65,6 +65,15 @@
         <meta-data
             android:name="CLOUDINARY_URL"
             android:value="cloudinary://idansass" />
+
+        <service
+            android:name=".CancelOrderJobService"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
