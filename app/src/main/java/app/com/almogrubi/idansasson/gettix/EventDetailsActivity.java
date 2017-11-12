@@ -104,11 +104,20 @@ public class EventDetailsActivity extends AppCompatActivity {
 
                         // If we reached here then the hall was found, we'll bind it to UI
                         Hall hall = dataSnapshot.getValue(Hall.class);
-                        String hallAddress = String.format("%s, %s, %s",
+                        final String hallAddress = String.format("%s, %s, %s",
                                 hall.getName(), hall.getAddress(), hall.getCity());
                         binding.tvEventHallAddress.setText(Utils.createIndentedText(hallAddress,
                                 Utils.FIRST_LINE_INDENT, Utils.PARAGRAPH_INDENT));
 
+                        binding.ivEventLocation.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Uri addressUri = Uri.parse("geo:0,0?q=" + Uri.encode(hallAddress));
+                                Intent intent = new Intent(Intent.ACTION_VIEW, addressUri);
+                                if (intent.resolveActivity(getPackageManager()) != null)
+                                    startActivity(intent);
+                            }
+                        });
                     }
 
                     @Override
