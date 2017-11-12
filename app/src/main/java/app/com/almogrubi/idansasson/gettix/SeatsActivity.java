@@ -36,8 +36,6 @@ public class SeatsActivity extends AppCompatActivity{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
 
         // Initialization of all needed Firebase database references
         initializeDatabaseReferences();
@@ -55,14 +53,15 @@ public class SeatsActivity extends AppCompatActivity{
                                 abort();
                                 return;
                             }
-
                             // If we reached here then the existing event was found, we'll bind it to UI
                             event = dataSnapshot.getValue(Event.class);
-
-                            rows =  2; //event.getEventHall().getRows();
-                            columns =  2; //event.getEventHall().getColumns();
                             Log.i("almog", "event row number is " + rows);
                             Log.i("almog", "event column number is " + columns);
+
+
+                            rows = event.getEventHall().getRows();
+                            columns = event.getEventHall().getColumns();
+                            setSeats();
 
                         }
 
@@ -71,60 +70,74 @@ public class SeatsActivity extends AppCompatActivity{
                             abort();
                         }
                     });
+        }
 
+        else{ abort(); }
 
             // TODO: uncomment and replace with query
             //List<EventSeat> seatsList = new ArrayList<EventSeat>(event.getEventHall().getEventSeat().values());
 
 
-            Log.i("almog", "row number is " + rows);
-            Log.i("almog", "column number is " + columns);
 
-            for (int i = 0; i < rows; i++) {
-                LinearLayout row = new LinearLayout(this);
-                row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                    //change to size in %
-                for (int j = 0; j < columns; j++) {
+    }
 
-                    Button b = new Button(this);
-                    b.setLayoutParams(new LinearLayout.LayoutParams(100, LinearLayout.LayoutParams.WRAP_CONTENT));
-                    // TODO: uncomment after replacing with query
-                    //b.setTag(seatsList.get(i+j*columns));
-                    b.setText("" + (j + 1 + (i * 10)));
-                    b.setId(j + 1 + (i * 10));
-                    row.addView(b);
+    private void initializeDatabaseReferences() {
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        eventsDatabaseReference = firebaseDatabase.getReference().child("events");
+    }
 
-                    b.setOnClickListener(new View.OnClickListener() {
-                            public void onClick(View v) {
+    private void abort() {
+        String eventNotFoundErrorMessage = "המופע לא נמצא, נסה שנית";
+
+        Toast.makeText(this, eventNotFoundErrorMessage, Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(this, MainActivity.class));
+    }
+
+    public void setSeats () {
+
+        LinearLayout layout = new LinearLayout(SeatsActivity.this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        for (int i = 0; i < rows; i++) {
+            LinearLayout row = new LinearLayout(SeatsActivity.this);
+            row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            //change to size in %
+            for (int j = 0; j < columns; j++) {
+
+                Button b = new Button(SeatsActivity.this);
+                b.setLayoutParams(new LinearLayout.LayoutParams(100, LinearLayout.LayoutParams.WRAP_CONTENT));
+                // TODO: uncomment after replacing with query
+                //b.setTag(seatsList.get(i+j*columns));
+                b.setText("" + (j + 1 + (i * 10)));
+                b.setId(j + 1 + (i * 10));
+                row.addView(b);
+
+                b.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
 //                                Intent intent = new Intent(v.getContext(), SeatsActivity.class);
 //                                intent.putExtra("eventObject", event);
 //                                startActivity(intent);
-                                ((Button) v).setText("*");
-                                ((Button) v).setEnabled(false);
+                        ((Button) v).setText("*");
+                        ((Button) v).setEnabled(false);
 
-                                Log.i("almog", "id is " + v.getId());
+                        Log.i("almog", "id is " + v.getId());
 
-                                order.setTicketsNum(order.getTicketsNum()+1);
+                        order.setTicketsNum(order.getTicketsNum()+1);
 
-
-                            }
-                        }
-
-                    );
+                    }
                 }
 
-                layout.addView(row);
+                );
             }
-            setContentView(layout);
-            //setContentView(R.layout.main);
+
+            layout.addView(row);
         }
+        setContentView(layout);
+        //setContentView(R.layout.main);
 
-        else{ abort(); }
-
-
-        LinearLayout row = new LinearLayout(this);
+        LinearLayout row = new LinearLayout(SeatsActivity.this);
         row.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        Button next = new Button(this);
+        Button next = new Button(SeatsActivity.this);
         next.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         next.setText("next");
         next.setId(0);
@@ -148,18 +161,6 @@ public class SeatsActivity extends AppCompatActivity{
 
         );
 
-    }
-
-    private void initializeDatabaseReferences() {
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        eventsDatabaseReference = firebaseDatabase.getReference().child("events");
-    }
-
-    private void abort() {
-        String eventNotFoundErrorMessage = "המופע לא נמצא, נסה שנית";
-
-        Toast.makeText(this, eventNotFoundErrorMessage, Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(this, MainActivity.class));
     }
 
 }

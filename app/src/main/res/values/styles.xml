@@ -22,6 +22,7 @@
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="AppTextViewStyle" parent="android:style/Widget.TextView">
@@ -90,6 +91,7 @@
     <style name="SpinnerItem">
         <item name="android:textDirection">anyRtl</item>
     </style>
+
     <style name="SpinnerDropDownItem">
         <item name="android:textDirection">anyRtl</item>
         <item name="android:padding">8dp</item>
