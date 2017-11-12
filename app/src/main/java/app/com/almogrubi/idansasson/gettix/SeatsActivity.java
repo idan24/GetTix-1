@@ -30,7 +30,7 @@ public class SeatsActivity extends AppCompatActivity{
 
     private Event event;
     private Order order = new Order();
-    private int rows = 0;
+    private int rows;
     private int columns;
 
     @Override
@@ -59,6 +59,11 @@ public class SeatsActivity extends AppCompatActivity{
                             // If we reached here then the existing event was found, we'll bind it to UI
                             event = dataSnapshot.getValue(Event.class);
 
+                            rows =  2; //event.getEventHall().getRows();
+                            columns =  2; //event.getEventHall().getColumns();
+                            Log.i("almog", "event row number is " + rows);
+                            Log.i("almog", "event column number is " + columns);
+
                         }
 
                         @Override
@@ -72,9 +77,8 @@ public class SeatsActivity extends AppCompatActivity{
             //List<EventSeat> seatsList = new ArrayList<EventSeat>(event.getEventHall().getEventSeat().values());
 
 
-
-            rows =  event.getEventHall().getRows();
-            rows =  event.getEventHall().getColumns();
+            Log.i("almog", "row number is " + rows);
+            Log.i("almog", "column number is " + columns);
 
             for (int i = 0; i < rows; i++) {
                 LinearLayout row = new LinearLayout(this);
