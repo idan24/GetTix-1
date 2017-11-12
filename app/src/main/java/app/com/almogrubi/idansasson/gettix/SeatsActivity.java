@@ -43,6 +43,7 @@ public class SeatsActivity extends AppCompatActivity{
         Intent intent = getIntent();
         if ((intent != null) && (intent.hasExtra("eventUid"))) {
 
+
             eventsDatabaseReference
                     .child(intent.getStringExtra("eventUid"))
                     .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -55,9 +56,6 @@ public class SeatsActivity extends AppCompatActivity{
                             }
                             // If we reached here then the existing event was found, we'll bind it to UI
                             event = dataSnapshot.getValue(Event.class);
-                            Log.i("almog", "event row number is " + rows);
-                            Log.i("almog", "event column number is " + columns);
-
 
                             rows = event.getEventHall().getRows();
                             columns = event.getEventHall().getColumns();
