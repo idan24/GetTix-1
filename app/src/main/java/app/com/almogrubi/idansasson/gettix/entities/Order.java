@@ -25,6 +25,7 @@ public class Order implements Serializable {
     private boolean isCouponUsed;
     private int totalPrice;
     private DataUtils.OrderStatus status;
+    private String confirmationNumber;
     private HashMap<String, Object> creationDate;
 
     // Default constructor required for calls to Firebase's DataSnapshot.getValue
@@ -44,13 +45,14 @@ public class Order implements Serializable {
     }
 
     public Order(String uid, Customer customer, String creditCardToken, int ticketsNum, boolean isCouponUsed,
-                 int totalPrice, DataUtils.OrderStatus status) {
+                 int totalPrice, String confirmationNumber, DataUtils.OrderStatus status) {
         this.uid = uid;
         this.customer = customer;
         this.creditCardToken = creditCardToken;
         this.ticketsNum = ticketsNum;
         this.isCouponUsed = isCouponUsed;
         this.totalPrice = totalPrice;
+        this.confirmationNumber = confirmationNumber;
         this.status = status;
 
         // Creation date will always be set to ServerValue.TIMESTAMP
@@ -67,12 +69,24 @@ public class Order implements Serializable {
         return customer;
     }
 
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
     public String getCreditCardToken() {
         return creditCardToken;
     }
 
+    public void setCreditCardToken(String creditCardToken) {
+        this.creditCardToken = creditCardToken;
+    }
+
     public int getTicketsNum() {
         return ticketsNum;
+    }
+
+    public void setTicketsNum(int ticketsNum) {
+        this.ticketsNum = ticketsNum;
     }
 
     public boolean isCouponUsed() {
@@ -83,16 +97,12 @@ public class Order implements Serializable {
         return totalPrice;
     }
 
-    public void setTicketsNum(int ticketsNum) {
-        this.ticketsNum = ticketsNum;
+    public String getConfirmationNumber() {
+        return confirmationNumber;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
-    public void setCreditCardToken(String creditCardToken) {
-        this.creditCardToken = creditCardToken;
+    public void setConfirmationNumber(String confirmationNumber) {
+        this.confirmationNumber = confirmationNumber;
     }
 
     public HashMap<String, Object> getCreationDate() { return creationDate; }

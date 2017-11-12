@@ -7,6 +7,8 @@ import android.widget.TextView;
 import com.cloudinary.Transformation;
 import com.cloudinary.android.MediaManager;
 
+import java.util.Random;
+
 import app.com.almogrubi.idansasson.gettix.R;
 
 /**
@@ -59,5 +61,21 @@ public class Utils {
         SpannableString result = new SpannableString(text);
         result.setSpan(new LeadingMarginSpan.Standard(marginFirstLine, marginNextLines),0, text.length(),0);
         return result;
+    }
+
+    public static int ORDER_CONFIRMATION_NUMBER_LENGTH = 5;
+
+    /*
+     * Generates a random numeric String of given length
+     */
+    public static String generateRandomString(int length, Random random) {
+        if (length < 1) throw new IllegalArgumentException();
+
+        char[] digits = "0123456789".toCharArray();
+        char[] buffer = new char[length];
+
+        for (int i = 0; i < buffer.length; i++)
+            buffer[i] = digits[random.nextInt(digits.length)];
+        return new String(buffer);
     }
 }

@@ -141,7 +141,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
 
         final String noTicketsLeft = "לא נותרו כרטיסים למופע זה";
-        final String someTicketsLeft = "נותרו %d כרטיסים למופע";
+        final String someTicketsLeft = "נותרו %d כרטיסים למופע !";
         final String manyTicketsLeft = "נותרו כרטיסים למופע !";
 
         if (event.isSoldOut()) {

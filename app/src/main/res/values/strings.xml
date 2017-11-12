@@ -34,6 +34,13 @@
     <string name="credit_card_label">הזן פרטי אשראי:</string>
     <string name="place_order_button">בצע הזמנה</string>
 
+    <!-- for confirmation activity -->
+    <string name="order_confirmation_title">אישור הזמנה</string>
+    <string name="order_number">מספר הזמנה: </string>
+    <string name="order_total_price">סכום כולל: </string>
+    <string name="order_customer_details">פרטי המזמין:</string>
+    <string name="goto_home_button">חזרה לדף הבית</string>
+
     <!-- for management screens -->
     <string name="action_management_title">למסכי ניהול והפקה</string>
     <string name="action_sign_out_title">התנתק...</string>

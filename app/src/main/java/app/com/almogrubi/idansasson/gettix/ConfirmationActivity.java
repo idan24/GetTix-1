@@ -1,8 +1,10 @@
 package app.com.almogrubi.idansasson.gettix;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -11,31 +13,47 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import app.com.almogrubi.idansasson.gettix.databinding.ActivityConfirmationBinding;
 import app.com.almogrubi.idansasson.gettix.entities.Event;
+import app.com.almogrubi.idansasson.gettix.entities.Hall;
 import app.com.almogrubi.idansasson.gettix.entities.Order;
+import app.com.almogrubi.idansasson.gettix.entities.Seat;
+import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
+import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 
 
 public class ConfirmationActivity extends AppCompatActivity {
 
-
-    private Event event;
-    private Order order;
-    private int counter;
-
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference eventsDatabaseReference;
+    private DatabaseReference hallsDatabaseReference;
+    private DatabaseReference orderSeatsDatabaseReference;
+
+    private ActivityConfirmationBinding binding;
+    private Event event;
+    private Order order;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirmation);
 
-        // Initialization of all needed Firebase database references
-        initializeDatabaseReferences();
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_confirmation);
 
-        Intent intent = getIntent();
+        // Initialize all needed Firebase database references
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        eventsDatabaseReference = firebaseDatabase.getReference().child("events");
+        hallsDatabaseReference = firebaseDatabase.getReference().child("halls");
+        orderSeatsDatabaseReference = firebaseDatabase.getReference().child("order_seats");
+
+        Toast.makeText(this, "הזמנתך התקבלה בהצלחה!", Toast.LENGTH_LONG).show();
+
+        Intent intent = this.getIntent();
+        // Lookup the event in the database and bind its data to UI
         if ((intent != null) && (intent.hasExtra("eventUid"))) {
-            order = (Order) intent.getSerializableExtra("orderObject");
             eventsDatabaseReference
                     .child(intent.getStringExtra("eventUid"))
                     .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -43,37 +61,102 @@ public class ConfirmationActivity extends AppCompatActivity {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             // If we have a null result, the event was somehow not found in the database
                             if (dataSnapshot == null || !dataSnapshot.exists() || dataSnapshot.getValue() == null) {
-                                abort();
                                 return;
                             }
 
                             // If we reached here then the existing event was found, we'll bind it to UI
                             event = dataSnapshot.getValue(Event.class);
-                            
+                            bindEventToUI(event);
+                            bindOrderSeatsToUI();
                         }
 
                         @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            abort();
-                        }
+                        public void onCancelled(DatabaseError databaseError) {}
                     });
-        } else {
-            abort();
+
+            if (intent.hasExtra("orderObject")) {
+                this.order = (Order) intent.getSerializableExtra("orderObject");
+                bindOrderToUI(order);
+            }
         }
 
+        binding.btGotoHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mainActivity = new Intent(ConfirmationActivity.this, MainActivity.class);
+                startActivity(mainActivity);
+            }
+        });
     }
 
+    private void bindEventToUI(final Event event) {
 
-    private void initializeDatabaseReferences() {
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        eventsDatabaseReference = firebaseDatabase.getReference().child("events");
+        binding.tvEventTitle.setText(Utils.createIndentedText(event.getTitle(),
+                Utils.FIRST_LINE_INDENT, Utils.PARAGRAPH_INDENT));
+        binding.tvEventDatetime.setText(String.format("%s בשעה %s",
+                DataUtils.convertToUiDateFormat(event.getDate()),
+                event.getHour()));
+
+        hallsDatabaseReference
+                .child(event.getEventHall().getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // If we have a null result, the hall was somehow not found in the database
+                        if (dataSnapshot == null || !dataSnapshot.exists() || dataSnapshot.getValue() == null) {
+                            return;
+                        }
+
+                        // If we reached here then the hall was found, we'll bind it to UI
+                        Hall hall = dataSnapshot.getValue(Hall.class);
+                        String hallAddress = String.format("%s, %s, %s",
+                                hall.getName(), hall.getAddress(), hall.getCity());
+                        binding.tvEventHallAddress.setText(Utils.createIndentedText(hallAddress,
+                                Utils.FIRST_LINE_INDENT, Utils.PARAGRAPH_INDENT));
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {}
+                });
+
+        binding.ivEventCategory.setBackgroundResource(Utils.lookupImageByCategory(event.getCategoryAsEnum()));
     }
 
-    private void abort() {
-        String eventNotFoundErrorMessage = "המופע לא נמצא, נסה שנית";
-
-        Toast.makeText(this, eventNotFoundErrorMessage, Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(this, MainActivity.class));
+    private void bindOrderToUI(final Order order) {
+        binding.tvOrderNumber.setText("מספר הזמנה: " + order.getConfirmationNumber());
+        binding.tvTicketsNum.setText(order.getTicketsNum() + " כרטיסים");
+        binding.tvTotalPrice.setText(String.format("סכום כולל: %d ₪", order.getTotalPrice()));
+        binding.tvCustomerName.setText(order.getCustomer().getName());
+        binding.tvCustomerPhone.setText(order.getCustomer().getPhone());
+        binding.tvCustomerEmail.setText(order.getCustomer().getEmail());
     }
 
+    private void bindOrderSeatsToUI() {
+        if (event.isMarkedSeats()) {
+            orderSeatsDatabaseReference
+                    .child(event.getUid())
+                    .child(order.getUid())
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                Map<String, Seat> eventSeats = new HashMap<>();
+
+                                for (DataSnapshot seatSnapshot : dataSnapshot.getChildren()) {
+                                    Seat seat = seatSnapshot.getValue(Seat.class);
+                                }
+
+                                // TODO: retrieve order's selected seats
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {}
+                    });
+        }
+        else {
+            binding.tvSelectedSeats.setVisibility(View.GONE);
+        }
+    }
 }

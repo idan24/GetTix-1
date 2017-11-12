@@ -1,8 +1,12 @@
 package app.com.almogrubi.idansasson.gettix.entities;
 
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.ServerValue;
+
 import org.joda.time.DateTime;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  * Created by idans on 21/10/2017.
@@ -15,7 +19,7 @@ public class EventSeat implements Serializable {
     private int number;
     private boolean isTaken;
     private boolean isOccupied;
-    private Long occupiedTimestamp;
+    private HashMap<String, Object> occupiedTimestamp;
 
     // Default constructor required for calls to Firebase's DataSnapshot.getValue
     public EventSeat() {}
@@ -51,7 +55,18 @@ public class EventSeat implements Serializable {
         isOccupied = occupied;
     }
 
-    public Long getOccupiedTimestamp() { return occupiedTimestamp; }
+    public void updateOccupiedTimestamp() {
+        // Occupied timestamp will always be set to ServerValue.TIMESTAMP
+        HashMap<String, Object> nowTimestamp = new HashMap<>();
+        nowTimestamp.put("timestamp", ServerValue.TIMESTAMP);
+        this.occupiedTimestamp = nowTimestamp;
+    }
 
-    public void setOccupiedTimestamp(Long occupiedTimestamp) { this.occupiedTimestamp = occupiedTimestamp; }
+    public HashMap<String, Object> getOccupiedTimestamp() { return occupiedTimestamp; }
+
+    // Use the method to get the long value from the occupied timestamp object
+    @Exclude
+    public long getOccupiedTimestampLong() {
+        return (long)occupiedTimestamp.get("timestamp");
+    }
 }

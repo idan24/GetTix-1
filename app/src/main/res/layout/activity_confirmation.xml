@@ -1,28 +1,180 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     tools:context="app.com.almogrubi.idansasson.gettix.ConfirmationActivity">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layoutDirection="rtl">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/tab_margin">
 
-    <EditText
-        android:id="@+id/editText2"
-        android:layout_width="248dp"
-        android:layout_height="42dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Thank you for your purchase!"
-        tools:layout_editor_absoluteX="68dp"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp" />
+            <TextView
+                android:id="@+id/tv_confirmation_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.AppCompat.Headline"
+                android:text="@string/order_confirmation_title"
+                android:textSize="@dimen/extra_large_text_size"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="@dimen/tab_margin"
+                android:layout_marginStart="@dimen/tab_margin" />
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Home Screen"
-        tools:layout_editor_absoluteX="133dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/editText2" />
-</android.support.constraint.ConstraintLayout>
+            <TextView
+                android:id="@+id/tv_order_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textDirection="anyRtl"
+                tools:text="מספר הזמנה: 68119"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textColor="@color/colorAccent" />
+
+            <TextView
+                android:id="@+id/tv_event_title"
+                style="@style/TextAppearance.AppCompat.Headline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/tab_margin"
+                android:layout_marginTop="@dimen/tab_margin"
+                android:textColor="@color/DarkBlue"
+                android:textDirection="anyRtl"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                tools:text="החברים של נטאשה: שינויים בהרגלי הצריחה" />
+
+            <TextView
+                android:id="@+id/tv_event_datetime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/triple_tab_margin"
+                android:textDirection="anyRtl"
+                android:textSize="@dimen/main_flow_text_size"
+                android:textStyle="bold"
+                tools:text="25/7/17 בשעה 21:30" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/iv_event_category"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:src="@drawable/ic_guitar" />
+
+                <TextView
+                    android:id="@+id/tv_event_hall_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/tab_margin"
+                    android:layout_marginStart="@dimen/tab_margin"
+                    android:textColor="@color/Black"
+                    android:textDirection="anyRtl"
+                    android:textSize="@dimen/common_text_size"
+                    android:textStyle="normal"
+                    tools:text="מועדון הבארבי, דרך קיבוץ גלויות, תל אביב" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_tickets_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/quadruple_tab_margin"
+                android:layout_marginTop="@dimen/quadruple_tab_margin"
+                android:textDirection="anyRtl"
+                android:textSize="@dimen/main_flow_text_size"
+                android:textStyle="bold"
+                tools:text="2 כרטיסים" />
+
+            <TextView
+                android:id="@+id/tv_selected_seats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/quadruple_tab_margin"
+                android:textColor="@color/Black"
+                android:textDirection="anyRtl"
+                android:textSize="@dimen/common_text_size"
+                android:textStyle="normal"
+                tools:text="שורה 9 מושבים 5,6" />
+
+            <TextView
+                android:id="@+id/tv_total_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/quadruple_tab_margin"
+                android:textColor="@color/Black"
+                android:textDirection="anyRtl"
+                android:textSize="@dimen/large_text_size"
+                android:textStyle="bold"
+                tools:text="סכום כולל: 240₪" />
+
+            <TextView
+                android:id="@+id/tv_customer_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/triple_tab_margin"
+                android:layout_marginStart="@dimen/double_tab_margin"
+                android:text="@string/order_customer_details"
+                android:textDirection="anyRtl"
+                android:textSize="@dimen/main_flow_text_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_customer_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/quadruple_tab_margin"
+                android:textColor="@color/Black"
+                android:textDirection="anyRtl"
+                android:textSize="@dimen/main_flow_text_size"
+                android:textStyle="normal"
+                tools:text="עידן ששון" />
+
+            <TextView
+                android:id="@+id/tv_customer_phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/quadruple_tab_margin"
+                android:textColor="@color/Black"
+                android:textDirection="anyRtl"
+                android:textSize="@dimen/common_text_size"
+                android:textStyle="normal"
+                tools:text="0547823266" />
+
+            <TextView
+                android:id="@+id/tv_customer_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/quadruple_tab_margin"
+                android:textColor="@color/Black"
+                android:textDirection="anyRtl"
+                android:textSize="@dimen/common_text_size"
+                android:textStyle="normal"
+                tools:text="idansass@gmail.com" />
+
+            <Button
+                android:id="@+id/bt_goto_home"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/quadruple_tab_margin"
+                android:padding="@dimen/semidouble_tab_margin"
+                android:text="@string/goto_home_button"
+                android:textStyle="bold"
+                android:background="@color/colorAccent"
+                android:textColor="@color/White"
+                android:textSize="@dimen/large_text_size" />
+
+        </LinearLayout>
+    </ScrollView>
+</layout>

@@ -102,8 +102,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        MediaManager.init(this);
-
         // Initialize references to views
         cbFilter = findViewById(R.id.cb_filter);
         spFilterKey = findViewById(R.id.sp_filter_key);

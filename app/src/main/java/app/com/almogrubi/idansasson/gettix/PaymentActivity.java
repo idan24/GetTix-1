@@ -17,6 +17,8 @@ import com.stripe.android.TokenCallback;
 import com.stripe.android.model.Card;
 import com.stripe.android.model.Token;
 
+import java.security.SecureRandom;
+
 import app.com.almogrubi.idansasson.gettix.databinding.ActivityPaymentBinding;
 import app.com.almogrubi.idansasson.gettix.entities.Customer;
 import app.com.almogrubi.idansasson.gettix.entities.Order;
@@ -148,6 +150,10 @@ public class PaymentActivity extends AppCompatActivity {
                         order.setCustomer(orderCustomer);
                         order.setCreditCardToken(token.getCard().getLast4());
                         order.setStatusAsEnum(DataUtils.OrderStatus.FINAL);
+                        order.setConfirmationNumber(
+                                Utils.generateRandomString(
+                                        Utils.ORDER_CONFIRMATION_NUMBER_LENGTH,
+                                        new SecureRandom()));
 
                         ordersDatabaseReference.child(eventUid).child(order.getUid()).setValue(order);
 
