@@ -21,6 +21,10 @@
     <string name="action_share">שתף</string>
 
     <!-- for seats / no seats activity -->
+    <string name="select_seats_label">בחר מקומות ישיבה באולם:</string>
+    <string name="seat_available">פנוי</string>
+    <string name="seat_occupied">תפוס</string>
+    <string name="seat_chosen">הבחירה שלך</string>
     <string name="enter_coupon_code_label">אם ברשותך קוד קופון הזן אותו כעת:</string>
     <string name="coupon_code_hint">קוד קופון</string>
     <string name="check_coupon_button">שלח</string>

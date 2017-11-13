@@ -1,6 +1,7 @@
 package app.com.almogrubi.idansasson.gettix;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
@@ -30,6 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import app.com.almogrubi.idansasson.gettix.databinding.ActivityNoSeatsBinding;
 import app.com.almogrubi.idansasson.gettix.entities.Event;
 import app.com.almogrubi.idansasson.gettix.entities.Order;
 import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
@@ -45,15 +47,10 @@ public class NoSeatsActivity extends AppCompatActivity {
     private Event event;
     private boolean isCouponUsed = false;
 
-    private TextView tvEventTitle;
-    private ImageView ivPlus;
-    private ImageView ivMinus;
-    private TextView tvTicketsNum;
-    private TextView tvFriendlyTicketsNum;
+    private ActivityNoSeatsBinding binding;
     private TextView tvCouponCode;
     private EditText etCouponCode;
     private Button btCheckCoupon;
-    private Button btNext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,15 +62,10 @@ public class NoSeatsActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        tvEventTitle = findViewById(R.id.tv_event_title);
-        ivPlus = findViewById(R.id.iv_plus);
-        ivMinus = findViewById(R.id.iv_minus);
-        tvTicketsNum = findViewById(R.id.tv_tickets_num);
-        tvFriendlyTicketsNum = findViewById(R.id.tv_friendly_tickets_num);
-        tvCouponCode = findViewById(R.id.tv_coupon_code);
-        etCouponCode = findViewById(R.id.et_coupon_code);
-        btCheckCoupon = findViewById(R.id.bt_check_coupon);
-        btNext = findViewById(R.id.bt_next);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_no_seats);
+        tvCouponCode = binding.couponBox.findViewById(R.id.tv_coupon_code);
+        etCouponCode = binding.couponBox.findViewById(R.id.et_coupon_code);
+        btCheckCoupon = binding.couponBox.findViewById(R.id.bt_check_coupon);
 
         // Initialize all needed Firebase database references
         firebaseDatabase = FirebaseDatabase.getInstance();
@@ -96,7 +88,7 @@ public class NoSeatsActivity extends AppCompatActivity {
 
                             // If we reached here then the existing event was found, we'll bind it to UI
                             event = dataSnapshot.getValue(Event.class);
-                            tvEventTitle.setText(event.getTitle());
+                            binding.tvEventTitle.setText(event.getTitle());
                             updateTicketsNumUI(1);
                         }
 
@@ -109,14 +101,14 @@ public class NoSeatsActivity extends AppCompatActivity {
             abort();
         }
 
-        ivPlus.setOnClickListener(new View.OnClickListener() {
+        binding.ivPlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 incrementTicketsNum();
             }
         });
 
-        ivMinus.setOnClickListener(new View.OnClickListener() {
+        binding.ivMinus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 decrementTicketsNum();
@@ -131,7 +123,7 @@ public class NoSeatsActivity extends AppCompatActivity {
             }
         });
 
-        btNext.setOnClickListener(new View.OnClickListener() {
+        binding.btNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Create a new order in database
@@ -172,7 +164,7 @@ public class NoSeatsActivity extends AppCompatActivity {
     }
 
     private void incrementTicketsNum() {
-        int previousTicketsNum = Integer.parseInt(tvTicketsNum.getText().toString());
+        int previousTicketsNum = Integer.parseInt(binding.tvTicketsNum.getText().toString());
 
         if (previousTicketsNum < this.event.getLeftTicketsNum()) {
             updateTicketsNumUI(previousTicketsNum + 1);
@@ -180,7 +172,7 @@ public class NoSeatsActivity extends AppCompatActivity {
     }
 
     private void decrementTicketsNum() {
-        int previousTicketsNum = Integer.parseInt(tvTicketsNum.getText().toString());
+        int previousTicketsNum = Integer.parseInt(binding.tvTicketsNum.getText().toString());
 
         if (previousTicketsNum > 1) {
             updateTicketsNumUI(previousTicketsNum - 1);
@@ -191,8 +183,8 @@ public class NoSeatsActivity extends AppCompatActivity {
         int newTotalPrice = isCouponUsed
                 ? ticketsNums * event.getDiscountedPrice()
                 : ticketsNums * event.getPrice();
-        tvTicketsNum.setText(String.valueOf(ticketsNums));
-        tvFriendlyTicketsNum.setText(String.format("רכישת %d כרטיסים: %d ₪", ticketsNums, newTotalPrice));
+        binding.tvTicketsNum.setText(String.valueOf(ticketsNums));
+        binding.tvFriendlyTicketsNum.setText(String.format("רכישת %d כרטיסים: %d ₪", ticketsNums, newTotalPrice));
     }
 
     private boolean isEnteredCouponCodeValid() {
@@ -222,7 +214,7 @@ public class NoSeatsActivity extends AppCompatActivity {
         // Should be set before updating tickets num UI
         isCouponUsed = true;
 
-        updateTicketsNumUI(Integer.parseInt(tvTicketsNum.getText().toString()));
+        updateTicketsNumUI(Integer.parseInt(binding.tvTicketsNum.getText().toString()));
 
         tvCouponCode.setTextColor(Color.GRAY);
         etCouponCode.setEnabled(false);
@@ -232,7 +224,7 @@ public class NoSeatsActivity extends AppCompatActivity {
     }
 
     private Order createNewOrderFromUI(String orderUid) {
-        int newOrderTicketsNum = Integer.parseInt(tvTicketsNum.getText().toString());
+        int newOrderTicketsNum = Integer.parseInt(binding.tvTicketsNum.getText().toString());
         int newOrderTotalPrice = isCouponUsed
                 ? newOrderTicketsNum * event.getDiscountedPrice()
                 : newOrderTicketsNum * event.getPrice();

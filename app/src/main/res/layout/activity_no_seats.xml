@@ -1,152 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:layoutDirection="rtl"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     tools:context="app.com.almogrubi.idansasson.gettix.NoSeatsActivity">
-
-    <TextView
-        android:id="@+id/tv_event_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/tab_margin"
-        android:layout_marginTop="@dimen/tab_margin"
-        android:padding="@dimen/double_tab_margin"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:textDirection="anyRtl"
-        android:textSize="@dimen/large_text_size"
-        android:textStyle="italic"
-        tools:text="אביתר בנאי: 'תנועה' מופע סולו" />
-
-    <LinearLayout
+    <ScrollView
+        android:layoutDirection="rtl"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/iv_minus"
-            android:src="@drawable/ic_action_minus"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="@dimen/double_tab_margin"
-            android:clickable="true"
-            android:layout_gravity="center"
-            />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/tv_tickets_num"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/TextAppearance.AppCompat.Headline"
-            android:textSize="@dimen/extra_large_text_size"
-            android:textStyle="bold"
-            android:text="1"
-            tools:text="2" />
+            <TextView
+                android:id="@+id/tv_event_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/tab_margin"
+                android:layout_marginTop="@dimen/tab_margin"
+                android:padding="@dimen/double_tab_margin"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textDirection="anyRtl"
+                android:textSize="@dimen/large_text_size"
+                android:textStyle="italic"
+                tools:text="אביתר בנאי: 'תנועה' מופע סולו" />
 
-        <ImageView
-            android:id="@+id/iv_plus"
-            android:src="@drawable/ic_action_plus"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="@dimen/double_tab_margin"
-            android:clickable="true"
-            android:layout_gravity="center" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="horizontal">
 
-    </LinearLayout>
+                <ImageView
+                    android:id="@+id/iv_minus"
+                    android:src="@drawable/ic_action_minus"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="@dimen/double_tab_margin"
+                    android:clickable="true"
+                    android:layout_gravity="center"
+                    />
 
-    <TextView
-        android:id="@+id/tv_friendly_tickets_num"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textDirection="anyRtl"
-        android:layout_gravity="center"
-        android:textSize="@dimen/large_text_size"
-        android:textStyle="bold"
-        tools:text="רכישת 2 כרטיסים: 240 ₪" />
+                <TextView
+                    android:id="@+id/tv_tickets_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/TextAppearance.AppCompat.Headline"
+                    android:textSize="@dimen/extra_large_text_size"
+                    android:textStyle="bold"
+                    android:text="1"
+                    tools:text="2" />
 
-    <ImageView
-        android:id="@+id/iv_divider_top"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="@dimen/triple_tab_margin"
-        android:layout_marginStart="@dimen/triple_tab_margin"
-        android:layout_marginEnd="@dimen/triple_tab_margin"
-        android:background="@color/colorPrimary" />
+                <ImageView
+                    android:id="@+id/iv_plus"
+                    android:src="@drawable/ic_action_plus"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="@dimen/double_tab_margin"
+                    android:clickable="true"
+                    android:layout_gravity="center" />
 
-    <TextView
-        android:id="@+id/tv_coupon_code"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/tab_margin"
-        android:layout_marginTop="@dimen/double_tab_margin"
-        android:layout_marginBottom="@dimen/double_tab_margin"
-        android:text="@string/enter_coupon_code_label"
-        android:textSize="@dimen/main_flow_text_size"
-        android:textDirection="anyRtl"
-        android:textColor="@color/Black"
-        android:textStyle="italic" />
+            </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tv_friendly_tickets_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textDirection="anyRtl"
+                android:layout_gravity="center"
+                android:textSize="@dimen/large_text_size"
+                android:textStyle="bold"
+                tools:text="רכישת 2 כרטיסים: 240 ₪" />
 
-        <EditText
-            android:id="@+id/et_coupon_code"
-            android:hint="@string/coupon_code_hint"
-            android:layout_width="@dimen/very_short_inputview_width"
-            android:layout_marginBottom="@dimen/tab_margin"
-            android:layout_marginStart="@dimen/double_tab_margin"
-            style="@style/AppEditTextStyle" />
+            <include
+                android:id="@+id/coupon_box"
+                layout="@layout/coupon_box"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-        <Button
-            android:id="@+id/bt_check_coupon"
-            android:layout_width="70dp"
-            android:layout_height="45dp"
-            android:layout_marginEnd="@dimen/tab_margin"
-            android:layout_marginStart="@dimen/double_tab_margin"
-            android:layout_marginBottom="@dimen/double_tab_margin"
-            android:text="@string/check_coupon_button"
-            android:textStyle="bold"
-            android:layout_gravity="top"
-            android:gravity="center"
-            android:background="@color/PowderBlue"
-            android:textColor="@color/Black"
-            android:textSize="@dimen/common_text_size" />
+            <Button
+                android:id="@+id/bt_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/tab_margin"
+                android:layout_marginStart="@dimen/tab_margin"
+                android:layout_marginTop="@dimen/quadruple_tab_margin"
+                android:padding="@dimen/semidouble_tab_margin"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/next_button"
+                android:textStyle="bold"
+                android:background="@color/colorAccent"
+                android:textColor="@color/White"
+                android:textSize="@dimen/large_text_size" />
 
-    </LinearLayout>
-
-    <ImageView
-        android:id="@+id/iv_divider_bottom"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="@dimen/triple_tab_margin"
-        android:layout_marginStart="@dimen/triple_tab_margin"
-        android:layout_marginEnd="@dimen/triple_tab_margin"
-        android:background="@color/colorPrimary" />
-
-    <Button
-        android:id="@+id/bt_next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/tab_margin"
-        android:layout_marginStart="@dimen/tab_margin"
-        android:layout_marginTop="@dimen/quadruple_tab_margin"
-        android:padding="@dimen/semidouble_tab_margin"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="@string/next_button"
-        android:textStyle="bold"
-        android:background="@color/colorAccent"
-        android:textColor="@color/White"
-        android:textSize="@dimen/large_text_size" />
-
-</LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</layout>

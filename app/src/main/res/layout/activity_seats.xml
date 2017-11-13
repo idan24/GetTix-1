@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="app.com.almogrubi.idansasson.gettix.SeatsActivity">
+    <ScrollView
+        android:layoutDirection="rtl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tv_event_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/tab_margin"
+                android:layout_marginTop="@dimen/tab_margin"
+                android:padding="@dimen/double_tab_margin"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textDirection="anyRtl"
+                android:textSize="@dimen/large_text_size"
+                android:textStyle="italic"
+                tools:text="אביתר בנאי: 'תנועה' מופע סולו" />
+
+            <TextView
+                android:id="@+id/tv_select_seats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/tab_margin"
+                android:layout_marginBottom="@dimen/double_tab_margin"
+                android:text="@string/select_seats_label"
+                android:textSize="@dimen/main_flow_text_size"
+                android:textDirection="anyRtl"
+                android:textStyle="italic" />
+
+            <TableLayout
+                android:id="@+id/tl_event_seats"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:src="@drawable/ic_seat_available"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tv_seat_available"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textDirection="anyRtl"
+                    android:textSize="@dimen/common_text_size"
+                    android:textStyle="normal"
+                    android:textColor="@color/Black"
+                    android:text="@string/seat_available" />
+
+                <ImageView
+                    android:src="@drawable/ic_seat_occupied"
+                    android:layout_marginStart="@dimen/triple_tab_margin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tv_seat_occupied"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textDirection="anyRtl"
+                    android:textSize="@dimen/common_text_size"
+                    android:textStyle="normal"
+                    android:textColor="@color/Black"
+                    android:text="@string/seat_occupied" />
+
+                <ImageView
+                    android:src="@drawable/ic_seat_chosen"
+                    android:layout_marginStart="@dimen/triple_tab_margin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tv_seat_chosen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textDirection="anyRtl"
+                    android:textSize="@dimen/common_text_size"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorAccent"
+                    android:text="@string/seat_chosen" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_friendly_tickets_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textDirection="anyRtl"
+                android:layout_gravity="center"
+                android:textSize="@dimen/large_text_size"
+                android:textStyle="bold"
+                tools:text="רכישת 2 כרטיסים: 240 ₪" />
+
+            <TextView
+                android:id="@+id/tv_selected_seats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@color/Black"
+                android:textDirection="anyRtl"
+                android:textSize="@dimen/common_text_size"
+                android:textStyle="normal"
+                tools:text="שורה 9 מושבים 5,6" />
+
+            <include
+                android:id="@+id/coupon_box"
+                layout="@layout/coupon_box"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/bt_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/tab_margin"
+                android:layout_marginStart="@dimen/tab_margin"
+                android:layout_marginTop="@dimen/quadruple_tab_margin"
+                android:padding="@dimen/semidouble_tab_margin"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/next_button"
+                android:textStyle="bold"
+                android:background="@color/colorAccent"
+                android:textColor="@color/White"
+                android:textSize="@dimen/large_text_size" />
+
+        </LinearLayout>
+    </ScrollView>
+</layout>
