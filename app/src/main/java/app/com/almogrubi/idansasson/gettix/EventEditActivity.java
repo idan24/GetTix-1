@@ -403,9 +403,10 @@ public class EventEditActivity extends ManagementScreen {
             binding.etEventPrice.setError(emptyFieldErrorMessage);
             isValid = false;
         }
-        // If the event is not an event with marked seats, checking max capacity was filled
+        // If the event is not an event with marked seats, checking max capacity was filled and bigger than 0
         if (!binding.cbEventMarkedSeats.isChecked() &&
-                Utils.isTextViewEmpty(binding.etEventMaxCapacity)) {
+                (Utils.isTextViewEmpty(binding.etEventMaxCapacity) ||
+                        binding.etEventMaxCapacity.getText().toString().equals("0"))) {
             binding.etEventMaxCapacity.setError(emptyFieldErrorMessage);
             isValid = false;
         }
