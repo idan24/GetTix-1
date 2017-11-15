@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layoutDirection="rtl"
+    android:focusableInTouchMode="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -11,7 +12,6 @@
         android:id="@+id/iv_divider_top"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="@dimen/triple_tab_margin"
         android:layout_marginStart="@dimen/triple_tab_margin"
         android:layout_marginEnd="@dimen/triple_tab_margin"
         android:background="@color/colorPrimary" />

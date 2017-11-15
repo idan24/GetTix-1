@@ -11,6 +11,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import app.com.almogrubi.idansasson.gettix.entities.Event;
 import app.com.almogrubi.idansasson.gettix.entities.Order;
 import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
@@ -24,6 +27,8 @@ public class CancelOrderJobService extends JobService {
     private DatabaseReference eventSeatsDatabaseReference;
     private DatabaseReference ordersDatabaseReference;
     private DatabaseReference orderSeatsDatabaseReference;
+
+    private boolean[][] orderSeats;
 
     @Override
     public void onCreate() {
@@ -77,7 +82,7 @@ public class CancelOrderJobService extends JobService {
                                     updateEventLeftTicketsNum(eventUid, order.getTicketsNum());
 
                                     if (isEventMarkedSeats) {
-                                        // TODO: free event seats (according to order seats)
+                                        freeEventAndOrderSeats(eventUid, orderUid);
                                     }
                                 }
                             }
@@ -97,6 +102,36 @@ public class CancelOrderJobService extends JobService {
 
         backgroundTask.execute();
         return true;
+    }
+
+    private void freeEventAndOrderSeats(final String eventUid, final String orderUid) {
+        orderSeatsDatabaseReference.child(orderUid)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            Map orderSeatsData = new HashMap();
+
+                            // Going through all order's rows
+                            for (DataSnapshot rowSnapshot : dataSnapshot.getChildren()) {
+                                // Going through all order's seats in this row
+                                for (DataSnapshot seatSnapshot : rowSnapshot.getChildren()) {
+                                    // Free the seat, as we have cancelled the order
+                                    orderSeatsData.put(
+                                            String.format("%s/%s", rowSnapshot.getKey(), seatSnapshot.getKey()),
+                                            false);
+                                }
+                            }
+
+                            eventSeatsDatabaseReference.child(eventUid).updateChildren(orderSeatsData);
+
+                            orderSeatsDatabaseReference.child(orderUid).removeValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {}
+                });
     }
 
     private void updateEventLeftTicketsNum(final String eventUid, final int orderTicketsNum) {

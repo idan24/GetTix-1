@@ -1,6 +1,5 @@
 package app.com.almogrubi.idansasson.gettix.utilities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,19 +12,11 @@ import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
-import app.com.almogrubi.idansasson.gettix.EventEditActivity;
 import app.com.almogrubi.idansasson.gettix.MainActivity;
 import app.com.almogrubi.idansasson.gettix.R;
-import app.com.almogrubi.idansasson.gettix.entities.Hall;
-import app.com.almogrubi.idansasson.gettix.entities.Seat;
 
 /**
  * Created by idans on 25/10/2017.

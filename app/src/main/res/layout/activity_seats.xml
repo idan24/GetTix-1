@@ -35,11 +35,14 @@
                 android:layout_marginBottom="@dimen/double_tab_margin"
                 android:text="@string/select_seats_label"
                 android:textSize="@dimen/main_flow_text_size"
+                android:textColor="@color/Black"
                 android:textDirection="anyRtl"
                 android:textStyle="italic" />
 
             <TableLayout
                 android:id="@+id/tl_event_seats"
+                android:layout_gravity="center"
+                android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -47,6 +50,8 @@
                 android:orientation="horizontal"
                 android:layout_gravity="center"
                 android:gravity="center"
+                android:layout_marginTop="@dimen/triple_tab_margin"
+                android:layout_marginBottom="@dimen/double_tab_margin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -82,13 +87,16 @@
                     android:text="@string/seat_occupied" />
 
                 <ImageView
+                    android:id="@+id/iv_seat_chosen"
                     android:src="@drawable/ic_seat_chosen"
+                    android:visibility="invisible"
                     android:layout_marginStart="@dimen/triple_tab_margin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
                 <TextView
                     android:id="@+id/tv_seat_chosen"
+                    android:visibility="invisible"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textDirection="anyRtl"
@@ -107,10 +115,10 @@
                 android:layout_gravity="center"
                 android:textSize="@dimen/large_text_size"
                 android:textStyle="bold"
-                tools:text="רכישת 2 כרטיסים: 240 ₪" />
+                tools:text="לא נבחרו מושבים" />
 
             <TextView
-                android:id="@+id/tv_selected_seats"
+                android:id="@+id/tv_chosen_seats"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

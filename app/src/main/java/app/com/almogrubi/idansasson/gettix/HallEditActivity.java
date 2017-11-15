@@ -3,11 +3,9 @@ package app.com.almogrubi.idansasson.gettix;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -20,10 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import app.com.almogrubi.idansasson.gettix.databinding.ActivityHallEditBinding;
-import app.com.almogrubi.idansasson.gettix.entities.Event;
 import app.com.almogrubi.idansasson.gettix.entities.Hall;
-import app.com.almogrubi.idansasson.gettix.entities.Seat;
-import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
 import app.com.almogrubi.idansasson.gettix.utilities.ManagementScreen;
 import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 
@@ -227,15 +222,16 @@ public class HallEditActivity extends ManagementScreen {
 
     private void createHallSeats(Hall hall) {
 
-        Map<String, Seat> seats = new HashMap<>();
+        hallSeatsDatabaseReference.child(hall.getUid()).removeValue();
+
+        Map hallSeatsData = new HashMap();
 
         for (int i=0; i < hall.getRows(); i++)
             for (int j=0; j < hall.getColumns(); j++) {
-                String seatUid = String.format("%sSEAT%d-%d", hall.getUid(), i+1, j+1);
-                seats.put(seatUid, new Seat(seatUid, i+1, j+1));
+                hallSeatsData.put(String.format("%d/%d", i+1, j+1), false);
             }
 
-        hallSeatsDatabaseReference.child(hall.getUid()).setValue(seats);
+        hallSeatsDatabaseReference.child(hall.getUid()).updateChildren(hallSeatsData);
     }
 
     @Override

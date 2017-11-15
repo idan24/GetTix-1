@@ -37,9 +37,7 @@ import java.util.Map;
 import app.com.almogrubi.idansasson.gettix.databinding.ActivityEventEditBinding;
 import app.com.almogrubi.idansasson.gettix.entities.Event;
 import app.com.almogrubi.idansasson.gettix.entities.EventHall;
-import app.com.almogrubi.idansasson.gettix.entities.EventSeat;
 import app.com.almogrubi.idansasson.gettix.entities.Hall;
-import app.com.almogrubi.idansasson.gettix.entities.Seat;
 import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
 import app.com.almogrubi.idansasson.gettix.utilities.HallSpinnerAdapter;
 import app.com.almogrubi.idansasson.gettix.utilities.ManagementScreen;
@@ -660,26 +658,37 @@ public class EventEditActivity extends ManagementScreen {
         // Create event seat objects in database
         if (!editedEvent.isMarkedSeats() && updatedEvent.isMarkedSeats())
             createEventSeats(updatedEvent.getEventHall().getUid(), updatedEvent.getUid());
-            // If the event was an event with marked seats before, and now it shouldn't have marked seats
-            // Delete the already existing event seats from database
+        // If the event was an event with marked seats before, and now it shouldn't have marked seats
+        // Delete the already existing event seats from database
         else if (editedEvent.isMarkedSeats() && !updatedEvent.isMarkedSeats())
             eventSeatsDatabaseReference.child(updatedEvent.getUid()).removeValue();
     }
 
     private void createEventSeats(final String hallUid, final String eventUid) {
+        // Clearing whatever formation of seats that used to be for the event beforehand (if any)
+        eventSeatsDatabaseReference.child(eventUid).removeValue();
+
         hallSeatsDatabaseReference.child(hallUid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            Map<String, EventSeat> eventSeats = new HashMap<>();
+                            Map eventSeatsData = new HashMap();
 
-                            for (DataSnapshot seatSnapshot : dataSnapshot.getChildren()) {
-                                Seat seat = seatSnapshot.getValue(Seat.class);
-                                eventSeats.put(seat.getUid(), new EventSeat(seat.getUid(), seat.getRow(), seat.getNumber()));
+                            // Going through all of hall's rows
+                            for (DataSnapshot rowSnapshot : dataSnapshot.getChildren()) {
+                                // Going through all row's seats
+                                for (DataSnapshot seatSnapshot : rowSnapshot.getChildren()) {
+                                    // Add: "event_seats / $ eventUid / $ hallRow / $ rowSeat / false"
+                                    // Which means the seat (and row) will be created in nested fashion,
+                                    // with "false" value for occupied since all seats should be free at this point
+                                    eventSeatsData.put(
+                                            String.format("%s/%s", rowSnapshot.getKey(), seatSnapshot.getKey()),
+                                            false);
+                                }
                             }
 
-                            eventSeatsDatabaseReference.child(eventUid).setValue(eventSeats);
+                            eventSeatsDatabaseReference.child(eventUid).updateChildren(eventSeatsData);
                         }
                     }
 

@@ -36,6 +36,10 @@ public class PaymentActivity extends AppCompatActivity {
     private boolean isMarkedSeats;
     private Order order;
 
+    // We keep the order seats as strings as they are only kept here to be passed from SeatsActivity
+    // to ConfirmationActivity
+    private String[][] orderSeats;
+
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference eventsDatabaseReference;
     private DatabaseReference ordersDatabaseReference;
@@ -70,6 +74,9 @@ public class PaymentActivity extends AppCompatActivity {
             }
             if (intent.hasExtra("orderObject")) {
                 this.order = (Order)intent.getSerializableExtra("orderObject");
+            }
+            if (intent.hasExtra("orderSeats")) {
+                orderSeats = (String[][]) intent.getSerializableExtra("orderSeats");
             }
             else abort();
         }
@@ -161,6 +168,10 @@ public class PaymentActivity extends AppCompatActivity {
                         Intent confirmationActivity = new Intent(PaymentActivity.this, ConfirmationActivity.class);
                         confirmationActivity.putExtra("eventUid", eventUid);
                         confirmationActivity.putExtra("orderObject", order);
+
+                        if (isMarkedSeats)
+                            confirmationActivity.putExtra("orderSeats", orderSeats);
+
                         startActivity(confirmationActivity);
                     }
                     public void onError(Exception error) {

@@ -97,7 +97,7 @@
                 tools:text="2 כרטיסים" />
 
             <TextView
-                android:id="@+id/tv_selected_seats"
+                android:id="@+id/tv_chosen_seats"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/quadruple_tab_margin"

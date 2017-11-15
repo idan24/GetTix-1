@@ -77,6 +77,7 @@
             <include
                 android:id="@+id/coupon_box"
                 layout="@layout/coupon_box"
+                android:layout_marginTop="@dimen/triple_tab_margin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

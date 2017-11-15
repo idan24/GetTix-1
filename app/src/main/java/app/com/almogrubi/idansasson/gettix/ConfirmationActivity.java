@@ -13,14 +13,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 import app.com.almogrubi.idansasson.gettix.databinding.ActivityConfirmationBinding;
 import app.com.almogrubi.idansasson.gettix.entities.Event;
 import app.com.almogrubi.idansasson.gettix.entities.Hall;
 import app.com.almogrubi.idansasson.gettix.entities.Order;
-import app.com.almogrubi.idansasson.gettix.entities.Seat;
 import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
 import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 
@@ -35,6 +33,7 @@ public class ConfirmationActivity extends AppCompatActivity {
     private ActivityConfirmationBinding binding;
     private Event event;
     private Order order;
+    private boolean[][] orderSeats;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +66,6 @@ public class ConfirmationActivity extends AppCompatActivity {
                             // If we reached here then the existing event was found, we'll bind it to UI
                             event = dataSnapshot.getValue(Event.class);
                             bindEventToUI(event);
-                            bindOrderSeatsToUI();
                         }
 
                         @Override
@@ -77,6 +75,19 @@ public class ConfirmationActivity extends AppCompatActivity {
             if (intent.hasExtra("orderObject")) {
                 this.order = (Order) intent.getSerializableExtra("orderObject");
                 bindOrderToUI(order);
+            }
+            if (intent.hasExtra("orderSeats")) {
+                String[][] orderSeatsStrings = (String[][]) intent.getSerializableExtra("orderSeats");
+
+                orderSeats = new boolean[orderSeatsStrings.length][orderSeatsStrings[0].length];
+                for (int i = 0; i < orderSeatsStrings.length; i++)
+                    for (int j = 0; j < orderSeatsStrings[0].length; j++)
+                        orderSeats[i][j] = Boolean.parseBoolean(orderSeatsStrings[i][j]);
+
+                binding.tvChosenSeats.setText(Utils.generateOrderSeatsUIString(this.orderSeats));
+            }
+            else {
+                binding.tvChosenSeats.setVisibility(View.GONE);
             }
         }
 
@@ -130,33 +141,5 @@ public class ConfirmationActivity extends AppCompatActivity {
         binding.tvCustomerName.setText(order.getCustomer().getName());
         binding.tvCustomerPhone.setText(order.getCustomer().getPhone());
         binding.tvCustomerEmail.setText(order.getCustomer().getEmail());
-    }
-
-    private void bindOrderSeatsToUI() {
-        if (event.isMarkedSeats()) {
-            orderSeatsDatabaseReference
-                    .child(event.getUid())
-                    .child(order.getUid())
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                Map<String, Seat> eventSeats = new HashMap<>();
-
-                                for (DataSnapshot seatSnapshot : dataSnapshot.getChildren()) {
-                                    Seat seat = seatSnapshot.getValue(Seat.class);
-                                }
-
-                                // TODO: retrieve order's selected seats
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {}
-                    });
-        }
-        else {
-            binding.tvSelectedSeats.setVisibility(View.GONE);
-        }
     }
 }

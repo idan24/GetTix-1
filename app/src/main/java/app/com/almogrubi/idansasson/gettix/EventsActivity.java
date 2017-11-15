@@ -18,12 +18,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import app.com.almogrubi.idansasson.gettix.entities.Event;
-import app.com.almogrubi.idansasson.gettix.entities.Hall;
-import app.com.almogrubi.idansasson.gettix.entities.Seat;
 import app.com.almogrubi.idansasson.gettix.utilities.ManagementScreen;
 
 public class EventsActivity extends ManagementScreen {

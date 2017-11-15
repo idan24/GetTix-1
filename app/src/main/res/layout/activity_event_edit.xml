@@ -8,6 +8,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:alignmentMode="alignBounds"
+            android:focusableInTouchMode="true"
             android:layout_margin="3dp"
             android:layout_marginStart="4dp"
             android:layoutDirection="rtl"
