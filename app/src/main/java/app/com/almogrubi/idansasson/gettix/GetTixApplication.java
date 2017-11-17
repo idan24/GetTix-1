@@ -13,6 +13,7 @@ public class GetTixApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        // Initiating Cloudinary MediaManager (for loading responsive images)
         MediaManager.init(this);
     }
 }

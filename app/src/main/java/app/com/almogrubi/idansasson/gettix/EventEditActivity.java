@@ -48,6 +48,12 @@ import static app.com.almogrubi.idansasson.gettix.utilities.Utils.INDEXED_KEY_DI
 
 public class EventEditActivity extends ManagementScreen {
 
+    public enum EventEditMode {
+        NEW_EVENT,
+        NEW_EVENT_BASED_ON_EXISTING,
+        EXISTING_EVENT
+    }
+
     // Arbitrary request code value for photo picker
     private static final int RC_PHOTO_PICKER =  2;
 
@@ -69,7 +75,7 @@ public class EventEditActivity extends ManagementScreen {
     private String eventPosterUri;
     private ProgressDialog progressDialog;
 
-    private boolean isEdit = false;
+    private EventEditMode eventEditMode;
     private Event editedEvent;
 
     @Override
@@ -91,42 +97,56 @@ public class EventEditActivity extends ManagementScreen {
         initializeUIViews();
 
         Intent intent = this.getIntent();
-        // If we should be in edit mode, lookup the event in the database and bind its data to UI
-        if ((intent != null) && (intent.hasExtra("eventUid"))) {
-
-            isEdit = true;
-
-            eventsDatabaseReference
-                    .child(intent.getStringExtra("eventUid"))
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            // If we have a null result, the event was somehow not found in the database
-                            if (dataSnapshot == null || !dataSnapshot.exists() || dataSnapshot.getValue() == null) {
-                                abort();
-                                return;
-                            }
-
-                            // If we reached here then the existing event was found, we'll bind it to UI
-                            editedEvent = dataSnapshot.getValue(Event.class);
-                            binding.tvEventEditTitle.setText(R.string.event_edit_title);
-                            bindExistingEventInfo();
-                            bindExistingEventDateTime(editedEvent.getDate(), editedEvent.getHour());
-                            binding.cbEventSoldOut.setVisibility(View.VISIBLE);
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            abort();
-                        }
-                    });
+        if ((intent != null) && (intent.hasExtra("editMode"))) {
+            this.eventEditMode = (EventEditMode) intent.getSerializableExtra("editMode");
+        } else {
+            this.eventEditMode = EventEditMode.NEW_EVENT;
         }
+
         // If we should be in new/create mode, initialize views accordingly
-        else {
+        if (this.eventEditMode == EventEditMode.NEW_EVENT) {
             bindEventDateTime();
             binding.ivEventPoster.setVisibility(View.INVISIBLE);
             binding.cbEventSoldOut.setVisibility(View.GONE);
             binding.etEventTitle.requestFocus();
+        }
+        else {
+            // If we should be in edit mode or new event based on another,
+            // lookup the event in the database and bind its data to UI
+            if (intent.hasExtra("eventUid")) {
+
+                eventsDatabaseReference
+                        .child(intent.getStringExtra("eventUid"))
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                // If we have a null result, the event was somehow not found in the database
+                                if (dataSnapshot == null || !dataSnapshot.exists() || dataSnapshot.getValue() == null) {
+                                    abort();
+                                    return;
+                                }
+
+                                // If we reached here then the existing event was found, we'll bind it to UI
+                                editedEvent = dataSnapshot.getValue(Event.class);
+                                bindExistingEventInfo();
+
+                                if (eventEditMode == EventEditMode.EXISTING_EVENT) {
+                                    binding.tvEventEditTitle.setText(R.string.event_edit_title);
+                                    bindExistingEventDateTime(editedEvent.getDate(), editedEvent.getHour());
+                                    binding.cbEventSoldOut.setVisibility(View.VISIBLE);
+                                }
+                                else {
+                                    bindEventDateTime();
+                                    binding.cbEventSoldOut.setVisibility(View.GONE);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                abort();
+                            }
+                        });
+            }
         }
     }
 
@@ -349,28 +369,38 @@ public class EventEditActivity extends ManagementScreen {
      */
     private void saveEventIfInputValid() {
         if (checkInstantInputValidity()) {
-            // This is a new event
-            if (!isEdit) {
-                // Requires a check that the hall + date combination is not taken by another event
-                // This is the next step in the event data validation process
-                // Event save will be triggered from fireHallDateUniqueCheck() if needed
-                Hall selectedHall = (Hall) binding.spEventHall.getSelectedItem();
-                fireHallDateUniqueCheck(selectedHall.getUid());
-            }
-            // This is an edited existing event
-            else {
-                // If the event hall or event date were changed, we need to check the new hall is available
-                // on the new date
-                Hall selectedHall = (Hall) binding.spEventHall.getSelectedItem();
-                String selectedDate = binding.etEventDate.getText().toString();
-                if ((!editedEvent.getEventHall().getUid().equals(selectedHall.getUid())) ||
-                    (!editedEvent.getDate().equals(DataUtils.convertToDbDateFormat(selectedDate)))) {
-                    // Event save will be triggered from callback inside fireHallDateUniqueCheck() if needed
+
+            Hall selectedHall = (Hall) binding.spEventHall.getSelectedItem();
+
+            switch (this.eventEditMode) {
+                // This is a new event
+                case NEW_EVENT:
+                    // Requires a check that the hall + date combination is not taken by another event
+                    // This is the next step in the event data validation process
+                    // Event save will be triggered from fireHallDateUniqueCheck() if needed
                     fireHallDateUniqueCheck(selectedHall.getUid());
-                } else {
-                    // If there's no need for hall/date unique check, we trigger event save directly from here
-                    updateExistingEventAndExit();
-                }
+                    break;
+                // This is an edited existing event
+                case EXISTING_EVENT:
+                    // If the event hall or event date were changed, we need to check the new hall is available
+                    // on the new date
+                    String selectedDate = binding.etEventDate.getText().toString();
+                    if ((!editedEvent.getEventHall().getUid().equals(selectedHall.getUid())) ||
+                            (!editedEvent.getDate().equals(DataUtils.convertToDbDateFormat(selectedDate)))) {
+                        // Event save will be triggered from callback inside fireHallDateUniqueCheck() if needed
+                        fireHallDateUniqueCheck(selectedHall.getUid());
+                    } else {
+                        // If there's no need for hall/date unique check, we trigger event save directly from here
+                        updateExistingEventAndExit();
+                    }
+                    break;
+                // This is a new event, based on an existing event
+                case NEW_EVENT_BASED_ON_EXISTING:
+                    // Requires a check that the hall + date combination is not taken by another event
+                    // This is the next step in the event data validation process
+                    // Event save will be triggered from fireHallDateUniqueCheck() if needed
+                    fireHallDateUniqueCheck(selectedHall.getUid());
+                    break;
             }
         }
     }
@@ -453,7 +483,7 @@ public class EventEditActivity extends ManagementScreen {
                 }
 
                 // If we reached here then all input validations are done, we can save the event
-                if (isEdit)
+                if (eventEditMode == EventEditMode.EXISTING_EVENT)
                     updateExistingEventAndExit();
                 else
                     saveNewEventAndExit();

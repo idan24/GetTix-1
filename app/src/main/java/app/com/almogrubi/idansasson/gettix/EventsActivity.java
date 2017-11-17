@@ -44,8 +44,6 @@ public class EventsActivity extends ManagementScreen {
 
     private DatabaseReference firebaseDatabaseReference;
     private DatabaseReference eventsDatabaseReference;
-    private DatabaseReference hallsDatabaseReference;
-    private DatabaseReference hallSeatsDatabaseReference;
     private DatabaseReference hallEventsDatabaseReference;
     private DatabaseReference hallEventDatesDatabaseReference;
     private DatabaseReference dateEventsDatabaseReference;
@@ -80,8 +78,6 @@ public class EventsActivity extends ManagementScreen {
     private void initializeDatabaseReferences() {
         firebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
         eventsDatabaseReference = firebaseDatabaseReference.child("events");
-        hallsDatabaseReference = firebaseDatabaseReference.child("halls");
-        hallSeatsDatabaseReference = firebaseDatabaseReference.child("hall_seats");
         hallEventsDatabaseReference = firebaseDatabaseReference.child("hall_events");
         dateEventsDatabaseReference = firebaseDatabaseReference.child("date_events");
         cityEventsDatabaseReference = firebaseDatabaseReference.child("city_events");
@@ -161,10 +157,14 @@ public class EventsActivity extends ManagementScreen {
 
                 switch (itemId) {
                     case R.id.action_new_event_based:
+                        eventEditActivityIntent.putExtra("editMode",
+                                EventEditActivity.EventEditMode.NEW_EVENT_BASED_ON_EXISTING);
                         eventEditActivityIntent.putExtra("eventUid", event.getUid());
                         context.startActivity(eventEditActivityIntent);
                         return true;
                     case R.id.action_edit_event:
+                        eventEditActivityIntent.putExtra("editMode",
+                                EventEditActivity.EventEditMode.EXISTING_EVENT);
                         eventEditActivityIntent.putExtra("eventUid", event.getUid());
                         context.startActivity(eventEditActivityIntent);
                         return true;
@@ -294,7 +294,11 @@ public class EventsActivity extends ManagementScreen {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_add_item) {
-            startActivity(new Intent(this, EventEditActivity.class));
+            Intent eventEditActivityIntent = new Intent(this, EventEditActivity.class);
+            eventEditActivityIntent.putExtra("editMode",
+                    EventEditActivity.EventEditMode.NEW_EVENT);
+            startActivity(eventEditActivityIntent);
+
             return true;
         }
 
