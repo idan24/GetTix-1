@@ -6,6 +6,6 @@
     <item
         android:id="@+id/action_management"
         android:orderInCategory="1"
-        android:title="@string/action_management_title"
+        android:title="@string/action_management"
         app:showAsAction="never" />
 </menu>

@@ -21,11 +21,13 @@ public class Hall implements Serializable {
     private String officialWebsite;
     private int rows;
     private int columns;
+    private String producerId;
 
     // Default constructor required for calls to Firebase's DataSnapshot.getValue
     public Hall() {}
 
-    public Hall(String uid, String name, String address, String city, String officialWebsite, int rows, int columns) {
+    public Hall(String uid, String name, String address, String city, String officialWebsite, int rows, int columns,
+                String producerId) {
         this.uid = uid;
         this.name = name;
         this.address = address;
@@ -33,6 +35,7 @@ public class Hall implements Serializable {
         this.officialWebsite = officialWebsite;
         this.rows = rows;
         this.columns = columns;
+        this.producerId = producerId;
     }
 
     public String getUid() {
@@ -63,6 +66,10 @@ public class Hall implements Serializable {
         return columns;
     }
 
+    public String getProducerId() {
+        return this.producerId;
+    }
+
     public void setUid(String uid) {
         this.uid = uid;
     }
@@ -89,6 +96,10 @@ public class Hall implements Serializable {
 
     public void setColumns(int columns) {
         this.columns = columns;
+    }
+
+    public void setProducerId(String producerId) {
+        this.producerId = producerId;
     }
 
     @Override

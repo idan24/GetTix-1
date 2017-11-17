@@ -1,6 +1,7 @@
 package app.com.almogrubi.idansasson.gettix;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -66,6 +67,7 @@ public class EventEditActivity extends ManagementScreen {
 
     private ActivityEventEditBinding binding;
     private String eventPosterUri;
+    private ProgressDialog progressDialog;
 
     private boolean isEdit = false;
     private Event editedEvent;
@@ -124,6 +126,7 @@ public class EventEditActivity extends ManagementScreen {
             bindEventDateTime();
             binding.ivEventPoster.setVisibility(View.INVISIBLE);
             binding.cbEventSoldOut.setVisibility(View.GONE);
+            binding.etEventTitle.requestFocus();
         }
     }
 
@@ -227,9 +230,9 @@ public class EventEditActivity extends ManagementScreen {
             @Override
             public void onClick(View v) {
                 new DatePickerDialog(EventEditActivity.this, dateSetListener,
-                        DateTime.now().getYear(),
-                        DateTime.now().getMonthOfYear(),
-                        DateTime.now().getDayOfMonth())
+                        calendar.get(Calendar.YEAR),
+                        calendar.get(Calendar.MONTH),
+                        calendar.get(Calendar.DAY_OF_MONTH))
                         .show();
             }
         });
@@ -237,8 +240,8 @@ public class EventEditActivity extends ManagementScreen {
             @Override
             public void onClick(View view) {
                 new TimePickerDialog(EventEditActivity.this, timeSetListener,
-                        DateTime.now().getHourOfDay(),
-                        DateTime.now().getMinuteOfHour(),
+                        calendar.get(Calendar.HOUR),
+                        calendar.get(Calendar.MINUTE),
                         true)
                         .show();
             }
@@ -718,6 +721,9 @@ public class EventEditActivity extends ManagementScreen {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
+            progressDialog = ProgressDialog.show(EventEditActivity.this, "רק רגע",
+                    "המתן להעלאת הפוסטר...", true, false);
+
             Uri selectedImageUri = data.getData();
 
             MediaManager.get().upload(selectedImageUri)
@@ -732,6 +738,7 @@ public class EventEditActivity extends ManagementScreen {
                         @Override
                         public void onSuccess(String requestId, Map resultData) {
                             loadEventPoster(Uri.parse(resultData.get("url").toString()).getLastPathSegment());
+                            progressDialog.dismiss();
                         }
 
                         @Override
@@ -765,12 +772,5 @@ public class EventEditActivity extends ManagementScreen {
                 .load(Utils.getTransformedCloudinaryImageUrl(50, 50, photoUri, "thumb"))
                 .into(binding.ivEventPoster);
         eventPosterUri = photoUri;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_manager, menu);
-        menu.findItem(R.id.action_add_item).setVisible(false);
-        return true;
     }
 }

@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -48,7 +50,7 @@ public class HallsActivity extends ManagementScreen {
     }
 
     @Override
-    protected void onSignedInInitialize(FirebaseUser user) {
+    protected void onSignedInInitialize(final FirebaseUser user) {
         super.onSignedInInitialize(user);
 
         SnapshotParser<Hall> parser = new SnapshotParser<Hall>() {
@@ -79,15 +81,16 @@ public class HallsActivity extends ManagementScreen {
                                             int position,
                                             final Hall hall) {
                 viewHolder.bindHall(hall);
-                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Context context = v.getContext();
-                        Intent hallEditActivityIntent = new Intent(context, HallEditActivity.class);
-                        hallEditActivityIntent.putExtra("hallUid", hall.getUid());
-                        context.startActivity(hallEditActivityIntent);
-                    }
-                });
+
+                // Only if the hall is owned by the logged-in user, allow editing option
+                if (hall.getProducerId().equals(user.getUid())) {
+                    viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showHallEditPopup(v, hall);
+                        }
+                    });
+                }
             }
         };
 
@@ -96,6 +99,36 @@ public class HallsActivity extends ManagementScreen {
         hallsRecyclerView.setAdapter(firebaseRecyclerAdapter);
 
         firebaseRecyclerAdapter.startListening();
+    }
+
+    private void showHallEditPopup(final View hallView, final Hall hall) {
+
+        PopupMenu hallEditPopup = new PopupMenu(HallsActivity.this, hallView);
+        hallEditPopup.getMenuInflater().inflate(R.menu.popup_menu_managed_hall, hallEditPopup.getMenu());
+
+        hallEditPopup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int itemId = item.getItemId();
+                Context context = hallView.getContext();
+                Intent hallEditActivityIntent = new Intent(context, HallEditActivity.class);
+
+                if (itemId == R.id.action_edit_hall) {
+                    hallEditActivityIntent.putExtra("hallUid", hall.getUid());
+                    context.startActivity(hallEditActivityIntent);
+                }
+
+                return true;
+            }
+        });
+
+        hallEditPopup.show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_manager_list, menu);
+        return true;
     }
 
     @Override

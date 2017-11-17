@@ -1,5 +1,6 @@
 package app.com.almogrubi.idansasson.gettix;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -30,6 +31,8 @@ import app.com.almogrubi.idansasson.gettix.utilities.Utils;
  */
 
 public class PaymentActivity extends AppCompatActivity {
+
+    private ProgressDialog progressDialog;
 
     private ActivityPaymentBinding binding;
     private String eventUid;
@@ -78,7 +81,6 @@ public class PaymentActivity extends AppCompatActivity {
             if (intent.hasExtra("orderSeats")) {
                 orderSeats = (String[][]) intent.getSerializableExtra("orderSeats");
             }
-            else abort();
         }
 
         binding.tvTicketsNum.setText(
@@ -89,23 +91,16 @@ public class PaymentActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (checkInputValidity()) {
+                    progressDialog = ProgressDialog.show(PaymentActivity.this, "המתן רק דקה",
+                            "ההזמנה מתבצעת...", true, false);
                     // Order save and continue to next screen will be triggered from callback
                     // inside fireCreditCardTokenCreation()
                     fireCreditCardTokenCreation();
                 }
             }
         });
-    }
 
-    private void abort() {
-        String orderNotFoundErrorMessage = "ההזמנה לא נמצאה, נסה שנית";
-
-        Toast.makeText(this, orderNotFoundErrorMessage, Toast.LENGTH_SHORT).show();
-
-        if (this.isMarkedSeats)
-            startActivity(new Intent(this, SeatsActivity.class));
-        else
-            startActivity(new Intent(this, NoSeatsActivity.class));
+        binding.etFullName.requestFocus();
     }
 
     private boolean checkInputValidity() {
@@ -164,15 +159,10 @@ public class PaymentActivity extends AppCompatActivity {
 
                         ordersDatabaseReference.child(eventUid).child(order.getUid()).setValue(order);
 
-                        // Continue to confirmation activity
-                        Intent confirmationActivity = new Intent(PaymentActivity.this, ConfirmationActivity.class);
-                        confirmationActivity.putExtra("eventUid", eventUid);
-                        confirmationActivity.putExtra("orderObject", order);
+                        progressDialog.dismiss();
 
-                        if (isMarkedSeats)
-                            confirmationActivity.putExtra("orderSeats", orderSeats);
-
-                        startActivity(confirmationActivity);
+                        // Proceed to confirmation activity
+                        proceedToConfirmation();
                     }
                     public void onError(Exception error) {
                         // Show localized error message
@@ -180,6 +170,17 @@ public class PaymentActivity extends AppCompatActivity {
                                 .show();
                     }
                 });
+    }
+
+    private void proceedToConfirmation() {
+        Intent confirmationActivity = new Intent(PaymentActivity.this, ConfirmationActivity.class);
+        confirmationActivity.putExtra("eventUid", eventUid);
+        confirmationActivity.putExtra("orderObject", order);
+
+        if (isMarkedSeats)
+            confirmationActivity.putExtra("orderSeats", orderSeats);
+
+        startActivity(confirmationActivity);
     }
 
     @Override

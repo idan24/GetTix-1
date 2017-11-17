@@ -85,6 +85,7 @@ public class HallEditActivity extends ManagementScreen {
         }
         // If we should be in new/create mode, initialize views accordingly
         else {
+            binding.etHallName.requestFocus();
         }
     }
 
@@ -215,9 +216,10 @@ public class HallEditActivity extends ManagementScreen {
         String newHallOfficialWebsite = binding.etHallWebsite.getText().toString();
         int newHallRows = Integer.parseInt(binding.etHallRows.getText().toString());
         int newHallColumns = Integer.parseInt(binding.etHallColumns.getText().toString());
+        String newHallProducerId = HallEditActivity.super.user.getUid();
 
         return new Hall(hallUid, newHallName, newHallAddress, newHallCity, newHallOfficialWebsite,
-                newHallRows, newHallColumns);
+                newHallRows, newHallColumns, newHallProducerId);
     }
 
     private void createHallSeats(Hall hall) {
@@ -232,12 +234,5 @@ public class HallEditActivity extends ManagementScreen {
             }
 
         hallSeatsDatabaseReference.child(hall.getUid()).updateChildren(hallSeatsData);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_manager, menu);
-        menu.findItem(R.id.action_add_item).setVisible(false);
-        return true;
     }
 }

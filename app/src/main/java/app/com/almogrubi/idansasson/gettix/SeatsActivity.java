@@ -1,5 +1,6 @@
 package app.com.almogrubi.idansasson.gettix;
 
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
@@ -149,15 +150,7 @@ public class SeatsActivity extends AppCompatActivity{
                 ordersDatabaseReference.child(event.getUid()).child(newOrderUid).setValue(newOrder);
 
                 // Update order's event's leftTicketsNum (and soldOut if necessary)
-                int newLeftTicketsNum = event.getLeftTicketsNum() - newOrder.getTicketsNum();
-                Map newEventData = new HashMap();
-                newEventData.put("leftTicketsNum", newLeftTicketsNum);
-
-                if (newLeftTicketsNum == 0) {
-                    newEventData.put("soldOut", true);
-                }
-
-                eventsDatabaseReference.child(event.getUid()).updateChildren(newEventData);
+                updateEventTicketsNum(newOrder.getTicketsNum());
 
                 // Handle order seats save
                 saveNewOrderSeats(newOrderUid, event.getUid());
@@ -167,22 +160,39 @@ public class SeatsActivity extends AppCompatActivity{
                 fireCancelOrderService(newOrder);
 
                 // Proceed to PaymentActivity
-                Intent paymentActivity = new Intent(v.getContext(), PaymentActivity.class);
-                paymentActivity.putExtra("eventUid", event.getUid());
-                paymentActivity.putExtra("eventTitle", event.getTitle());
-                paymentActivity.putExtra("eventMarkedSeats", true);
-                paymentActivity.putExtra("orderObject", newOrder);
-
-                String[][] chosenSeatsStrings = new String[chosenSeats.length][chosenSeats[0].length];
-                for (int i = 0; i < chosenSeats.length; i++)
-                    for (int j = 0; j < chosenSeats[0].length; j++)
-                        chosenSeatsStrings[i][j] = String.valueOf(chosenSeats[i][j]);
-
-                paymentActivity.putExtra("orderSeats", chosenSeatsStrings);
-
-                startActivity(paymentActivity);
+                proceedToPayment(v.getContext(), newOrder);
             }
         });
+    }
+
+    private void proceedToPayment(Context context, Order newOrder) {
+
+        Intent paymentActivity = new Intent(context, PaymentActivity.class);
+        paymentActivity.putExtra("eventUid", event.getUid());
+        paymentActivity.putExtra("eventTitle", event.getTitle());
+        paymentActivity.putExtra("eventMarkedSeats", true);
+        paymentActivity.putExtra("orderObject", newOrder);
+
+        String[][] chosenSeatsStrings = new String[chosenSeats.length][chosenSeats[0].length];
+        for (int i = 0; i < chosenSeats.length; i++)
+            for (int j = 0; j < chosenSeats[0].length; j++)
+                chosenSeatsStrings[i][j] = String.valueOf(chosenSeats[i][j]);
+
+        paymentActivity.putExtra("orderSeats", chosenSeatsStrings);
+
+        startActivity(paymentActivity);
+    }
+
+    private void updateEventTicketsNum(int newOrderTicketsNum) {
+        int newLeftTicketsNum = event.getLeftTicketsNum() - newOrderTicketsNum;
+        Map newEventData = new HashMap();
+        newEventData.put("leftTicketsNum", newLeftTicketsNum);
+
+        if (newLeftTicketsNum == 0) {
+            newEventData.put("soldOut", true);
+        }
+
+        eventsDatabaseReference.child(event.getUid()).updateChildren(newEventData);
     }
 
     private void initializeDatabaseReferences() {
