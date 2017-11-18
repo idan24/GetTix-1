@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layoutDirection="rtl"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tv_order_item_customer_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/Black"
+        android:textSize="@dimen/main_flow_text_size"
+        android:textStyle="normal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="עידן ששון - 2 כרטיסים" />
+
+    <TextView
+        android:id="@+id/tv_order_item_customer_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/tab_margin"
+        android:textColor="@color/Black"
+        android:textSize="@dimen/small_text_size"
+        android:textStyle="normal"
+        app:layout_constraintStart_toStartOf="@+id/tv_order_item_customer_name"
+        app:layout_constraintTop_toBottomOf="@+id/tv_order_item_customer_name"
+        tools:text="0547823266" />
+
+    <TextView
+        android:id="@+id/tv_order_item_customer_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/tab_margin"
+        android:padding="0dp"
+        android:textColor="@color/Black"
+        android:textSize="@dimen/small_text_size"
+        android:textStyle="normal"
+        app:layout_constraintStart_toStartOf="@+id/tv_order_item_customer_phone"
+        app:layout_constraintTop_toBottomOf="@+id/tv_order_item_customer_phone"
+        tools:text="idansass@gmail.com" />
+
+    <TextView
+        android:id="@+id/tv_order_item_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/half_tab_margin"
+        android:layout_marginTop="@dimen/half_tab_margin"
+        android:textDirection="anyRtl"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="25/7/17" />
+
+    <TextView
+        android:id="@+id/tv_order_item_total_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/quadruple_tab_margin"
+        android:layout_marginTop="@dimen/half_tab_margin"
+        android:textColor="@color/Black"
+        android:textDirection="anyRtl"
+        android:textSize="@dimen/main_flow_text_size"
+        android:textStyle="normal"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_order_item_date"
+        tools:text="120₪" />
+
+    <ImageView
+        android:id="@+id/iv_order_item_coupon_used"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:layout_marginEnd="@dimen/tab_margin"
+        app:layout_constraintEnd_toStartOf="@+id/tv_order_item_total_price"
+        app:layout_constraintTop_toBottomOf="@+id/tv_order_item_date"
+        android:src="@drawable/ic_coupon" />
+
+    <TextView
+        android:id="@+id/tv_order_item_confirmation_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginEnd="@dimen/quadruple_tab_margin"
+        android:gravity="center"
+        android:padding="0dp"
+        android:textColor="@color/colorAccent"
+        android:textDirection="anyRtl"
+        android:textSize="@dimen/small_text_size"
+        android:textStyle="normal"
+        app:layout_constraintStart_toStartOf="@+id/tv_order_item_total_price"
+        app:layout_constraintTop_toBottomOf="@+id/tv_order_item_total_price"
+        tools:text="38098" />
+
+    <ImageView
+        android:id="@+id/iv_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/tab_margin"
+        android:background="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_order_item_customer_email" />
+
+</android.support.constraint.ConstraintLayout>

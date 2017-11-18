@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layoutDirection="rtl"
+    android:layout_gravity="end"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="app.com.almogrubi.idansasson.gettix.EventOrdersActivity">
+
+    <TextView
+        android:id="@+id/tv_event_orders_headline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TextAppearance.AppCompat.Headline"
+        tools:text="אביתר בנאי: 'תנועה' מופע סולו"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="@dimen/tab_margin"
+        android:layout_marginStart="@dimen/tab_margin" />
+
+    <TextView
+        android:id="@+id/tv_total_tickets_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/tab_margin"
+        android:textDirection="anyRtl"
+        android:textSize="@dimen/main_flow_text_size"
+        android:textColor="@color/Black"
+        tools:text="מספר כרטיסים כולל: 300" />
+
+    <TextView
+        android:id="@+id/tv_left_tickets_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/tab_margin"
+        android:layout_marginTop="0dp"
+        android:textDirection="anyRtl"
+        android:textSize="@dimen/main_flow_text_size"
+        android:textColor="@color/Black"
+        tools:text="מספר כרטיסים שנותרו: 154" />
+
+    <TextView
+        android:id="@+id/tv_event_orders"
+        android:text="@string/event_orders_label"
+        android:textSize="16sp"
+        android:padding="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/colorPrimary" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/orders_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical" />
+    </ScrollView>
+
+</LinearLayout>

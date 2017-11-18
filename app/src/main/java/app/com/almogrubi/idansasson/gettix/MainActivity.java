@@ -235,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
                 if (isInputValid()) {
                     searchEvents();
 
+                    // Hide keyboard
                     v.requestFocusFromTouch();
                     InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                     if (imm != null) {

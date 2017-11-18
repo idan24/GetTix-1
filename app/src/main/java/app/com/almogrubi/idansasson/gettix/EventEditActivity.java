@@ -235,6 +235,7 @@ public class EventEditActivity extends ManagementScreen {
                 calendar.set(Calendar.MONTH, monthOfYear);
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 binding.etEventDate.setText(DataUtils.UI_DATE_FORMAT.format(calendar.getTime()));
+                binding.etEventDate.setError(null);
             }
         };
         final TimePickerDialog.OnTimeSetListener timeSetListener = new TimePickerDialog.OnTimeSetListener() {
@@ -243,6 +244,7 @@ public class EventEditActivity extends ManagementScreen {
                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar.set(Calendar.MINUTE, minute);
                 binding.etEventHour.setText(DataUtils.HOUR_FORMAT.format(calendar.getTime()));
+                binding.etEventHour.setError(null);
             }
         };
 
@@ -279,6 +281,7 @@ public class EventEditActivity extends ManagementScreen {
                 calendar.set(Calendar.MONTH, monthOfYear);
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 binding.etEventDate.setText(DataUtils.UI_DATE_FORMAT.format(calendar.getTime()));
+                binding.etEventDate.setError(null);
             }
         };
         final TimePickerDialog.OnTimeSetListener timeSetListener = new TimePickerDialog.OnTimeSetListener() {
@@ -287,6 +290,7 @@ public class EventEditActivity extends ManagementScreen {
                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar.set(Calendar.MINUTE, minute);
                 binding.etEventHour.setText(DataUtils.HOUR_FORMAT.format(calendar.getTime()));
+                binding.etEventHour.setError(null);
             }
         };
 

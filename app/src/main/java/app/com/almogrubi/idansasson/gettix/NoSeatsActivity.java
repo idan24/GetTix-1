@@ -11,17 +11,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.jobdispatcher.Constraint;
-import com.firebase.jobdispatcher.FirebaseJobDispatcher;
-import com.firebase.jobdispatcher.GooglePlayDriver;
-import com.firebase.jobdispatcher.Job;
-import com.firebase.jobdispatcher.Lifetime;
-import com.firebase.jobdispatcher.RetryStrategy;
-import com.firebase.jobdispatcher.Trigger;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -144,7 +136,8 @@ public class NoSeatsActivity extends AppCompatActivity {
 
                 // We create a service to return the tickets if after 10 min order is
                 // not finished
-                fireCancelOrderService(newOrder);
+                Utils.fireCancelOrderService(NoSeatsActivity.this, newOrderUid, event.getUid(),
+                        false);
 
                 Intent paymentActivity = new Intent(v.getContext(), PaymentActivity.class);
                 paymentActivity.putExtra("eventUid", event.getUid());
@@ -231,42 +224,6 @@ public class NoSeatsActivity extends AppCompatActivity {
 
         return new Order(orderUid, newOrderTicketsNum, isCouponUsed, newOrderTotalPrice,
                 DataUtils.OrderStatus.IN_PROGRESS);
-    }
-
-    private void fireCancelOrderService(Order order) {
-
-        // Create a new dispatcher using the Google Play driver.
-        FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(NoSeatsActivity.this));
-
-        Bundle cancelOrderJobServiceExtrasBundle = new Bundle();
-        cancelOrderJobServiceExtrasBundle.putString("order_uid", order.getUid());
-        cancelOrderJobServiceExtrasBundle.putString("event_uid", event.getUid());
-        cancelOrderJobServiceExtrasBundle.putBoolean("event_marked_seats", event.isMarkedSeats());
-
-        Job myJob = dispatcher.newJobBuilder()
-                // the JobService that will be called
-                .setService(CancelOrderJobService.class)
-                // uniquely identifies the job
-                .setTag("cancel-order-" + order.getUid())
-                // one-off job
-                .setRecurring(false)
-                // persist past a device reboot
-                .setLifetime(Lifetime.FOREVER)
-                // start in 10-11 minutes from now
-                .setTrigger(Trigger.executionWindow(600, 660))
-                // don't overwrite an existing job with the same tag
-                .setReplaceCurrent(false)
-                // retry with exponential backoff
-                .setRetryStrategy(RetryStrategy.DEFAULT_EXPONENTIAL)
-                // constraints that need to be satisfied for the job to run
-                .setConstraints(
-                        // run on any network
-                        Constraint.ON_ANY_NETWORK
-                )
-                .setExtras(cancelOrderJobServiceExtrasBundle)
-                .build();
-
-        dispatcher.mustSchedule(myJob);
     }
 
     @Override

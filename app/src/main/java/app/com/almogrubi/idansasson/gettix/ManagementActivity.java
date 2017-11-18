@@ -45,7 +45,7 @@ public class ManagementActivity extends ManagementScreen {
         btReports.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //startActivity(new Intent(view.getContext(), ReportsActivity.class));
+                startActivity(new Intent(view.getContext(), ReportsActivity.class));
             }
         });
     }

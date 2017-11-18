@@ -1,15 +1,25 @@
 package app.com.almogrubi.idansasson.gettix.utilities;
 
+import android.content.Context;
+import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.LeadingMarginSpan;
 import android.widget.TextView;
 
 import com.cloudinary.Transformation;
 import com.cloudinary.android.MediaManager;
+import com.firebase.jobdispatcher.Constraint;
+import com.firebase.jobdispatcher.FirebaseJobDispatcher;
+import com.firebase.jobdispatcher.GooglePlayDriver;
+import com.firebase.jobdispatcher.Job;
+import com.firebase.jobdispatcher.Lifetime;
+import com.firebase.jobdispatcher.RetryStrategy;
+import com.firebase.jobdispatcher.Trigger;
 
 import java.util.ArrayList;
 import java.util.Random;
 
+import app.com.almogrubi.idansasson.gettix.CancelOrderJobService;
 import app.com.almogrubi.idansasson.gettix.R;
 
 /**
@@ -152,6 +162,42 @@ public class Utils {
         }
 
         return completeUIString.toString();
+    }
+
+    public static void fireCancelOrderService(Context context, String orderUid, String eventUid, boolean isMarkedSeats) {
+        // Create a new dispatcher using the Google Play driver.
+        FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(context));
+
+        Bundle cancelOrderJobServiceExtrasBundle = new Bundle();
+        cancelOrderJobServiceExtrasBundle.putString("order_uid", orderUid);
+        cancelOrderJobServiceExtrasBundle.putString("event_uid", eventUid);
+        cancelOrderJobServiceExtrasBundle.putBoolean("event_marked_seats", isMarkedSeats);
+
+        Job myJob = dispatcher.newJobBuilder()
+                // the JobService that will be called
+                .setService(CancelOrderJobService.class)
+                // uniquely identifies the job
+                .setTag("cancel-order-" + orderUid)
+                // one-off job
+                .setRecurring(false)
+                // persist past a device reboot
+                .setLifetime(Lifetime.FOREVER)
+                // start in 10-11 minutes from now
+                .setTrigger(Trigger.executionWindow(600, 660))
+                //.setTrigger(Trigger.executionWindow(5, 15))
+                // don't overwrite an existing job with the same tag
+                .setReplaceCurrent(false)
+                // retry with exponential backoff
+                .setRetryStrategy(RetryStrategy.DEFAULT_EXPONENTIAL)
+                // constraints that need to be satisfied for the job to run
+                .setConstraints(
+                        // run on any network
+                        Constraint.ON_ANY_NETWORK
+                )
+                .setExtras(cancelOrderJobServiceExtrasBundle)
+                .build();
+
+        dispatcher.mustSchedule(myJob);
     }
 
     /*

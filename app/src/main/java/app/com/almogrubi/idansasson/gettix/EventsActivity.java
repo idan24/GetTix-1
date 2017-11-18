@@ -153,20 +153,31 @@ public class EventsActivity extends ManagementScreen {
             public boolean onMenuItemClick(MenuItem item) {
                 int itemId = item.getItemId();
                 Context context = eventView.getContext();
-                Intent eventEditActivityIntent = new Intent(context, EventEditActivity.class);
+                Intent eventEditActivity = new Intent(context, EventEditActivity.class);
 
                 switch (itemId) {
+                    case R.id.action_view_event_orders:
+                        Intent eventOrdersActivity = new Intent(context, EventOrdersActivity.class);
+                        eventOrdersActivity.putExtra("eventUid", event.getUid());
+                        eventOrdersActivity.putExtra("eventTitle", event.getTitle());
+                        int eventTotalTicketsNum = event.isMarkedSeats()
+                                ? event.getEventHall().getRows() * event.getEventHall().getColumns()
+                                : event.getMaxCapacity();
+                        eventOrdersActivity.putExtra("eventTotalTicketsNum", eventTotalTicketsNum);
+                        eventOrdersActivity.putExtra("eventLeftTicketsNum", event.getLeftTicketsNum());
+                        context.startActivity(eventOrdersActivity);
+                        return true;
                     case R.id.action_new_event_based:
-                        eventEditActivityIntent.putExtra("editMode",
+                        eventEditActivity.putExtra("editMode",
                                 EventEditActivity.EventEditMode.NEW_EVENT_BASED_ON_EXISTING);
-                        eventEditActivityIntent.putExtra("eventUid", event.getUid());
-                        context.startActivity(eventEditActivityIntent);
+                        eventEditActivity.putExtra("eventUid", event.getUid());
+                        context.startActivity(eventEditActivity);
                         return true;
                     case R.id.action_edit_event:
-                        eventEditActivityIntent.putExtra("editMode",
+                        eventEditActivity.putExtra("editMode",
                                 EventEditActivity.EventEditMode.EXISTING_EVENT);
-                        eventEditActivityIntent.putExtra("eventUid", event.getUid());
-                        context.startActivity(eventEditActivityIntent);
+                        eventEditActivity.putExtra("eventUid", event.getUid());
+                        context.startActivity(eventEditActivity);
                         return true;
                     case R.id.action_delete_event:
                         handleDeleteEvent(event);

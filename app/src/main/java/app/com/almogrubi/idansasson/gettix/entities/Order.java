@@ -65,6 +65,10 @@ public class Order implements Serializable {
         return uid;
     }
 
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
     public Customer getCustomer() {
         return customer;
     }
@@ -90,11 +94,19 @@ public class Order implements Serializable {
     }
 
     public boolean isCouponUsed() {
-        return isCouponUsed;
+        return this.isCouponUsed;
+    }
+
+    public void setCouponUsed(boolean couponUsed) {
+        this.isCouponUsed = couponUsed;
     }
 
     public int getTotalPrice() {
         return totalPrice;
+    }
+
+    public void setTotalPrice(int totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
     public String getConfirmationNumber() {

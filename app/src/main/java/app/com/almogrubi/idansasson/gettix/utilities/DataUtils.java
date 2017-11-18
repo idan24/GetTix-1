@@ -81,6 +81,11 @@ public class DataUtils {
         return UI_DATE_FORMAT.format(getDateFromString(dbDate, DB_DATE_FORMAT));
     }
 
+    public static String convertToUiDateFormat(long timestamp) {
+        UI_DATE_FORMAT.setLenient(false);
+        return UI_DATE_FORMAT.format(new Date(timestamp));
+    }
+
     public static int getYearFromDbDate(String dbDate) {
         return new DateTime(getDateFromString(dbDate, DB_DATE_FORMAT)).getYear();
     }

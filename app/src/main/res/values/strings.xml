@@ -4,7 +4,10 @@
     <string name="title_activity_seats">הזמנת כרטיסים</string>
     <string name="title_activity_no_seats">הזמנת כרטיסים</string>
     <string name="title_activity_payment">הזנת פרטים</string>
-    <string name="events_screen_title">מסך מפיק</string>
+    <string name="title_activity_management">מסך מפיק</string>
+    <string name="title_activity_events">מופעים</string>
+    <string name="title_activity_halls">אולמות</string>
+    <string name="title_activity_event_orders">הזמנות</string>
 
     <!-- for main activity -->
     <string name="find_events_label">מצא את האירוע שלך:</string>
@@ -17,6 +20,7 @@
     <string name="search_events_button">חפש</string>
 
     <!-- for popup menus -->
+    <string name="action_view_event_orders">צפה בהזמנות...</string>
     <string name="action_new_event_based">צור מופע חדש בסדרה...</string>
     <string name="action_edit_event">ערוך מופע</string>
     <string name="action_delete_event">בטל מופע</string>
@@ -57,6 +61,7 @@
     <string name="action_sign_out">התנתק...</string>
     <string name="action_add_item">צור חדש</string>
     <string name="your_events_label">האירועים שלך:</string>
+    <string name="event_orders_label">הזמנות:</string>
     <string name="events_button">מופעים</string>
     <string name="halls_button">אולמות</string>
     <string name="reports_button">דו\"חות</string>

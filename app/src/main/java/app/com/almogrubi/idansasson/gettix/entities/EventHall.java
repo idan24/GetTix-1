@@ -35,4 +35,20 @@ public class EventHall implements Serializable {
     public int getRows() { return rows; }
 
     public int getColumns() { return columns; }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setRows(int rows) {
+        this.rows = rows;
+    }
+
+    public void setColumns(int columns) {
+        this.columns = columns;
+    }
 }

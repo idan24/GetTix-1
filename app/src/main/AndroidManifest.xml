@@ -15,28 +15,35 @@
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".ManagementActivity"
-            android:label="@string/events_screen_title"
+            android:label="@string/title_activity_management"
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".EventsActivity"
-            android:label="@string/events_button"
+            android:label="@string/title_activity_events"
             android:launchMode="singleTop"
             android:parentActivityName=".ManagementActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SENDTO" />
+
                 <data android:scheme="mailto" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
             android:name=".EventEditActivity"
             android:label="@string/event_edit_title"
+            android:parentActivityName=".EventsActivity" />
+        <activity
+            android:name=".EventOrdersActivity"
+            android:label="@string/title_activity_event_orders"
             android:parentActivityName=".EventsActivity" />
         <activity
             android:name=".HallsActivity"
@@ -47,6 +54,9 @@
             android:name=".HallEditActivity"
             android:label="@string/hall_edit_title"
             android:parentActivityName=".HallsActivity" />
+        <activity android:name=".ReportsActivity"
+            android:label="@string/reports_button"
+            android:parentActivityName=".ManagementActivity" />
         <activity
             android:name=".EventDetailsActivity"
             android:label="@string/title_activity_detail"
@@ -76,9 +86,10 @@
             android:enabled="true"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
             </intent-filter>
         </service>
+
     </application>
 
 </manifest>

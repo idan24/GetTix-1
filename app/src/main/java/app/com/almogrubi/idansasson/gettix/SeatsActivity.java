@@ -8,11 +8,9 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -21,13 +19,6 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.jobdispatcher.Constraint;
-import com.firebase.jobdispatcher.FirebaseJobDispatcher;
-import com.firebase.jobdispatcher.GooglePlayDriver;
-import com.firebase.jobdispatcher.Job;
-import com.firebase.jobdispatcher.Lifetime;
-import com.firebase.jobdispatcher.RetryStrategy;
-import com.firebase.jobdispatcher.Trigger;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -36,9 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeSet;
 
 import app.com.almogrubi.idansasson.gettix.databinding.ActivitySeatsBinding;
 import app.com.almogrubi.idansasson.gettix.entities.Event;
@@ -157,7 +146,8 @@ public class SeatsActivity extends AppCompatActivity{
 
                 // We create a service to return the tickets if after 10 min order is
                 // not finished
-                fireCancelOrderService(newOrder);
+                Utils.fireCancelOrderService(SeatsActivity.this, newOrderUid, event.getUid(),
+                        true);
 
                 // Proceed to PaymentActivity
                 proceedToPayment(v.getContext(), newOrder);
@@ -213,6 +203,7 @@ public class SeatsActivity extends AppCompatActivity{
     private void createSeatsUI(String eventUid) {
         eventSeatsDatabaseReference
                 .child(eventUid)
+                // TODO: update UI automatically when seats are getting taken/free in DB; handle chosen seats in that case
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -415,43 +406,6 @@ public class SeatsActivity extends AppCompatActivity{
 
         orderSeatsDatabaseReference.child(newOrderUid).updateChildren(orderSeatsData);
         eventSeatsDatabaseReference.child(orderEventUid).updateChildren(orderSeatsData);
-    }
-
-    private void fireCancelOrderService(Order order) {
-
-        // Create a new dispatcher using the Google Play driver.
-        FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(SeatsActivity.this));
-
-        Bundle cancelOrderJobServiceExtrasBundle = new Bundle();
-        cancelOrderJobServiceExtrasBundle.putString("order_uid", order.getUid());
-        cancelOrderJobServiceExtrasBundle.putString("event_uid", event.getUid());
-        cancelOrderJobServiceExtrasBundle.putBoolean("event_marked_seats", event.isMarkedSeats());
-
-        Job myJob = dispatcher.newJobBuilder()
-                // the JobService that will be called
-                .setService(CancelOrderJobService.class)
-                // uniquely identifies the job
-                .setTag("cancel-order-" + order.getUid())
-                // one-off job
-                .setRecurring(false)
-                // persist past a device reboot
-                .setLifetime(Lifetime.FOREVER)
-                // start in 10-11 minutes from now
-                .setTrigger(Trigger.executionWindow(600, 660))
-                //.setTrigger(Trigger.executionWindow(5, 15))
-                // don't overwrite an existing job with the same tag
-                .setReplaceCurrent(false)
-                // retry with exponential backoff
-                .setRetryStrategy(RetryStrategy.DEFAULT_EXPONENTIAL)
-                // constraints that need to be satisfied for the job to run
-                .setConstraints(
-                        // run on any network
-                        Constraint.ON_ANY_NETWORK
-                )
-                .setExtras(cancelOrderJobServiceExtrasBundle)
-                .build();
-
-        dispatcher.mustSchedule(myJob);
     }
 
     @Override
