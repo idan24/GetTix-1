@@ -210,6 +210,14 @@ public class EventEditActivity extends ManagementScreen {
                         new HallSpinnerAdapter(EventEditActivity.this, R.layout.spinner_item, halls);
                 hallSpinnerAdapter.setDropDownViewResource(R.layout.spinner_item);
                 binding.spEventHall.setAdapter(hallSpinnerAdapter);
+
+                // If we are in edit mode / new event based on an existing one, we make sure here that the event's
+                // hall is properly selected (this solved race condition)
+                if (editedEvent != null) {
+                    binding.spEventHall.setSelection(
+                            ((HallSpinnerAdapter) binding.spEventHall.getAdapter())
+                                    .getPosition(editedEvent.getEventHall().getUid()));
+                }
             }
 
             @Override
@@ -323,21 +331,12 @@ public class EventEditActivity extends ManagementScreen {
         binding.etEventTitle.setText(this.editedEvent.getTitle());
         binding.spEventCategory.setSelection(this.editedEvent.getCategoryAsEnum().ordinal() - 1);
 
-        hallsDatabaseReference.child(this.editedEvent.getEventHall().getUid())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            // dataSnapshot is the "hall" node
-                            Hall hall = dataSnapshot.getValue(Hall.class);
-                            binding.spEventHall.setSelection(
-                                    ((HallSpinnerAdapter)binding.spEventHall.getAdapter()).getPosition(hall));
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {}
-                });
+        // If the halls spinner adapter source was not yet set, it will be once the source is loaded instead of here
+        if (binding.spEventHall.getAdapter() != null) {
+            binding.spEventHall.setSelection(
+                    ((HallSpinnerAdapter) binding.spEventHall.getAdapter())
+                            .getPosition(this.editedEvent.getEventHall().getUid()));
+        }
 
         binding.etEventDuration.setText(String.valueOf(this.editedEvent.getDuration()));
         binding.etEventDescription.setText(this.editedEvent.getDescription());
