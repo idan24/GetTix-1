@@ -1,6 +1,7 @@
 package app.com.almogrubi.idansasson.gettix;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -11,8 +12,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 import com.stripe.android.Stripe;
 import com.stripe.android.TokenCallback;
 import com.stripe.android.model.Card;
@@ -22,8 +28,10 @@ import java.security.SecureRandom;
 
 import app.com.almogrubi.idansasson.gettix.databinding.ActivityPaymentBinding;
 import app.com.almogrubi.idansasson.gettix.entities.Customer;
+import app.com.almogrubi.idansasson.gettix.entities.Event;
 import app.com.almogrubi.idansasson.gettix.entities.Order;
 import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
+import app.com.almogrubi.idansasson.gettix.utilities.OrderDataUtils;
 import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 
 /**
@@ -83,6 +91,56 @@ public class PaymentActivity extends AppCompatActivity {
             }
         }
 
+        // Retrieve event's up-to-date leftTicketsNum from DB
+        eventsDatabaseReference
+                .child(intent.getStringExtra("eventUid"))
+                .child("leftTicketsNum").runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                int leftTicketsNum = Integer.parseInt(mutableData.getValue().toString());
+
+                // For the rare scenario where multiple customers ordered the last tickets for the event
+                // at the same time, we identify it by checking if its left tickets num is negative and
+                // therefore invalid. In that case, we abort the orders of all clients that booked their
+                // orders at the same time (sometimes besides the first one to get here, depending on timing)
+                if (leftTicketsNum < 0)
+                    abortOrder();
+
+                // Report transaction success
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {}
+        });
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(DataSnapshot dataSnapshot) {
+//                        // If we have a null result, the event was somehow not found in the database
+//                        if (dataSnapshot == null || !dataSnapshot.exists() || dataSnapshot.getValue() == null) {
+//                            abort();
+//                            return;
+//                        }
+//
+//                        // If we reached here then the existing event was found
+//                        Event event = dataSnapshot.getValue(Event.class);
+//
+//                        // For the rare scenario where multiple customers ordered the last tickets for the event
+//                        // at the same time, we identify it by checking if its left tickets num is negative and
+//                        // therefore invalid. In that case, we abort the orders of all clients that booked their
+//                        // orders at the same time
+//                        if (event.getLeftTicketsNum() < 0)
+//                            abortOrder();
+//
+////                        int eventLeftTicketsNum = Integer.parseInt(dataSnapshot.getValue().toString());
+////                        if (eventLeftTicketsNum < 0)
+////                            abortOrder();
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {}
+//                });
+
         binding.tvTicketsNum.setText(
                 String.format("רכישת %d כרטיסים: %d ₪",
                         order.getTicketsNum(), order.getTotalPrice()));
@@ -101,6 +159,17 @@ public class PaymentActivity extends AppCompatActivity {
         });
 
         binding.etFullName.requestFocus();
+    }
+
+    private void abortOrder() {
+        OrderDataUtils.cancelOrder(eventUid, isMarkedSeats, order);
+        String toastMessage = "מצטערים, הזמנתך נחסמה ע\"י לקוח אחר. אם לא אזלו הכרטיסים, נסה שנית!";
+        Toast.makeText(PaymentActivity.this, toastMessage, Toast.LENGTH_LONG).show();
+
+        // Send user back to event details activity
+        Intent detailActivityIntent = new Intent(this, EventDetailsActivity.class);
+        detailActivityIntent.putExtra("eventUid", eventUid);
+        startActivity(detailActivityIntent);
     }
 
     private boolean checkInputValidity() {
@@ -175,6 +244,7 @@ public class PaymentActivity extends AppCompatActivity {
     private void proceedToConfirmation() {
         Intent confirmationActivity = new Intent(PaymentActivity.this, ConfirmationActivity.class);
         confirmationActivity.putExtra("eventUid", eventUid);
+        confirmationActivity.putExtra("eventMarkedSeats", isMarkedSeats);
         confirmationActivity.putExtra("orderObject", order);
 
         if (isMarkedSeats)
@@ -186,6 +256,8 @@ public class PaymentActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
+            // Cancel the order the was created in seats/no-seats activity
+            OrderDataUtils.cancelOrder(eventUid, isMarkedSeats, order);
             finish();
             return true;
         }

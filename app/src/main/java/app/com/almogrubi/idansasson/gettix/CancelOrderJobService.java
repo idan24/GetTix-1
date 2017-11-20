@@ -9,6 +9,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
@@ -17,6 +19,7 @@ import java.util.Map;
 import app.com.almogrubi.idansasson.gettix.entities.Event;
 import app.com.almogrubi.idansasson.gettix.entities.Order;
 import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
+import app.com.almogrubi.idansasson.gettix.utilities.OrderDataUtils;
 
 public class CancelOrderJobService extends JobService {
 
@@ -72,18 +75,7 @@ public class CancelOrderJobService extends JobService {
                                 // We only have work to do if the order is still marked as "in process" after 10 min
                                 // If the order is final or cancelled by now, we can abort
                                 if (order.getStatusAsEnum() == DataUtils.OrderStatus.IN_PROGRESS) {
-
-                                    // Update: "orders / $ eventUid / $ orderUid / status = FINAL"
-                                    ordersDatabaseReference
-                                            .child(eventUid)
-                                            .child(orderUid)
-                                            .child("status").setValue(DataUtils.OrderStatus.CANCELLED.name());
-
-                                    updateEventLeftTicketsNum(eventUid, order.getTicketsNum());
-
-                                    if (isEventMarkedSeats) {
-                                        freeEventAndOrderSeats(eventUid, orderUid);
-                                    }
+                                    OrderDataUtils.cancelOrder(eventUid, isEventMarkedSeats, order);
                                 }
                             }
 
@@ -102,71 +94,6 @@ public class CancelOrderJobService extends JobService {
 
         backgroundTask.execute();
         return true;
-    }
-
-    private void freeEventAndOrderSeats(final String eventUid, final String orderUid) {
-        orderSeatsDatabaseReference.child(orderUid)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            Map orderSeatsData = new HashMap();
-
-                            // Going through all order's rows
-                            for (DataSnapshot rowSnapshot : dataSnapshot.getChildren()) {
-                                // Going through all order's seats in this row
-                                for (DataSnapshot seatSnapshot : rowSnapshot.getChildren()) {
-                                    // Free the seat, as we have cancelled the order
-                                    orderSeatsData.put(
-                                            String.format("%s/%s", rowSnapshot.getKey(), seatSnapshot.getKey()),
-                                            false);
-                                }
-                            }
-
-                            eventSeatsDatabaseReference.child(eventUid).updateChildren(orderSeatsData);
-
-                            orderSeatsDatabaseReference.child(orderUid).removeValue();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {}
-                });
-    }
-
-    private void updateEventLeftTicketsNum(final String eventUid, final int orderTicketsNum) {
-        // Query the event that needs to be updated
-        eventsDatabaseReference
-                .child(eventUid)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // If we have a null result, the event was somehow not found in the database
-                        if (dataSnapshot == null || !dataSnapshot.exists() || dataSnapshot.getValue() == null) {
-                            return;
-                        }
-
-                        // If we reached here then the event was found
-                        Event event = dataSnapshot.getValue(Event.class);
-                        int eventLeftTicketsNum = event.getLeftTicketsNum();
-
-                        // Update: "events / $ eventUid / leftTicketNum += orderTicketsNum
-                        eventsDatabaseReference
-                                .child(eventUid)
-                                .child("leftTicketsNum").setValue(eventLeftTicketsNum + orderTicketsNum);
-
-                        // If the event was marked as sold-out before, now that tickets were returned it is back
-                        // to selling state
-                        if (event.isSoldOut()) {
-                            eventsDatabaseReference
-                                    .child(eventUid)
-                                    .child("soldOut").setValue(false);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {}
-                });
     }
 
     @Override

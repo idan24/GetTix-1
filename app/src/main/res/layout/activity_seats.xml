@@ -141,6 +141,7 @@
                 android:layout_marginEnd="@dimen/tab_margin"
                 android:layout_marginStart="@dimen/tab_margin"
                 android:layout_marginTop="@dimen/quadruple_tab_margin"
+                android:layout_marginBottom="@dimen/tab_margin"
                 android:padding="@dimen/semidouble_tab_margin"
                 android:layout_gravity="center"
                 android:gravity="center"

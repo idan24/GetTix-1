@@ -156,6 +156,7 @@
                 android:layout_marginEnd="@dimen/tab_margin"
                 android:layout_marginStart="@dimen/tab_margin"
                 android:layout_marginTop="@dimen/quadruple_tab_margin"
+                android:layout_marginBottom="@dimen/tab_margin"
                 android:padding="@dimen/semidouble_tab_margin"
                 android:layout_gravity="center"
                 android:gravity="center"
@@ -167,81 +168,4 @@
 
         </LinearLayout>
     </ScrollView>
-
-            <!--<LinearLayout-->
-                <!--android:id="@+id/credit_box"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:orientation="horizontal"-->
-                <!--app:layout_constraintLeft_toLeftOf="@+id/payment_box"-->
-                <!--app:layout_constraintTop_toBottomOf="@+id/payment_box">-->
-
-                <!--<TextView-->
-                    <!--android:id="@+id/credit_text"-->
-                    <!--android:layout_width="70dp"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_weight="1"-->
-                    <!--android:ems="10"-->
-                    <!--android:text="Credit card " />-->
-
-                <!--<EditText-->
-                    <!--android:id="@+id/credit_edit_text"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_weight="1"-->
-                    <!--android:ems="10"-->
-                    <!--android:inputType="textPersonName"-->
-                    <!--android:text="credit card number" />-->
-            <!--</LinearLayout>-->
-
-            <!--<LinearLayout-->
-                <!--android:id="@+id/expiration_box"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:orientation="horizontal"-->
-                <!--app:layout_constraintLeft_toLeftOf="@+id/credit_box"-->
-                <!--app:layout_constraintTop_toBottomOf="@+id/credit_box">-->
-
-                <!--<TextView-->
-                    <!--android:id="@+id/expiration_text"-->
-                    <!--android:layout_width="70dp"-->
-                    <!--android:layout_height="50dp"-->
-                    <!--android:ems="10"-->
-                    <!--android:text="Expiration date" />-->
-
-                <!--<EditText-->
-                    <!--android:id="@+id/expiration_edit_text"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_weight="1"-->
-                    <!--android:ems="10"-->
-                    <!--android:inputType="textPersonName"-->
-                    <!--android:text="MM/YYYY" />-->
-            <!--</LinearLayout>-->
-
-            <!--<LinearLayout-->
-                <!--android:id="@+id/CVV_box"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:orientation="horizontal"-->
-                <!--app:layout_constraintLeft_toLeftOf="@+id/expiration_box"-->
-                <!--app:layout_constraintTop_toBottomOf="@+id/expiration_box">-->
-
-                <!--<TextView-->
-                    <!--android:id="@+id/CVV_text"-->
-                    <!--android:layout_width="70dp"-->
-                    <!--android:layout_height="50dp"-->
-                    <!--android:ems="10"-->
-                    <!--android:text="CVV" />-->
-
-                <!--<EditText-->
-                    <!--android:id="@+id/CVV_edit_text"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_weight="1"-->
-                    <!--android:ems="10"-->
-                    <!--android:inputType="textPersonName"-->
-                    <!--android:text="XXX" />-->
-            <!--</LinearLayout>-->
-
 </layout>

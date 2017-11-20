@@ -30,6 +30,7 @@ public class ConfirmationActivity extends AppCompatActivity {
 
     private ActivityConfirmationBinding binding;
     private Event event;
+    private boolean isMarkedSeats;
     private Order order;
     private boolean[][] orderSeats;
 
@@ -46,8 +47,6 @@ public class ConfirmationActivity extends AppCompatActivity {
         hallsDatabaseReference = firebaseDatabase.getReference().child("halls");
         orderSeatsDatabaseReference = firebaseDatabase.getReference().child("order_seats");
 
-        Toast.makeText(this, "הזמנתך התקבלה בהצלחה!", Toast.LENGTH_LONG).show();
-
         Intent intent = this.getIntent();
         // Lookup the event in the database and bind its data to UI
         if ((intent != null) && (intent.hasExtra("eventUid"))) {
@@ -62,6 +61,7 @@ public class ConfirmationActivity extends AppCompatActivity {
                             }
 
                             // If we reached here then the existing event was found, we'll bind it to UI
+                            Toast.makeText(ConfirmationActivity.this, "הזמנתך התקבלה בהצלחה!", Toast.LENGTH_LONG).show();
                             event = dataSnapshot.getValue(Event.class);
                             bindEventToUI(event);
                         }
@@ -69,20 +69,28 @@ public class ConfirmationActivity extends AppCompatActivity {
                         @Override
                         public void onCancelled(DatabaseError databaseError) {}
                     });
-
+            if (intent.hasExtra("eventMarkedSeats")) {
+                this.isMarkedSeats = intent.getBooleanExtra("eventMarkedSeats", false);
+            }
             if (intent.hasExtra("orderObject")) {
                 this.order = (Order) intent.getSerializableExtra("orderObject");
                 bindOrderToUI(order);
             }
-            if (intent.hasExtra("orderSeats")) {
-                String[][] orderSeatsStrings = (String[][]) intent.getSerializableExtra("orderSeats");
 
-                orderSeats = new boolean[orderSeatsStrings.length][orderSeatsStrings[0].length];
-                for (int i = 0; i < orderSeatsStrings.length; i++)
-                    for (int j = 0; j < orderSeatsStrings[0].length; j++)
-                        orderSeats[i][j] = Boolean.parseBoolean(orderSeatsStrings[i][j]);
+            if (this.isMarkedSeats) {
+                if (intent.hasExtra("orderSeats")) {
+                    String[][] orderSeatsStrings = (String[][]) intent.getSerializableExtra("orderSeats");
 
-                binding.tvChosenSeats.setText(Utils.generateOrderSeatsUIString(this.orderSeats));
+                    orderSeats = new boolean[orderSeatsStrings.length][orderSeatsStrings[0].length];
+                    for (int i = 0; i < orderSeatsStrings.length; i++)
+                        for (int j = 0; j < orderSeatsStrings[0].length; j++)
+                            orderSeats[i][j] = Boolean.parseBoolean(orderSeatsStrings[i][j]);
+
+                    binding.tvChosenSeats.setText(Utils.generateOrderSeatsUIString(this.orderSeats));
+                }
+                else {
+                    binding.tvChosenSeats.setVisibility(View.GONE);
+                }
             }
             else {
                 binding.tvChosenSeats.setVisibility(View.GONE);

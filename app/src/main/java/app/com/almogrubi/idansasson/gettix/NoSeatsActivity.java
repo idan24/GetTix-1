@@ -1,5 +1,6 @@
 package app.com.almogrubi.idansasson.gettix;
 
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
@@ -18,6 +19,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
@@ -118,42 +121,69 @@ public class NoSeatsActivity extends AppCompatActivity {
         binding.btNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Create a new order in database
-                final String newOrderUid = ordersDatabaseReference.push().getKey();
-                Order newOrder = createNewOrderFromUI(newOrderUid);
-                // orders / $ eventUid / $ newOrderUid / newOrder
-                ordersDatabaseReference.child(event.getUid()).child(newOrderUid).setValue(newOrder);
-
-                int newLeftTicketsNum = event.getLeftTicketsNum() - newOrder.getTicketsNum();
-                Map newEventData = new HashMap();
-                newEventData.put("leftTicketsNum", newLeftTicketsNum);
-
-                if (newLeftTicketsNum == 0) {
-                    newEventData.put("soldOut", true);
-                }
-
-                eventsDatabaseReference.child(event.getUid()).updateChildren(newEventData);
-
-                // We create a service to return the tickets if after 10 min order is
-                // not finished
-                Utils.fireCancelOrderService(NoSeatsActivity.this, newOrderUid, event.getUid(),
-                        false);
-
-                Intent paymentActivity = new Intent(v.getContext(), PaymentActivity.class);
-                paymentActivity.putExtra("eventUid", event.getUid());
-                paymentActivity.putExtra("eventTitle", event.getTitle());
-                paymentActivity.putExtra("eventMarkedSeats", false);
-                paymentActivity.putExtra("orderObject", newOrder);
-                startActivity(paymentActivity);
+                onNext(v.getContext());
             }
         });
     }
 
     private void abort() {
         String eventNotFoundErrorMessage = "המופע לא נמצא, נסה שנית";
-
         Toast.makeText(this, eventNotFoundErrorMessage, Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(this, EventDetailsActivity.class));
+
+        startActivity(new Intent(this, MainActivity.class));
+    }
+
+    private void onNext(Context context) {
+        // Create a new order in database
+        final String newOrderUid = ordersDatabaseReference.push().getKey();
+        Order newOrder = createNewOrderFromUI(newOrderUid);
+        // orders / $ eventUid / $ newOrderUid / newOrder
+        ordersDatabaseReference.child(event.getUid()).child(newOrderUid).setValue(newOrder);
+
+        // Update order's event's leftTicketsNum (and soldOut if necessary)
+        updateEventTicketsNum(newOrder.getTicketsNum());
+
+        // We create a service to return the tickets if after 10 min order is
+        // not finished
+        Utils.fireCancelOrderService(NoSeatsActivity.this, newOrderUid, event.getUid(),
+                false);
+
+        // Proceed to PaymentActivity
+        proceedToPayment(context, newOrder);
+    }
+
+    private void proceedToPayment(Context context, Order newOrder) {
+
+        Intent paymentActivity = new Intent(context, PaymentActivity.class);
+        paymentActivity.putExtra("eventUid", event.getUid());
+        paymentActivity.putExtra("eventTitle", event.getTitle());
+        paymentActivity.putExtra("eventMarkedSeats", false);
+        paymentActivity.putExtra("orderObject", newOrder);
+
+        startActivity(paymentActivity);
+    }
+
+    private void updateEventTicketsNum(final int newOrderTicketsNum) {
+        eventsDatabaseReference.child(event.getUid()).runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                Event event = mutableData.getValue(Event.class);
+                if (event == null)
+                    return Transaction.success(mutableData);
+
+                int newLeftTicketsNum = event.getLeftTicketsNum() - newOrderTicketsNum;
+                mutableData.child("leftTicketsNum").setValue(newLeftTicketsNum);
+
+                if (newLeftTicketsNum <= 0)
+                    mutableData.child("soldOut").setValue(true);
+
+                // Report transaction success
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {}
+        });
     }
 
     private void incrementTicketsNum() {
