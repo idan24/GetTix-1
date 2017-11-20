@@ -502,7 +502,10 @@ public class SeatsActivity extends AppCompatActivity{
             }
 
             @Override
-            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+            public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot dataSnapshot) {
+                // If the transaction aborted, do nothing here
+                if (!committed) return;
+
                 // If we reached here, the chosen seats are safe and updated in DB
                 // Update order's event's leftTicketsNum (and soldOut if necessary) in DB
                 updateEventTicketsNum(newOrder.getTicketsNum());
