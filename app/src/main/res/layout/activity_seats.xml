@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="app.com.almogrubi.idansasson.gettix.SeatsActivity">
+    tools:context="app.com.almogrubi.idansasson.gettix.activities.SeatsActivity">
     <ScrollView
         android:layoutDirection="rtl"
         android:layout_width="match_parent"

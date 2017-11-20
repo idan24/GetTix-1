@@ -1,4 +1,4 @@
-package app.com.almogrubi.idansasson.gettix;
+package app.com.almogrubi.idansasson.gettix.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +8,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -23,13 +24,12 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import app.com.almogrubi.idansasson.gettix.R;
 import app.com.almogrubi.idansasson.gettix.databinding.ActivityNoSeatsBinding;
+import app.com.almogrubi.idansasson.gettix.dataservices.OrderDataService;
 import app.com.almogrubi.idansasson.gettix.entities.Event;
 import app.com.almogrubi.idansasson.gettix.entities.Order;
-import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
+import app.com.almogrubi.idansasson.gettix.dataservices.DataUtils;
 import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 
 
@@ -145,7 +145,7 @@ public class NoSeatsActivity extends AppCompatActivity {
 
         // We create a service to return the tickets if after 10 min order is
         // not finished
-        Utils.fireCancelOrderService(NoSeatsActivity.this, newOrderUid, event.getUid(),
+        OrderDataService.fireCancelOrderService(NoSeatsActivity.this, newOrderUid, event.getUid(),
                 false);
 
         // Proceed to PaymentActivity
@@ -264,5 +264,19 @@ public class NoSeatsActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            onBackPressed();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onBackPressed() {
+        NavUtils.navigateUpFromSameTask(this);
     }
 }

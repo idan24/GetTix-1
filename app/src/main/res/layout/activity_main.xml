@@ -11,7 +11,7 @@
     android:gravity="right"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    tools:context="app.com.almogrubi.idansasson.gettix.MainActivity">
+    tools:context="app.com.almogrubi.idansasson.gettix.activities.MainActivity">
 
     <TextView
         android:id="@+id/tv_find_label"

@@ -7,7 +7,7 @@
     android:layout_gravity="end"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="app.com.almogrubi.idansasson.gettix.EventOrdersActivity">
+    tools:context="app.com.almogrubi.idansasson.gettix.activities.EventOrdersActivity">
 
     <TextView
         android:id="@+id/tv_event_orders_headline"

@@ -1,4 +1,4 @@
-package app.com.almogrubi.idansasson.gettix.utilities;
+package app.com.almogrubi.idansasson.gettix.dataservices;
 
 import org.joda.time.DateTime;
 

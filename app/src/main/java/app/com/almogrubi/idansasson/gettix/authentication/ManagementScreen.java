@@ -1,10 +1,11 @@
-package app.com.almogrubi.idansasson.gettix.utilities;
+package app.com.almogrubi.idansasson.gettix.authentication;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -15,7 +16,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
 
-import app.com.almogrubi.idansasson.gettix.MainActivity;
+import app.com.almogrubi.idansasson.gettix.activities.MainActivity;
 import app.com.almogrubi.idansasson.gettix.R;
 
 /**
@@ -107,6 +108,20 @@ public class ManagementScreen extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            onBackPressed();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onBackPressed() {
+        NavUtils.navigateUpFromSameTask(this);
     }
 
     @Override

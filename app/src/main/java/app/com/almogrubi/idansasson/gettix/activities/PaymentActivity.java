@@ -1,13 +1,12 @@
-package app.com.almogrubi.idansasson.gettix;
+package app.com.almogrubi.idansasson.gettix.activities;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -18,7 +17,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
-import com.google.firebase.database.ValueEventListener;
 import com.stripe.android.Stripe;
 import com.stripe.android.TokenCallback;
 import com.stripe.android.model.Card;
@@ -26,12 +24,12 @@ import com.stripe.android.model.Token;
 
 import java.security.SecureRandom;
 
+import app.com.almogrubi.idansasson.gettix.R;
 import app.com.almogrubi.idansasson.gettix.databinding.ActivityPaymentBinding;
 import app.com.almogrubi.idansasson.gettix.entities.Customer;
-import app.com.almogrubi.idansasson.gettix.entities.Event;
 import app.com.almogrubi.idansasson.gettix.entities.Order;
-import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
-import app.com.almogrubi.idansasson.gettix.utilities.OrderDataUtils;
+import app.com.almogrubi.idansasson.gettix.dataservices.DataUtils;
+import app.com.almogrubi.idansasson.gettix.dataservices.OrderDataService;
 import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 
 /**
@@ -162,7 +160,7 @@ public class PaymentActivity extends AppCompatActivity {
     }
 
     private void abortOrder() {
-        OrderDataUtils.cancelOrder(eventUid, isMarkedSeats, order);
+        OrderDataService.cancelOrder(eventUid, isMarkedSeats, order);
         String toastMessage = "מצטערים, הזמנתך נחסמה ע\"י לקוח אחר. אם לא אזלו הכרטיסים, נסה שנית!";
         Toast.makeText(PaymentActivity.this, toastMessage, Toast.LENGTH_LONG).show();
 
@@ -223,7 +221,7 @@ public class PaymentActivity extends AppCompatActivity {
                         order.setStatusAsEnum(DataUtils.OrderStatus.FINAL);
                         order.setConfirmationNumber(
                                 Utils.generateRandomString(
-                                        Utils.ORDER_CONFIRMATION_NUMBER_LENGTH,
+                                        OrderDataService.ORDER_CONFIRMATION_NUMBER_LENGTH,
                                         new SecureRandom()));
 
                         ordersDatabaseReference.child(eventUid).child(order.getUid()).setValue(order);
@@ -256,12 +254,26 @@ public class PaymentActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            // Cancel the order the was created in seats/no-seats activity
-            OrderDataUtils.cancelOrder(eventUid, isMarkedSeats, order);
-            finish();
+            onBackPressed();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            onBackPressed();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Cancel the order the was created in seats/no-seats activity
+        OrderDataService.cancelOrder(eventUid, isMarkedSeats, order);
+        finish();
     }
 }

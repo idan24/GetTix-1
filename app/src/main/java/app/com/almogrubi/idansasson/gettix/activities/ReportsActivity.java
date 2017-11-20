@@ -1,7 +1,5 @@
-package app.com.almogrubi.idansasson.gettix;
+package app.com.almogrubi.idansasson.gettix.activities;
 
-import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,9 +17,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import app.com.almogrubi.idansasson.gettix.viewholders.EventIncomeViewHolder;
+import app.com.almogrubi.idansasson.gettix.viewholders.EventOccupancyViewHolder;
+import app.com.almogrubi.idansasson.gettix.R;
 import app.com.almogrubi.idansasson.gettix.entities.Event;
-import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
-import app.com.almogrubi.idansasson.gettix.utilities.ManagementScreen;
+import app.com.almogrubi.idansasson.gettix.authentication.ManagementScreen;
 
 public class ReportsActivity extends ManagementScreen {
 

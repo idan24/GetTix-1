@@ -1,4 +1,4 @@
-package app.com.almogrubi.idansasson.gettix;
+package app.com.almogrubi.idansasson.gettix.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -33,12 +34,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import app.com.almogrubi.idansasson.gettix.R;
 import app.com.almogrubi.idansasson.gettix.databinding.ActivitySeatsBinding;
 import app.com.almogrubi.idansasson.gettix.entities.Event;
 import app.com.almogrubi.idansasson.gettix.entities.Order;
-import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
-import app.com.almogrubi.idansasson.gettix.utilities.OrderDataUtils;
-import app.com.almogrubi.idansasson.gettix.utilities.SeatImageView;
+import app.com.almogrubi.idansasson.gettix.dataservices.DataUtils;
+import app.com.almogrubi.idansasson.gettix.dataservices.OrderDataService;
+import app.com.almogrubi.idansasson.gettix.views.SeatImageView;
 import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 
 /**
@@ -417,7 +419,7 @@ public class SeatsActivity extends AppCompatActivity{
         // If there are currently chosen seats, show chosen seats text and handle its contents
         else {
             binding.tvChosenSeats.setVisibility(View.VISIBLE);
-            binding.tvChosenSeats.setText(Utils.generateOrderSeatsUIString(getChosenSeatsArray()));
+            binding.tvChosenSeats.setText(OrderDataService.generateOrderSeatsUIString(getChosenSeatsArray()));
         }
     }
 
@@ -506,7 +508,7 @@ public class SeatsActivity extends AppCompatActivity{
                 updateEventTicketsNum(newOrder.getTicketsNum());
 
                 // We create a service to return the tickets if after 10 min order is not finished
-                Utils.fireCancelOrderService(SeatsActivity.this, newOrder.getUid(), event.getUid(),
+                OrderDataService.fireCancelOrderService(SeatsActivity.this, newOrder.getUid(), event.getUid(),
                         true);
 
                 // Proceed to PaymentActivity
@@ -532,7 +534,7 @@ public class SeatsActivity extends AppCompatActivity{
     }
 
     private void abortOrder(Order order) {
-        OrderDataUtils.cancelOrder(event.getUid(), true, order);
+        OrderDataService.cancelOrder(event.getUid(), true, order);
         isOrderSaveInProgress = false;
         ticketsNum--;
         updateTicketsNumUI();
@@ -573,5 +575,19 @@ public class SeatsActivity extends AppCompatActivity{
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            onBackPressed();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onBackPressed() {
+        NavUtils.navigateUpFromSameTask(this);
     }
 }

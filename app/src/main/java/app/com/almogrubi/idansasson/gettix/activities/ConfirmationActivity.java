@@ -1,9 +1,10 @@
-package app.com.almogrubi.idansasson.gettix;
+package app.com.almogrubi.idansasson.gettix.activities;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -13,11 +14,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import app.com.almogrubi.idansasson.gettix.R;
 import app.com.almogrubi.idansasson.gettix.databinding.ActivityConfirmationBinding;
+import app.com.almogrubi.idansasson.gettix.dataservices.OrderDataService;
 import app.com.almogrubi.idansasson.gettix.entities.Event;
 import app.com.almogrubi.idansasson.gettix.entities.Hall;
 import app.com.almogrubi.idansasson.gettix.entities.Order;
-import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
+import app.com.almogrubi.idansasson.gettix.dataservices.DataUtils;
 import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 
 
@@ -85,7 +88,7 @@ public class ConfirmationActivity extends AppCompatActivity {
                         for (int j = 0; j < orderSeatsStrings[0].length; j++)
                             orderSeats[i][j] = Boolean.parseBoolean(orderSeatsStrings[i][j]);
 
-                    binding.tvChosenSeats.setText(Utils.generateOrderSeatsUIString(this.orderSeats));
+                    binding.tvChosenSeats.setText(OrderDataService.generateOrderSeatsUIString(this.orderSeats));
                 }
                 else {
                     binding.tvChosenSeats.setVisibility(View.GONE);
@@ -147,5 +150,20 @@ public class ConfirmationActivity extends AppCompatActivity {
         binding.tvCustomerName.setText(order.getCustomer().getName());
         binding.tvCustomerPhone.setText(order.getCustomer().getPhone());
         binding.tvCustomerEmail.setText(order.getCustomer().getEmail());
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            onBackPressed();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent mainActivity = new Intent(ConfirmationActivity.this, MainActivity.class);
+        startActivity(mainActivity);
     }
 }

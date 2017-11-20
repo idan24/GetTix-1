@@ -1,10 +1,9 @@
-package app.com.almogrubi.idansasson.gettix;
+package app.com.almogrubi.idansasson.gettix.activities;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
 
@@ -17,19 +16,17 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import app.com.almogrubi.idansasson.gettix.R;
 import app.com.almogrubi.idansasson.gettix.databinding.ActivityHallEditBinding;
 import app.com.almogrubi.idansasson.gettix.entities.Hall;
-import app.com.almogrubi.idansasson.gettix.utilities.ManagementScreen;
+import app.com.almogrubi.idansasson.gettix.authentication.ManagementScreen;
 import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 
 public class HallEditActivity extends ManagementScreen {
 
     private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference eventsDatabaseReference;
     private DatabaseReference hallsDatabaseReference;
     private DatabaseReference hallSeatsDatabaseReference;
-    private DatabaseReference hallEventsDatabaseReference;
-    private DatabaseReference hallEventDatesDatabaseReference;
 
     private ActivityHallEditBinding binding;
 
@@ -91,11 +88,8 @@ public class HallEditActivity extends ManagementScreen {
 
     private void initializeDatabaseReferences() {
         firebaseDatabase = FirebaseDatabase.getInstance();
-        eventsDatabaseReference = firebaseDatabase.getReference().child("events");
         hallsDatabaseReference = firebaseDatabase.getReference().child("halls");
         hallSeatsDatabaseReference = firebaseDatabase.getReference().child("hall_seats");
-        hallEventsDatabaseReference = firebaseDatabase.getReference().child("hall_events");
-        hallEventDatesDatabaseReference = firebaseDatabase.getReference().child("hall_eventDates");
     }
 
     private void initializeUIViews() {

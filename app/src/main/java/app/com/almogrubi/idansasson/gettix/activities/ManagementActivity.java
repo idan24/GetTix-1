@@ -1,7 +1,6 @@
-package app.com.almogrubi.idansasson.gettix;
+package app.com.almogrubi.idansasson.gettix.activities;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -9,7 +8,8 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseUser;
 
-import app.com.almogrubi.idansasson.gettix.utilities.ManagementScreen;
+import app.com.almogrubi.idansasson.gettix.R;
+import app.com.almogrubi.idansasson.gettix.authentication.ManagementScreen;
 
 public class ManagementActivity extends ManagementScreen {
 

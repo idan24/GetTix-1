@@ -1,10 +1,9 @@
-package app.com.almogrubi.idansasson.gettix;
+package app.com.almogrubi.idansasson.gettix.viewholders;
 
 /**
  * Created by idans on 25/10/2017.
  */
 
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,12 +11,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import org.joda.time.DateTime;
-
+import app.com.almogrubi.idansasson.gettix.R;
 import app.com.almogrubi.idansasson.gettix.entities.Event;
-import app.com.almogrubi.idansasson.gettix.entities.EventHall;
-import app.com.almogrubi.idansasson.gettix.entities.Hall;
-import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
+import app.com.almogrubi.idansasson.gettix.dataservices.DataUtils;
 import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 
 /**

@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,15 +20,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ManagementActivity"
+            android:name=".activities.ManagementActivity"
             android:label="@string/title_activity_management"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".activities.MainActivity" />
         <activity
-            android:name=".EventsActivity"
+            android:name=".activities.EventsActivity"
             android:label="@string/title_activity_events"
             android:launchMode="singleTop"
-            android:parentActivityName=".ManagementActivity">
+            android:parentActivityName=".activities.ManagementActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SENDTO" />
 
@@ -38,51 +38,53 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".EventEditActivity"
+            android:name=".activities.EventEditActivity"
             android:label="@string/event_edit_title"
-            android:parentActivityName=".EventsActivity" />
+            android:parentActivityName=".activities.EventsActivity" />
         <activity
-            android:name=".EventOrdersActivity"
+            android:name=".activities.EventOrdersActivity"
             android:label="@string/title_activity_event_orders"
-            android:parentActivityName=".EventsActivity" />
+            android:parentActivityName=".activities.EventsActivity" />
         <activity
-            android:name=".HallsActivity"
+            android:name=".activities.HallsActivity"
             android:label="@string/halls_button"
             android:launchMode="singleTop"
-            android:parentActivityName=".ManagementActivity" />
+            android:parentActivityName=".activities.ManagementActivity" />
         <activity
-            android:name=".HallEditActivity"
+            android:name=".activities.HallEditActivity"
             android:label="@string/hall_edit_title"
-            android:parentActivityName=".HallsActivity" />
-        <activity android:name=".ReportsActivity"
-            android:label="@string/reports_button"
-            android:parentActivityName=".ManagementActivity" />
+            android:parentActivityName=".activities.HallsActivity" />
         <activity
-            android:name=".EventDetailsActivity"
+            android:name=".activities.ReportsActivity"
+            android:label="@string/reports_button"
+            android:parentActivityName=".activities.ManagementActivity" />
+        <activity
+            android:name=".activities.EventDetailsActivity"
             android:label="@string/title_activity_detail"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".activities.MainActivity" />
         <activity
-            android:name=".NoSeatsActivity"
+            android:name=".activities.NoSeatsActivity"
             android:label="@string/title_activity_no_seats"
             android:launchMode="singleTop"
-            android:parentActivityName=".EventDetailsActivity" />
+            android:parentActivityName=".activities.EventDetailsActivity" />
         <activity
-            android:name=".SeatsActivity"
+            android:name=".activities.SeatsActivity"
             android:label="@string/title_activity_seats"
             android:launchMode="singleTop"
-            android:parentActivityName=".EventDetailsActivity" />
+            android:parentActivityName=".activities.EventDetailsActivity" />
         <activity
-            android:name=".PaymentActivity"
+            android:name=".activities.PaymentActivity"
             android:label="@string/title_activity_payment" />
-        <activity android:name=".ConfirmationActivity" />
+        <activity
+            android:name=".activities.ConfirmationActivity" />
 
         <meta-data
             android:name="CLOUDINARY_URL"
             android:value="cloudinary://idansass" />
 
         <service
-            android:name=".CancelOrderJobService"
+            android:name=".services.CancelOrderJobService"
             android:enabled="true"
             android:exported="false">
             <intent-filter>

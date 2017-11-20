@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layoutDirection="rtl"
-    tools:context="app.com.almogrubi.idansasson.gettix.ManagementActivity">
+    tools:context="app.com.almogrubi.idansasson.gettix.activities.ManagementActivity">
 
     <TextView
         android:id="@+id/tv_welcome_manager"

@@ -1,4 +1,4 @@
-package app.com.almogrubi.idansasson.gettix;
+package app.com.almogrubi.idansasson.gettix.activities;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
-import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -27,21 +26,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.joda.time.DateTime;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import app.com.almogrubi.idansasson.gettix.R;
 import app.com.almogrubi.idansasson.gettix.databinding.ActivityEventEditBinding;
 import app.com.almogrubi.idansasson.gettix.entities.Event;
 import app.com.almogrubi.idansasson.gettix.entities.EventHall;
 import app.com.almogrubi.idansasson.gettix.entities.Hall;
-import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
-import app.com.almogrubi.idansasson.gettix.utilities.HallSpinnerAdapter;
-import app.com.almogrubi.idansasson.gettix.utilities.ManagementScreen;
+import app.com.almogrubi.idansasson.gettix.dataservices.DataUtils;
+import app.com.almogrubi.idansasson.gettix.adapters.HallSpinnerAdapter;
+import app.com.almogrubi.idansasson.gettix.authentication.ManagementScreen;
 import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 
 import static app.com.almogrubi.idansasson.gettix.utilities.Utils.INDEXED_KEY_DIVIDER;
@@ -420,49 +418,53 @@ public class EventEditActivity extends ManagementScreen {
             isValid = false;
         }
         // Checking date was picked
-        if (Utils.isTextViewEmpty(binding.etEventDate)) {
+        else if (Utils.isTextViewEmpty(binding.etEventDate)) {
             binding.etEventDate.setError(emptyFieldErrorMessage);
             isValid = false;
         }
         // Checking time was picked
-        if (Utils.isTextViewEmpty(binding.etEventHour)) {
+        else if (Utils.isTextViewEmpty(binding.etEventHour)) {
             binding.etEventHour.setError(emptyFieldErrorMessage);
             isValid = false;
         }
         // Checking description was filled
-        if (Utils.isTextViewEmpty(binding.etEventDescription)) {
+        else if (Utils.isTextViewEmpty(binding.etEventDescription)) {
             binding.etEventDescription.setError(emptyFieldErrorMessage);
             isValid = false;
         }
         // Checking price was filled
-        if (Utils.isTextViewEmpty(binding.etEventPrice)) {
+        else if (Utils.isTextViewEmpty(binding.etEventPrice)) {
             binding.etEventPrice.setError(emptyFieldErrorMessage);
             isValid = false;
         }
         // If the event is not an event with marked seats, checking max capacity was filled and bigger than 0
-        if (!binding.cbEventMarkedSeats.isChecked() &&
+        else if (!binding.cbEventMarkedSeats.isChecked() &&
                 (Utils.isTextViewEmpty(binding.etEventMaxCapacity) ||
                         binding.etEventMaxCapacity.getText().toString().equals("0"))) {
             binding.etEventMaxCapacity.setError(emptyFieldErrorMessage);
             isValid = false;
         }
         // Checking poster file was uploaded
-        if (eventPosterUri == null) {
+        else if (eventPosterUri == null) {
             binding.btLoadPoster.setError(posterErrorMessage);
             isValid = false;
         }
         // If producer entered a coupon code for the event
-        if (!Utils.isTextViewEmpty(binding.etEventCouponCode)) {
-            // Discounted price must be filled accordingly
+        else if (!Utils.isTextViewEmpty(binding.etEventCouponCode)) {
+            // Discounted price must be filled
             if (Utils.isTextViewEmpty(binding.etEventDiscountedPrice)) {
                 binding.etEventDiscountedPrice.setError(invalidDiscountedPrice);
                 isValid = false;
             }
-            // Discounted price should not be higher the original price
-            else if (Integer.parseInt(binding.etEventDiscountedPrice.getText().toString()) >
-                     Integer.parseInt(binding.etEventPrice.getText().toString())) {
-                binding.etEventDiscountedPrice.setError(invalidDiscountedPrice);
-                isValid = false;
+            else {
+                int enteredPrice = Integer.parseInt(binding.etEventPrice.getText().toString());
+                int enteredDiscountedPrice = Integer.parseInt(binding.etEventDiscountedPrice.getText().toString());
+
+                // Discounted price should be positive and not higher the original price
+                if (enteredDiscountedPrice <= 0 || enteredDiscountedPrice > enteredPrice) {
+                    binding.etEventDiscountedPrice.setError(invalidDiscountedPrice);
+                    isValid = false;
+                }
             }
         }
 
@@ -805,5 +807,6 @@ public class EventEditActivity extends ManagementScreen {
                 .load(Utils.getTransformedCloudinaryImageUrl(50, 50, photoUri, "thumb"))
                 .into(binding.ivEventPoster);
         eventPosterUri = photoUri;
+        binding.btLoadPoster.setError(null);
     }
 }

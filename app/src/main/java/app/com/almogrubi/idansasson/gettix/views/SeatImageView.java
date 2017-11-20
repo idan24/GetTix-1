@@ -1,7 +1,9 @@
-package app.com.almogrubi.idansasson.gettix.utilities;
+package app.com.almogrubi.idansasson.gettix.views;
 
 import android.content.Context;
 import android.widget.ImageView;
+
+import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 
 /**
  * Created by idans on 13/11/2017.

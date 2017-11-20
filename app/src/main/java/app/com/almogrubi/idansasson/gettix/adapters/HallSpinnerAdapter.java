@@ -1,4 +1,4 @@
-package app.com.almogrubi.idansasson.gettix.utilities;
+package app.com.almogrubi.idansasson.gettix.adapters;
 
 import android.content.Context;
 import android.graphics.Color;

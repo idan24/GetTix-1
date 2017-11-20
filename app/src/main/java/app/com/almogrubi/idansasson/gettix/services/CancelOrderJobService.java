@@ -1,4 +1,4 @@
-package app.com.almogrubi.idansasson.gettix;
+package app.com.almogrubi.idansasson.gettix.services;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,17 +9,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import app.com.almogrubi.idansasson.gettix.entities.Event;
 import app.com.almogrubi.idansasson.gettix.entities.Order;
-import app.com.almogrubi.idansasson.gettix.utilities.DataUtils;
-import app.com.almogrubi.idansasson.gettix.utilities.OrderDataUtils;
+import app.com.almogrubi.idansasson.gettix.dataservices.DataUtils;
+import app.com.almogrubi.idansasson.gettix.dataservices.OrderDataService;
 
 public class CancelOrderJobService extends JobService {
 
@@ -75,7 +69,7 @@ public class CancelOrderJobService extends JobService {
                                 // We only have work to do if the order is still marked as "in process" after 10 min
                                 // If the order is final or cancelled by now, we can abort
                                 if (order.getStatusAsEnum() == DataUtils.OrderStatus.IN_PROGRESS) {
-                                    OrderDataUtils.cancelOrder(eventUid, isEventMarkedSeats, order);
+                                    OrderDataService.cancelOrder(eventUid, isEventMarkedSeats, order);
                                 }
                             }
 

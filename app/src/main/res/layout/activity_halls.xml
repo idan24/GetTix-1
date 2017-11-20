@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:layoutDirection="rtl"
     android:layout_gravity="end"
-    tools:context="app.com.almogrubi.idansasson.gettix.HallsActivity">
+    tools:context="app.com.almogrubi.idansasson.gettix.activities.HallsActivity">
 
     <TextView
         android:id="@+id/tv_halls_headline"
