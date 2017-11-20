@@ -67,7 +67,7 @@ public class OrderDataService {
                 int newLeftTicketsNum = event.getLeftTicketsNum() + orderTicketsNum;
                 mutableData.child("leftTicketsNum").setValue(newLeftTicketsNum);
 
-                if (event.isSoldOut())
+                if (event.isSoldOut() && newLeftTicketsNum > 0)
                     mutableData.child("soldOut").setValue(false);
 
                 // Report transaction success

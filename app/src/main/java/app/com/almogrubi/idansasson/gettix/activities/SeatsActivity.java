@@ -171,9 +171,13 @@ public class SeatsActivity extends AppCompatActivity{
         // orders / $ eventUid / $ newOrderUid / newOrder
         ordersDatabaseReference.child(event.getUid()).child(newOrderUid).setValue(newOrder);
 
+        // Update order's event's leftTicketsNum (and soldOut if necessary) in DB
+        updateEventTicketsNum(newOrder.getTicketsNum());
+
         // Handle order seats save
         // If seats are successfully saved, we can proceed with the rest of the actions and move to PaymentActivity
         // This will happen from the callback inside saveNewOrderSeats()
+        // If seats are not successfully saved, order will be cancelled
         saveNewOrderSeats(newOrder, chosenSeatsStringArray);
     }
 
@@ -507,9 +511,6 @@ public class SeatsActivity extends AppCompatActivity{
                 if (!committed) return;
 
                 // If we reached here, the chosen seats are safe and updated in DB
-                // Update order's event's leftTicketsNum (and soldOut if necessary) in DB
-                updateEventTicketsNum(newOrder.getTicketsNum());
-
                 // We create a service to return the tickets if after 10 min order is not finished
                 OrderDataService.fireCancelOrderService(SeatsActivity.this, newOrder.getUid(), event.getUid(),
                         true);
@@ -539,7 +540,6 @@ public class SeatsActivity extends AppCompatActivity{
     private void abortOrder(Order order) {
         OrderDataService.cancelOrder(event.getUid(), true, order);
         isOrderSaveInProgress = false;
-        ticketsNum--;
         updateTicketsNumUI();
         updateChosenSeatsUI();
         String toastMessage = "שים לב! המושבים שבחרת נתפסו ע\"י לקוח אחר. אנא בחר מחדש";

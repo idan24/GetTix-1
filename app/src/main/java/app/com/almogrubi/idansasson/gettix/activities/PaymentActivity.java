@@ -95,14 +95,20 @@ public class PaymentActivity extends AppCompatActivity {
                 .child("leftTicketsNum").runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
+
+                if (mutableData.getValue() == null)
+                    return Transaction.success(mutableData);
+
                 int leftTicketsNum = Integer.parseInt(mutableData.getValue().toString());
 
                 // For the rare scenario where multiple customers ordered the last tickets for the event
                 // at the same time, we identify it by checking if its left tickets num is negative and
                 // therefore invalid. In that case, we abort the orders of all clients that booked their
                 // orders at the same time (sometimes besides the first one to get here, depending on timing)
-                if (leftTicketsNum < 0)
+                if (leftTicketsNum < 0) {
                     abortOrder();
+                    return Transaction.abort();
+                }
 
                 // Report transaction success
                 return Transaction.success(mutableData);
@@ -111,33 +117,6 @@ public class PaymentActivity extends AppCompatActivity {
             @Override
             public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {}
         });
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(DataSnapshot dataSnapshot) {
-//                        // If we have a null result, the event was somehow not found in the database
-//                        if (dataSnapshot == null || !dataSnapshot.exists() || dataSnapshot.getValue() == null) {
-//                            abort();
-//                            return;
-//                        }
-//
-//                        // If we reached here then the existing event was found
-//                        Event event = dataSnapshot.getValue(Event.class);
-//
-//                        // For the rare scenario where multiple customers ordered the last tickets for the event
-//                        // at the same time, we identify it by checking if its left tickets num is negative and
-//                        // therefore invalid. In that case, we abort the orders of all clients that booked their
-//                        // orders at the same time
-//                        if (event.getLeftTicketsNum() < 0)
-//                            abortOrder();
-//
-////                        int eventLeftTicketsNum = Integer.parseInt(dataSnapshot.getValue().toString());
-////                        if (eventLeftTicketsNum < 0)
-////                            abortOrder();
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(DatabaseError databaseError) {}
-//                });
 
         binding.tvTicketsNum.setText(
                 String.format("רכישת %d כרטיסים: %d ₪",
@@ -161,8 +140,6 @@ public class PaymentActivity extends AppCompatActivity {
 
     private void abortOrder() {
         OrderDataService.cancelOrder(eventUid, isMarkedSeats, order);
-        String toastMessage = "מצטערים, הזמנתך נחסמה ע\"י לקוח אחר. אם לא אזלו הכרטיסים, נסה שנית!";
-        Toast.makeText(PaymentActivity.this, toastMessage, Toast.LENGTH_LONG).show();
 
         // Send user back to event details activity
         Intent detailActivityIntent = new Intent(this, EventDetailsActivity.class);
@@ -274,6 +251,8 @@ public class PaymentActivity extends AppCompatActivity {
     public void onBackPressed() {
         // Cancel the order the was created in seats/no-seats activity
         OrderDataService.cancelOrder(eventUid, isMarkedSeats, order);
+
+        // Go back to seats / no-seats activity
         finish();
     }
 }
