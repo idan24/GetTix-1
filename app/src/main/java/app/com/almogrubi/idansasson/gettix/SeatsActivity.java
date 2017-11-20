@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -215,7 +216,10 @@ public class SeatsActivity extends AppCompatActivity{
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        final int RECOMMENDED_DIMEN_FOR_10_SEATS = 85;
+
+                        DisplayMetrics displayMetrics = new DisplayMetrics();
+                        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+                        final int SCREEN_WIDTH = displayMetrics.widthPixels;
 
                         if (dataSnapshot.exists()) {
                             // Going through all of event hall's rows
@@ -227,23 +231,13 @@ public class SeatsActivity extends AppCompatActivity{
 
                                 // Create a new row to be added
                                 TableRow tr = new TableRow(SeatsActivity.this);
-                                tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT));
+                                tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
                                 tr.setGravity(Gravity.CENTER);
-
-                                // Create left/right row number view
-                                TextView tvRowNumber = new TextView(SeatsActivity.this);
-                                tvRowNumber.setTextSize(R.dimen.common_text_size);
-                                tvRowNumber.setText(rowNumber);
-                                tvRowNumber.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT));
-
-                                // Add left tvRowNumber to row
-                                tr.addView(tvRowNumber);
 
                                 // Go through all row's seats
                                 ArrayList<DataSnapshot> rowSeats =
                                         Utils.toArrayList(rowSnapshot.getChildren());
-                                final int DIMEN_FOR_SEAT =
-                                        RECOMMENDED_DIMEN_FOR_10_SEATS / (rowSeats.size() / 10);
+                                final int DIMEN_FOR_SEAT = SCREEN_WIDTH / (rowSeats.size() + 2);
                                 for (int j = rowSeats.size() - 1; j >= 0; j--) {
                                     DataSnapshot seatSnapshot = rowSeats.get(j);
                                     String seatNumber = seatSnapshot.getKey();
