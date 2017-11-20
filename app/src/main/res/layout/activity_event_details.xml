@@ -105,7 +105,7 @@
                 android:layout_height="45dp"
                 android:layout_marginStart="@dimen/tab_margin"
                 android:layout_marginTop="@dimen/tab_margin"
-                android:src="@drawable/ic_guitar"
+                tools:src="@drawable/ic_guitar"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_event_datetime" />
 

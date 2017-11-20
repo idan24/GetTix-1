@@ -26,7 +26,6 @@ public class ConfirmationActivity extends AppCompatActivity {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference eventsDatabaseReference;
     private DatabaseReference hallsDatabaseReference;
-    private DatabaseReference orderSeatsDatabaseReference;
 
     private ActivityConfirmationBinding binding;
     private Event event;
@@ -45,7 +44,6 @@ public class ConfirmationActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance();
         eventsDatabaseReference = firebaseDatabase.getReference().child("events");
         hallsDatabaseReference = firebaseDatabase.getReference().child("halls");
-        orderSeatsDatabaseReference = firebaseDatabase.getReference().child("order_seats");
 
         Intent intent = this.getIntent();
         // Lookup the event in the database and bind its data to UI
@@ -77,6 +75,7 @@ public class ConfirmationActivity extends AppCompatActivity {
                 bindOrderToUI(order);
             }
 
+            // We set the chosen seats text if the event is with marked seats
             if (this.isMarkedSeats) {
                 if (intent.hasExtra("orderSeats")) {
                     String[][] orderSeatsStrings = (String[][]) intent.getSerializableExtra("orderSeats");
@@ -114,6 +113,7 @@ public class ConfirmationActivity extends AppCompatActivity {
                 DataUtils.convertToUiDateFormat(event.getDate()),
                 event.getHour()));
 
+        // Retrieve hall information from DB
         hallsDatabaseReference
                 .child(event.getEventHall().getUid())
                 .addListenerForSingleValueEvent(new ValueEventListener() {

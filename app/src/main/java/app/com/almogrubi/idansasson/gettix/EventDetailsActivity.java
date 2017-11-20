@@ -94,6 +94,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 DataUtils.convertToUiDateFormat(event.getDate()),
                 event.getHour()));
 
+        // Retrieve hall information from DB
         hallsDatabaseReference
                 .child(event.getEventHall().getUid())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -111,6 +112,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                         binding.tvEventHallAddress.setText(Utils.createIndentedText(hallAddress,
                                 Utils.FIRST_LINE_INDENT, Utils.PARAGRAPH_INDENT));
 
+                        // Set location map link
                         binding.ivEventLocation.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -144,7 +146,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                     seatsActivity.putExtra("eventUid", event.getUid());
                     startActivity(seatsActivity);
                 }
-                // If the event is not seat-marked,
+                // If the event is not seat-marked, go to no-seats activity
                 else {
                     Intent noSeatsActivity = new Intent(v.getContext(), NoSeatsActivity.class);
                     noSeatsActivity.putExtra("eventUid", event.getUid());
@@ -153,6 +155,18 @@ public class EventDetailsActivity extends AppCompatActivity {
             }
         });
 
+        // Set left tickets text
+        setLeftTicketsUI(event);
+    }
+
+    private void abort() {
+        String eventNotFoundErrorMessage = "המופע לא נמצא, נסה שנית";
+
+        Toast.makeText(this, eventNotFoundErrorMessage, Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(this, MainActivity.class));
+    }
+
+    private void setLeftTicketsUI(Event event) {
         final String noTicketsLeft = "לא נותרו כרטיסים למופע זה";
         final String someTicketsLeft = "נותרו %d כרטיסים למופע !";
         final String manyTicketsLeft = "נותרו כרטיסים למופע !";
@@ -168,13 +182,6 @@ public class EventDetailsActivity extends AppCompatActivity {
         } else {
             binding.tvTicketsLeft.setText(manyTicketsLeft);
         }
-    }
-
-    private void abort() {
-        String eventNotFoundErrorMessage = "המופע לא נמצא, נסה שנית";
-
-        Toast.makeText(this, eventNotFoundErrorMessage, Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(this, MainActivity.class));
     }
 
     private Intent createShareEventIntent() {
