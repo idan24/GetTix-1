@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 import com.stripe.android.Stripe;
 import com.stripe.android.TokenCallback;
 import com.stripe.android.model.Card;
@@ -129,8 +130,8 @@ public class PaymentActivity extends AppCompatActivity {
                     progressDialog = ProgressDialog.show(PaymentActivity.this, "המתן רק דקה",
                             "ההזמנה מתבצעת...", true, false);
                     // Order save and continue to next screen will be triggered from callback
-                    // inside fireCreditCardTokenCreation()
-                    fireCreditCardTokenCreation();
+                    // inside fireOrderValidityCheck()
+                    fireOrderValidityCheck();
                 }
             }
         });
@@ -180,6 +181,31 @@ public class PaymentActivity extends AppCompatActivity {
         return isValid;
     }
 
+    private void fireOrderValidityCheck() {
+        ordersDatabaseReference.child(eventUid).child(order.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists() && (dataSnapshot.getValue() != null)) {
+                    order = dataSnapshot.getValue(Order.class);
+
+                    // We check if by the time the user finished entering his details the order has become invalid
+                    // If so, we send him back to main activity
+                    if (order.getStatusAsEnum() == DataUtils.OrderStatus.CANCELLED) {
+                        progressDialog.dismiss();
+                        onOrderExpired();
+                    }
+                    // Otherwise continue the order process
+                    else {
+                        fireCreditCardTokenCreation();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        });
+    }
+
     private void fireCreditCardTokenCreation() {
         Card creditCard = binding.creditCardInputWidget.getCard();
 
@@ -226,6 +252,52 @@ public class PaymentActivity extends AppCompatActivity {
             confirmationActivity.putExtra("orderSeats", orderSeats);
 
         startActivity(confirmationActivity);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // We check order is not null in case order is somehow not initialized yet
+        if (this.order != null) {
+            ordersDatabaseReference.child(eventUid).child(order.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists() && (dataSnapshot.getValue() != null)) {
+                        order = dataSnapshot.getValue(Order.class);
+
+                        // We check if by the time the user resumed this activity the order has become invalid
+                        // If so, we send him back to main activity
+                        if (order.getStatusAsEnum() == DataUtils.OrderStatus.CANCELLED) {
+                            onOrderExpired();
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {}
+            });
+        }
+    }
+
+    private void onOrderExpired() {
+        String orderCancelledMessage = "שים לב! חלפו 10 דקות והזמנתך אינה תקפה. נסה שוב";
+        Toast.makeText(PaymentActivity.this, orderCancelledMessage, Toast.LENGTH_LONG).show();
+        final Intent mainActivity = new Intent(PaymentActivity.this, MainActivity.class);
+
+        Thread thread = new Thread(){
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(2500);
+                    startActivity(mainActivity);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        thread.start();
     }
 
     @Override
