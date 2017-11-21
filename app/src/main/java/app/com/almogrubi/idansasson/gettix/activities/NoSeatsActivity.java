@@ -84,7 +84,33 @@ public class NoSeatsActivity extends AppCompatActivity {
                             // If we reached here then the existing event was found, we'll bind it to UI
                             event = dataSnapshot.getValue(Event.class);
                             binding.tvEventTitle.setText(event.getTitle());
-                            updateTicketsNumUI(1);
+
+                            // To cover the slim chance that the event got sold out between the user first entered
+                            // EventDetailsActivity and after he entered this activity, we notify him
+                            if (event.isSoldOut()) {
+                                String orderInvalidMessage = "שים לב! ברגעים אלה אזלו הכרטיסים למופע זה. מצטערים!";
+                                Toast.makeText(NoSeatsActivity.this, orderInvalidMessage, Toast.LENGTH_LONG).show();
+                                final Intent detailActivityIntent = new Intent(NoSeatsActivity.this, EventDetailsActivity.class);
+                                detailActivityIntent.putExtra("eventUid", event.getUid());
+
+                                // Send user back to event details activity after toast was shown for long enough
+                                Thread thread = new Thread(){
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            Thread.sleep(2500);
+                                            startActivity(detailActivityIntent);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                };
+
+                                thread.start();
+                            }
+                            else {
+                                updateTicketsNumUI(1);
+                            }
                         }
 
                         @Override

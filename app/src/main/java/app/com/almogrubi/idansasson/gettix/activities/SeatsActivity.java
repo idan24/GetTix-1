@@ -104,11 +104,37 @@ public class SeatsActivity extends AppCompatActivity{
                             event = dataSnapshot.getValue(Event.class);
                             binding.tvEventTitle.setText(event.getTitle());
 
-                            // Initializing the array of rows and seats
-                            seats =
-                                new SeatImageView[event.getEventHall().getRows()][event.getEventHall().getColumns()];
+                            // To cover the slim chance that the event got sold out between the user first entered
+                            // EventDetailsActivity and after he entered this activity, we notify him
+                            if (event.isSoldOut()) {
+                                String orderInvalidMessage = "שים לב! ברגעים אלה אזלו הכרטיסים למופע זה. מצטערים!";
+                                Toast.makeText(SeatsActivity.this, orderInvalidMessage, Toast.LENGTH_LONG).show();
+                                final Intent detailActivityIntent = new Intent(SeatsActivity.this, EventDetailsActivity.class);
+                                detailActivityIntent.putExtra("eventUid", event.getUid());
 
-                            updateTicketsNumUI();
+                                // Send user back to event details activity after toast was shown for long enough
+                                Thread thread = new Thread(){
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            Thread.sleep(2500);
+                                            startActivity(detailActivityIntent);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                };
+
+                                thread.start();
+                            }
+                            else {
+                                // Initializing the array of rows and seats
+                                seats =
+                                        new SeatImageView[event.getEventHall().getRows()][event.getEventHall().getColumns()];
+
+                                updateTicketsNumUI();
+                                createSeatsUI(event.getUid());
+                            }
                         }
 
                         @Override
@@ -116,8 +142,6 @@ public class SeatsActivity extends AppCompatActivity{
                             abort();
                         }
                     });
-
-            createSeatsUI(eventUid);
 
         } else {
             abort();
