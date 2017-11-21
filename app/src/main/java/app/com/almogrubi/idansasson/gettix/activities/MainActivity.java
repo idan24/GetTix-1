@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        hallsDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        hallsDatabaseReference.orderByChild("name").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 

@@ -46,6 +46,7 @@ public class EventsActivity extends ManagementScreen {
 
     private DatabaseReference firebaseDatabaseReference;
     private DatabaseReference eventsDatabaseReference;
+    private DatabaseReference producerEventsDatabaseReference;
     private DatabaseReference hallEventsDatabaseReference;
     private DatabaseReference hallEventDatesDatabaseReference;
     private DatabaseReference dateEventsDatabaseReference;
@@ -80,6 +81,7 @@ public class EventsActivity extends ManagementScreen {
     private void initializeDatabaseReferences() {
         firebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
         eventsDatabaseReference = firebaseDatabaseReference.child("events");
+        producerEventsDatabaseReference = firebaseDatabaseReference.child("producer_events");
         hallEventsDatabaseReference = firebaseDatabaseReference.child("hall_events");
         dateEventsDatabaseReference = firebaseDatabaseReference.child("date_events");
         cityEventsDatabaseReference = firebaseDatabaseReference.child("city_events");
@@ -113,8 +115,7 @@ public class EventsActivity extends ManagementScreen {
         // Displaying all events produced by the signed-in user
         FirebaseRecyclerOptions<Event> options =
                 new FirebaseRecyclerOptions.Builder<Event>()
-                        .setQuery(eventsDatabaseReference
-                                .orderByChild("producerId").equalTo(user.getUid()),
+                        .setQuery(producerEventsDatabaseReference.child(user.getUid()).orderByChild("date"),
                                 parser)
                         .build();
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Event, EventViewHolder>(options) {
@@ -223,6 +224,7 @@ public class EventsActivity extends ManagementScreen {
             eventSeatsDatabaseReference.child(eventUid).removeValue();
 
         // Removing from all indexed tables
+        producerEventsDatabaseReference.child(user.getUid()).child(eventUid).removeValue();
         dateEventsDatabaseReference.child(event.getDate()).child(eventUid).removeValue();
         cityEventsDatabaseReference.child(event.getCity()).child(eventUid).removeValue();
         hallEventsDatabaseReference.child(event.getEventHall().getUid()).child(eventUid).removeValue();

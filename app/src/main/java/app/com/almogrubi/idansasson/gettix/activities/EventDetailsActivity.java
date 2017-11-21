@@ -2,12 +2,22 @@ package app.com.almogrubi.idansasson.gettix.activities;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.StyleSpan;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -86,7 +96,8 @@ public class EventDetailsActivity extends AppCompatActivity {
     private void bindEventToUI(final Event event) {
 
         Glide.with(binding.ivEventPoster.getContext())
-                .load(Utils.getTransformedCloudinaryImageUrl(450, 200, event.getPosterUri(), "fill"))
+                .load(Utils.getTransformedCloudinaryImageUrl(
+                        event.getCategoryAsEnum(), 450, 200, event.getPosterUri(), "fill"))
                 .into(binding.ivEventPoster);
 
         binding.tvEventTitle.setText(Utils.createIndentedText(event.getTitle(),
@@ -107,17 +118,31 @@ public class EventDetailsActivity extends AppCompatActivity {
                         }
 
                         // If we reached here then the hall was found, we'll bind it to UI
-                        Hall hall = dataSnapshot.getValue(Hall.class);
-                        final String hallAddress = String.format("%s, %s, %s",
-                                hall.getName(), hall.getAddress(), hall.getCity());
-                        binding.tvEventHallAddress.setText(Utils.createIndentedText(hallAddress,
-                                Utils.FIRST_LINE_INDENT, Utils.PARAGRAPH_INDENT));
+                        final Hall hall = dataSnapshot.getValue(Hall.class);
+
+                        final SpannableStringBuilder hallAddress = new SpannableStringBuilder(String.format("%s, %s, %s",
+                                hall.getName(), hall.getAddress(), hall.getCity()));
+                        ClickableSpan clickableSpan = new ClickableSpan() {
+                            @Override
+                            public void onClick(View textView) {
+                                String hallWebsiteUrl = hall.getOfficialWebsite();
+                                if (!hallWebsiteUrl.startsWith("http://") && !hallWebsiteUrl.startsWith("https://"))
+                                    hallWebsiteUrl = "http://" + hallWebsiteUrl;
+                                Intent browserIntent = new Intent(Intent.ACTION_VIEW);
+                                browserIntent.setData(Uri.parse(hallWebsiteUrl));
+                                startActivity(browserIntent);
+                            }
+                        };
+                        hallAddress.setSpan(clickableSpan, 0, hall.getName().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        binding.tvEventHallAddress.setText(hallAddress);
+                        binding.tvEventHallAddress.setMovementMethod(LinkMovementMethod.getInstance());
+                        binding.tvEventHallAddress.setHighlightColor(Color.TRANSPARENT);
 
                         // Set location map link
                         binding.ivEventLocation.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Uri addressUri = Uri.parse("geo:0,0?q=" + Uri.encode(hallAddress));
+                                Uri addressUri = Uri.parse("geo:0,0?q=" + Uri.encode(hall.getAddress() + " " + hall.getCity()));
                                 Intent intent = new Intent(Intent.ACTION_VIEW, addressUri);
                                 if (intent.resolveActivity(getPackageManager()) != null)
                                     startActivity(intent);

@@ -53,7 +53,8 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
         ivEventCategory.setBackgroundResource(Utils.lookupImageByCategory(event.getCategoryAsEnum()));
 
         Glide.with(ivEventPoster.getContext())
-                .load(Utils.getTransformedCloudinaryImageUrl(90, 90, event.getPosterUri(), "fill"))
+                .load(Utils.getTransformedCloudinaryImageUrl(
+                        event.getCategoryAsEnum(), 90, 90, event.getPosterUri(), "fill"))
                 .into(ivEventPoster);
 
         if (event.isSoldOut()) {

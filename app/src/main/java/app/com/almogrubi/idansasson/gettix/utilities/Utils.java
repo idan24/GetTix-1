@@ -38,9 +38,12 @@ public class Utils {
     /*
      * Loads a responsive image from Cloudinary
      */
-    public static String getTransformedCloudinaryImageUrl(int width, int height, String imageUrl, String cropMode) {
+    public static String getTransformedCloudinaryImageUrl(DataUtils.Category eventCategory, int width, int height,
+                                                          String imageUrl, String cropMode) {
+        String gravity = eventCategory == DataUtils.Category.SPORTS ? "center" : "faces";
+
         return MediaManager.get().url()
-                .transformation(new Transformation().width(width).height(height).crop(cropMode).gravity("faces"))
+                .transformation(new Transformation().width(width).height(height).crop(cropMode).gravity(gravity))
                 .generate(imageUrl);
     }
 

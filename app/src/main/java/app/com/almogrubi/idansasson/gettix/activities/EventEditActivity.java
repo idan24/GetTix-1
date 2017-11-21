@@ -61,6 +61,7 @@ public class EventEditActivity extends ManagementScreen {
     private DatabaseReference hallSeatsDatabaseReference;
     private DatabaseReference hallEventsDatabaseReference;
     private DatabaseReference hallEventDatesDatabaseReference;
+    private DatabaseReference producerEventsDatabaseReference;
     private DatabaseReference dateEventsDatabaseReference;
     private DatabaseReference cityEventsDatabaseReference;
     private DatabaseReference categoryEventsDatabaseReference;
@@ -154,6 +155,7 @@ public class EventEditActivity extends ManagementScreen {
         hallsDatabaseReference = firebaseDatabase.getReference().child("halls");
         hallSeatsDatabaseReference = firebaseDatabase.getReference().child("hall_seats");
         hallEventsDatabaseReference = firebaseDatabase.getReference().child("hall_events");
+        producerEventsDatabaseReference = firebaseDatabase.getReference().child("producer_events");
         dateEventsDatabaseReference = firebaseDatabase.getReference().child("date_events");
         cityEventsDatabaseReference = firebaseDatabase.getReference().child("city_events");
         categoryEventsDatabaseReference = firebaseDatabase.getReference().child("category_events");
@@ -171,7 +173,8 @@ public class EventEditActivity extends ManagementScreen {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/jpeg");
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("image/*");
                 intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
                 startActivityForResult(Intent.createChooser(intent, "השלם פעולה באמצעות..."), RC_PHOTO_PICKER);
             }
@@ -194,7 +197,7 @@ public class EventEditActivity extends ManagementScreen {
         categorySpinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
         binding.spEventCategory.setAdapter(categorySpinnerArrayAdapter);
 
-        hallsDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        hallsDatabaseReference.orderByChild("name").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -511,6 +514,9 @@ public class EventEditActivity extends ManagementScreen {
         // We use a less detailed event for the indexed tables
         Event diminishedEvent = getDiminishedEventFromEvent(newEvent);
 
+        // add "producer_events / $ producerUid / $ newEvent
+        updateEventInIndexedTable(producerEventsDatabaseReference, user.getUid(), diminishedEvent);
+
         // add "date_events / $ date / $ newEvent
         updateEventInIndexedTable(dateEventsDatabaseReference, newEvent.getDate(), diminishedEvent);
 
@@ -614,6 +620,8 @@ public class EventEditActivity extends ManagementScreen {
                     editedEvent.getDate(), updatedEvent.getDate());
         }
 
+        // update "producer_events / $ producerUid / $ event"
+        updateEventInIndexedTable(producerEventsDatabaseReference, user.getUid(), diminishedEvent);
         // update "category_events / $ eventCategory / $ event"
         updateEventInIndexedTable(categoryEventsDatabaseReference, updatedEvent.getCategory(), diminishedEvent);
         // update "date_events / $ eventDate / $ event"
@@ -804,7 +812,8 @@ public class EventEditActivity extends ManagementScreen {
     private void loadEventPoster(String photoUri) {
         binding.ivEventPoster.setVisibility(View.VISIBLE);
         Glide.with(binding.ivEventPoster.getContext())
-                .load(Utils.getTransformedCloudinaryImageUrl(50, 50, photoUri, "thumb"))
+                .load(Utils.getTransformedCloudinaryImageUrl(
+                        DataUtils.Category.SPORTS, 50, 50, photoUri, "thumb"))
                 .into(binding.ivEventPoster);
         eventPosterUri = photoUri;
         binding.btLoadPoster.setError(null);

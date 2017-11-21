@@ -83,6 +83,7 @@
                 android:layout_marginTop="@dimen/half_tab_margin"
                 android:textColor="@color/Black"
                 android:textDirection="anyRtl"
+                android:textColorLink="@color/CornflowerBlue"
                 android:textSize="@dimen/common_text_size"
                 android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="@+id/tv_event_datetime"
