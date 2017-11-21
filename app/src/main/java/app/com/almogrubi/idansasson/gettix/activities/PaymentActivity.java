@@ -6,6 +6,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -142,10 +143,25 @@ public class PaymentActivity extends AppCompatActivity {
     private void abortOrder() {
         OrderDataService.cancelOrder(eventUid, isMarkedSeats, order);
 
-        // Send user back to event details activity
-        Intent detailActivityIntent = new Intent(this, EventDetailsActivity.class);
+        String orderInvalidMessage = "שים לב! לא נותרו כרטיסים בכמות שבחרת. במידה ולא אזלו הכרטיסים, נסה שוב";
+        Toast.makeText(PaymentActivity.this, orderInvalidMessage, Toast.LENGTH_LONG).show();
+        final Intent detailActivityIntent = new Intent(this, EventDetailsActivity.class);
         detailActivityIntent.putExtra("eventUid", eventUid);
-        startActivity(detailActivityIntent);
+
+        // Send user back to event details activity after toast was shown for long enough
+        Thread thread = new Thread(){
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(2500);
+                    startActivity(detailActivityIntent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        thread.start();
     }
 
     private boolean checkInputValidity() {
