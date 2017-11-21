@@ -155,20 +155,31 @@ public class EventsActivity extends ManagementScreen {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 int itemId = item.getItemId();
-                Context context = eventView.getContext();
+                final Context context = eventView.getContext();
                 Intent eventEditActivity = new Intent(context, EventEditActivity.class);
 
                 switch (itemId) {
                     case R.id.action_view_event_orders:
-                        Intent eventOrdersActivity = new Intent(context, EventOrdersActivity.class);
+                        final Intent eventOrdersActivity = new Intent(context, EventOrdersActivity.class);
                         eventOrdersActivity.putExtra("eventUid", event.getUid());
                         eventOrdersActivity.putExtra("eventTitle", event.getTitle());
                         int eventTotalTicketsNum = event.isMarkedSeats()
                                 ? event.getEventHall().getRows() * event.getEventHall().getColumns()
                                 : event.getMaxCapacity();
                         eventOrdersActivity.putExtra("eventTotalTicketsNum", eventTotalTicketsNum);
-                        eventOrdersActivity.putExtra("eventLeftTicketsNum", event.getLeftTicketsNum());
-                        context.startActivity(eventOrdersActivity);
+
+                        eventsDatabaseReference.child(event.getUid()).child("leftTicketsNum")
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        eventOrdersActivity.putExtra("eventLeftTicketsNum", Integer.parseInt(dataSnapshot.getValue().toString()));
+                                        context.startActivity(eventOrdersActivity);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {}
+                                });
+
                         return true;
                     case R.id.action_new_event_based:
                         eventEditActivity.putExtra("editMode",
