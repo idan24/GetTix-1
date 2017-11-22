@@ -13,18 +13,16 @@ import java.util.Random;
 import app.com.almogrubi.idansasson.gettix.dataservices.DataUtils;
 import app.com.almogrubi.idansasson.gettix.R;
 
-/**
- * Created by idans on 22/10/2017.
- */
-
 public class Utils {
 
+    // This enum represents all seat statuses
     public enum SeatStatus {
         AVAILABLE,
         OCCUPIED,
         CHOSEN
     }
 
+    // A pre-determined sign that divides between indexed keys in the event indexed tables
     public static String INDEXED_KEY_DIVIDER = "~";
     public static int FIRST_LINE_INDENT = 0;
     public static int PARAGRAPH_INDENT = 10;
@@ -96,6 +94,9 @@ public class Utils {
         return new String(buffer);
     }
 
+    /*
+     * Returns image resource according to seat status
+     */
     public static int lookupImageBySeatStatus(SeatStatus seatStatus) {
         switch (seatStatus) {
             case AVAILABLE:
@@ -109,6 +110,9 @@ public class Utils {
         }
     }
 
+    /*
+     * Returns image resource according to event category
+     */
     public static int lookupImageByCategory(DataUtils.Category category) {
         switch (category) {
             case MUSIC:

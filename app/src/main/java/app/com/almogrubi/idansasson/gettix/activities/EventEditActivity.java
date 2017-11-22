@@ -46,6 +46,7 @@ import static app.com.almogrubi.idansasson.gettix.utilities.Utils.INDEXED_KEY_DI
 
 public class EventEditActivity extends ManagementScreen {
 
+    // This enum represents all modes this activity can be in
     public enum EventEditMode {
         NEW_EVENT,
         NEW_EVENT_BASED_ON_EXISTING,
@@ -55,6 +56,7 @@ public class EventEditActivity extends ManagementScreen {
     // Arbitrary request code value for photo picker
     private static final int RC_PHOTO_PICKER =  2;
 
+    // Firebase database references
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference eventsDatabaseReference;
     private DatabaseReference hallsDatabaseReference;
@@ -92,9 +94,10 @@ public class EventEditActivity extends ManagementScreen {
         // Initialization of all needed Firebase database references
         initializeDatabaseReferences();
 
-        // Initialization actions that should happen whether this is a new event or an edited existing event
-        initializeUIViews();
+        // Initialization actions that should happen in either edit mode
+        initializeCommonUIViews();
 
+        // Get edit mode from parent activity. If not found, edit mode is NEW_EVENT by default
         Intent intent = this.getIntent();
         if ((intent != null) && (intent.hasExtra("editMode"))) {
             this.eventEditMode = (EventEditMode) intent.getSerializableExtra("editMode");
@@ -104,47 +107,13 @@ public class EventEditActivity extends ManagementScreen {
 
         // If we should be in new/create mode, initialize views accordingly
         if (this.eventEditMode == EventEditMode.NEW_EVENT) {
-            bindEventDateTime();
-            binding.ivEventPoster.setVisibility(View.INVISIBLE);
-            binding.cbEventSoldOut.setVisibility(View.GONE);
-            binding.etEventTitle.requestFocus();
+            initializeUIViewsForCreate();
         }
         else {
             // If we should be in edit mode or new event based on another,
             // lookup the event in the database and bind its data to UI
             if (intent.hasExtra("eventUid")) {
-
-                eventsDatabaseReference
-                        .child(intent.getStringExtra("eventUid"))
-                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                // If we have a null result, the event was somehow not found in the database
-                                if (dataSnapshot == null || !dataSnapshot.exists() || dataSnapshot.getValue() == null) {
-                                    abort();
-                                    return;
-                                }
-
-                                // If we reached here then the existing event was found, we'll bind it to UI
-                                editedEvent = dataSnapshot.getValue(Event.class);
-                                bindExistingEventInfo();
-
-                                if (eventEditMode == EventEditMode.EXISTING_EVENT) {
-                                    binding.tvEventEditTitle.setText(R.string.event_edit_title);
-                                    bindExistingEventDateTime(editedEvent.getDate(), editedEvent.getHour());
-                                    binding.cbEventSoldOut.setVisibility(View.VISIBLE);
-                                }
-                                else {
-                                    bindEventDateTime();
-                                    binding.cbEventSoldOut.setVisibility(View.GONE);
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                abort();
-                            }
-                        });
+                loadEventFromDB(intent.getStringExtra("eventUid"));
             }
         }
     }
@@ -166,7 +135,7 @@ public class EventEditActivity extends ManagementScreen {
         hallEventDatesDatabaseReference = firebaseDatabase.getReference().child("hall_eventDates");
     }
 
-    private void initializeUIViews() {
+    private void initializeCommonUIViews() {
         setSpinnersAdapterSource();
 
         binding.btLoadPoster.setOnClickListener(new View.OnClickListener() {
@@ -186,6 +155,13 @@ public class EventEditActivity extends ManagementScreen {
                 saveEventIfInputValid();
             }
         });
+    }
+
+    private void initializeUIViewsForCreate() {
+        bindNewEventDateTime();
+        binding.ivEventPoster.setVisibility(View.INVISIBLE);
+        binding.cbEventSoldOut.setVisibility(View.GONE);
+        binding.etEventTitle.requestFocus();
     }
 
     private void setSpinnersAdapterSource() {
@@ -226,6 +202,42 @@ public class EventEditActivity extends ManagementScreen {
         });
     }
 
+    private void loadEventFromDB(String eventUid) {
+        eventsDatabaseReference
+                .child(eventUid)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // If we have a null result, the event was somehow not found in the database
+                        if (dataSnapshot == null || !dataSnapshot.exists() || dataSnapshot.getValue() == null) {
+                            abort();
+                            return;
+                        }
+
+                        // If we reached here then the existing event was found, we'll bind it to UI
+                        editedEvent = dataSnapshot.getValue(Event.class);
+                        bindExistingEventUI();
+
+                        // For editing for an existing event, we set views accordingly
+                        if (eventEditMode == EventEditMode.EXISTING_EVENT) {
+                            binding.tvEventEditTitle.setText(R.string.event_edit_title);
+                            bindExistingEventDateTime(editedEvent.getDate(), editedEvent.getHour());
+                            binding.cbEventSoldOut.setVisibility(View.VISIBLE);
+                        }
+                        // For new-event-based-on-another edit mode, we set views accordingly
+                        else {
+                            bindNewEventDateTime();
+                            binding.cbEventSoldOut.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        abort();
+                    }
+                });
+    }
+
     private void abort() {
         String eventNotFoundErrorMessage = "המופע לא נמצא, נסה שנית";
 
@@ -233,8 +245,10 @@ public class EventEditActivity extends ManagementScreen {
         startActivity(new Intent(EventEditActivity.this, EventsActivity.class));
     }
 
-    // Used to bind date/time pickers for new event scenario
-    private void bindEventDateTime() {
+    /*
+     * Used to bind date/time pickers for new event mode
+     */
+    private void bindNewEventDateTime() {
         final Calendar calendar = Calendar.getInstance();
         final DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -279,7 +293,9 @@ public class EventEditActivity extends ManagementScreen {
         });
     }
 
-    // Used to bind date/time pickers for existing event scenario
+    /*
+     * Used to bind date/time pickers for existing event edit mode
+     */
     private void bindExistingEventDateTime(final String date, final String hour) {
         final Calendar calendar = Calendar.getInstance();
         final DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
@@ -328,7 +344,7 @@ public class EventEditActivity extends ManagementScreen {
         binding.etEventHour.setText(hour);
     }
 
-    private void bindExistingEventInfo() {
+    private void bindExistingEventUI() {
         binding.etEventTitle.setText(this.editedEvent.getTitle());
         binding.spEventCategory.setSelection(this.editedEvent.getCategoryAsEnum().ordinal() - 1);
 
@@ -344,6 +360,7 @@ public class EventEditActivity extends ManagementScreen {
         binding.etEventPerformer.setText(this.editedEvent.getPerformer());
         binding.etEventPrice.setText(String.valueOf(this.editedEvent.getPrice()));
 
+        // If the event has a coupon code
         if (this.editedEvent.getCouponCode() != 0) {
             binding.etEventCouponCode.setText(String.valueOf(this.editedEvent.getCouponCode()));
             binding.etEventDiscountedPrice.setText(String.valueOf(this.editedEvent.getDiscountedPrice()));
@@ -440,7 +457,7 @@ public class EventEditActivity extends ManagementScreen {
             binding.etEventPrice.setError(emptyFieldErrorMessage);
             isValid = false;
         }
-        // If the event is not an event with marked seats, checking max capacity was filled and bigger than 0
+        // If the event is not an event with marked seats, checking max capacity was filled and is bigger than 0
         else if (!binding.cbEventMarkedSeats.isChecked() &&
                 (Utils.isTextViewEmpty(binding.etEventMaxCapacity) ||
                         binding.etEventMaxCapacity.getText().toString().equals("0"))) {
@@ -648,6 +665,7 @@ public class EventEditActivity extends ManagementScreen {
         String newEventTitle = binding.etEventTitle.getText().toString();
         DataUtils.Category newEventCategory = (DataUtils.Category) binding.spEventCategory.getSelectedItem();
 
+        // Creating an EventHall entity (diminished hall) from the selected Hall
         final Hall selectedHall = (Hall) binding.spEventHall.getSelectedItem();
         EventHall newEventHall =
                 new EventHall(selectedHall.getUid(),
@@ -668,6 +686,7 @@ public class EventEditActivity extends ManagementScreen {
         int newEventCouponCode = 0;
         int newEventDiscountedPrice = 0;
 
+        // Get coupon information from UI if available
         if (!Utils.isTextViewEmpty(binding.etEventCouponCode)) {
             newEventCouponCode = Integer.parseInt(binding.etEventCouponCode.getText().toString());
             newEventDiscountedPrice = Integer.parseInt(binding.etEventDiscountedPrice.getText().toString());
@@ -675,23 +694,33 @@ public class EventEditActivity extends ManagementScreen {
 
         String newEventPosterUri = eventPosterUri;
         boolean newEventIsMarkedSeats = binding.cbEventMarkedSeats.isChecked();
+
+        // set max capacity according to marked-seats status
         int newEventMaxCapacity = newEventIsMarkedSeats
                 ? 0
                 : Integer.parseInt(binding.etEventMaxCapacity.getText().toString());
+
+        // Event's producer is the creating/editing user currently logged-in
         String newEventProducerId = EventEditActivity.super.user.getUid();
+
         return new Event(eventUid, newEventTitle, newEventCategory, newEventHall, newEventCity,
                 newEventDate, newEventHour, newEventDuration, newEventDescription, newEventPerformer,
                 newEventPrice, newEventCouponCode, newEventDiscountedPrice, newEventPosterUri,
                 newEventIsMarkedSeats, newEventMaxCapacity, newEventProducerId);
     }
 
+    /*
+     * Create an event entity with minimal information for indexed tables
+     */
     private Event getDiminishedEventFromEvent(Event event) {
         return new Event(event.getUid(), event.getTitle(), event.getCategoryAsEnum(), event.getEventHall(),
                 event.getCity(), event.getDate(), event.getHour(), event.getDuration(), event.getPrice(),
                 event.getPosterUri(), event.isMarkedSeats(), event.getMaxCapacity());
     }
 
-    // Used for updating event seats when editing an existing event
+    /*
+     * Used for updating event seats when editing an existing event
+     */
     private void updateEventSeatsIfNeeded(Event updatedEvent) {
         // If the event hall was changed, update its seats (according to event's marked-seats property)
         if (!editedEvent.getEventHall().getUid().equals(updatedEvent.getEventHall().getUid())) {
@@ -712,9 +741,10 @@ public class EventEditActivity extends ManagementScreen {
     }
 
     private void createEventSeats(final String hallUid, final String eventUid) {
-        // Clearing whatever formation of seats that used to be for the event beforehand (if any)
+        // Clearing whatever formation of seats that used to be for the event before (if any)
         eventSeatsDatabaseReference.child(eventUid).removeValue();
 
+        // Populate event seats according to given hall seats
         hallSeatsDatabaseReference.child(hallUid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -769,6 +799,7 @@ public class EventEditActivity extends ManagementScreen {
 
             Uri selectedImageUri = data.getData();
 
+            // Upload event poster to Cloudinary storage
             MediaManager.get().upload(selectedImageUri)
                     .unsigned(Utils.CLOUDINARY_PRESET)
                     .callback(new UploadCallback() {
@@ -794,11 +825,17 @@ public class EventEditActivity extends ManagementScreen {
         }
     }
 
+    /*
+     * Callback for when marked-seats checkbox is checked/unchecked
+     */
     public void onMarkedSeatsClicked(View view) {
         if (view.getId() == R.id.cb_event_marked_seats)
             changeMaxCapacityVisibility(((CheckBox) view).isChecked());
     }
 
+    /*
+     * Collapses or expands the max capacity views according to marked-seats status
+     */
     private void changeMaxCapacityVisibility(boolean isMarkedSeats) {
         if (isMarkedSeats) {
             binding.tvEventMaxCapacity.setVisibility(View.GONE);
@@ -809,12 +846,18 @@ public class EventEditActivity extends ManagementScreen {
         }
     }
 
+    /*
+     * Loads event poster thumbnail to UI
+     */
     private void loadEventPoster(String photoUri) {
         binding.ivEventPoster.setVisibility(View.VISIBLE);
+
+        // Use Cloudinary to transform event poster to fit the screen and Glide to load the transformed image to view
         Glide.with(binding.ivEventPoster.getContext())
                 .load(Utils.getTransformedCloudinaryImageUrl(
                         DataUtils.Category.SPORTS, 50, 50, photoUri, "thumb"))
                 .into(binding.ivEventPoster);
+
         eventPosterUri = photoUri;
         binding.btLoadPoster.setError(null);
     }

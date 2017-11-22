@@ -53,12 +53,9 @@ import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 
 import static app.com.almogrubi.idansasson.gettix.utilities.Utils.INDEXED_KEY_DIVIDER;
 
-/**
- * Created by almogrubi on 10/14/17.
- */
-
 public class MainActivity extends AppCompatActivity {
 
+    // This enum represents all filter keys the user can search for events with
     enum FilterKey {
         DATE("תאריך"),
         HALL("אולם"),
@@ -86,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView eventsRecyclerView;
     private LinearLayoutManager linearLayoutManager;
 
+    // Firebase database references
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference eventsDatabaseReference;
     private DatabaseReference hallsDatabaseReference;
@@ -119,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
         linearLayoutManager = new LinearLayoutManager(this);
         eventsRecyclerView.setLayoutManager(linearLayoutManager);
 
+        // Initialization of all needed Firebase database references
         initializeDatabaseReferences();
 
         // Initializing an ArrayAdapter for the category spinner
@@ -127,109 +126,14 @@ public class MainActivity extends AppCompatActivity {
         spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
         spEventCategory.setAdapter(spinnerArrayAdapter);
 
-        cbFilter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked)
-                    expandFiltering();
-                else
-                    shrinkFiltering();
-            }
-        });
+        // Set all UI related to filter keys
+        setFilterKeysUI();
 
-        // Initializing an ArrayAdapter for the filter key spinner
-        final ArrayAdapter<FilterKey> filterKeyArrayAdapter = new ArrayAdapter<FilterKey>(
-                this, R.layout.spinner_item, FilterKey.values()) {};
-        filterKeyArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
-        spFilterKey.setAdapter(filterKeyArrayAdapter);
-        spFilterKey.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                updateFilterInputView();
-            }
+        // Set date text UI
+        setDateFilterUI();
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                updateFilterInputView();
-            }
-        });
-
-        shrinkFiltering();
-
-        final Calendar calendar = Calendar.getInstance();
-        final DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                  int dayOfMonth) {
-                calendar.set(Calendar.YEAR, year);
-                calendar.set(Calendar.MONTH, monthOfYear);
-                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                etEventDate.setText(DataUtils.UI_DATE_FORMAT.format(calendar.getTime()));
-                etEventDate.setError(null);
-            }
-        };
-        etEventDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new DatePickerDialog(MainActivity.this, dateSetListener,
-                        calendar.get(Calendar.YEAR),
-                        calendar.get(Calendar.MONTH),
-                        calendar.get(Calendar.DAY_OF_MONTH))
-                        .show();
-            }
-        });
-
-        hallsDatabaseReference.orderByChild("name").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                ArrayList<Hall> halls = new ArrayList<>();
-
-                if (dataSnapshot.exists())
-                    for (DataSnapshot hallSnapshot : dataSnapshot.getChildren())
-                        halls.add(hallSnapshot.getValue(Hall.class));
-
-                final HallSpinnerAdapter hallSpinnerAdapter =
-                        new HallSpinnerAdapter(MainActivity.this, R.layout.spinner_item, halls);
-                hallSpinnerAdapter.setDropDownViewResource(R.layout.spinner_item);
-                etEventHall.setAdapter(hallSpinnerAdapter);
-                etEventHall.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        selectedHall = hallSpinnerAdapter.getItem(position);
-                        etEventHall.setError(null);
-                    }
-                });
-                etEventHall.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                        ArrayList<Hall> halls = hallSpinnerAdapter.getValues();
-                        for (Hall hall : halls) {
-                            if (hall.getName().equals(s.toString())) {
-                                selectedHall = hall;
-                                etEventHall.setError(null);
-                                return;
-                            }
-                        }
-
-                        // Unset the selected hall whenever the user types. Validation will then fail.
-                        // This is how we enforce selecting from the list.
-                        selectedHall = null;
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });
+        // Set hall autocomplete text UI
+        setHallFilterUI();
 
         btSearchEvents.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -264,6 +168,59 @@ public class MainActivity extends AppCompatActivity {
         categoryHallEventsDatabaseReference = firebaseDatabase.getReference().child("category_hall_events");
     }
 
+    private void setFilterKeysUI() {
+        cbFilter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked)
+                    expandFiltering();
+                else
+                    shrinkFiltering();
+            }
+        });
+
+        // Initializing an ArrayAdapter for the filter key spinner
+        final ArrayAdapter<FilterKey> filterKeyArrayAdapter = new ArrayAdapter<FilterKey>(
+                this, R.layout.spinner_item, FilterKey.values()) {};
+        filterKeyArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
+        spFilterKey.setAdapter(filterKeyArrayAdapter);
+        spFilterKey.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                updateFilterInputView();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                updateFilterInputView();
+            }
+        });
+
+        shrinkFiltering();
+    }
+
+    private void updateFilterInputView() {
+        FilterKey filterKey = (FilterKey) spFilterKey.getSelectedItem();
+
+        switch (filterKey) {
+            case DATE:
+                etEventDate.setVisibility(View.VISIBLE);
+                etEventHall.setVisibility(View.GONE);
+                etEventCity.setVisibility(View.GONE);
+                break;
+            case HALL:
+                etEventDate.setVisibility(View.GONE);
+                etEventHall.setVisibility(View.VISIBLE);
+                etEventCity.setVisibility(View.GONE);
+                break;
+            case CITY:
+                etEventDate.setVisibility(View.GONE);
+                etEventHall.setVisibility(View.GONE);
+                etEventCity.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
+
     private void expandFiltering() {
         cbFilter.setText(R.string.filter_events_selected);
         spFilterKey.setVisibility(View.VISIBLE);
@@ -293,27 +250,88 @@ public class MainActivity extends AppCompatActivity {
         etEventCity.setVisibility(View.GONE);
     }
 
-    private void updateFilterInputView() {
+    private void setDateFilterUI() {
+        final Calendar calendar = Calendar.getInstance();
+        final DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, monthOfYear);
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                etEventDate.setText(DataUtils.UI_DATE_FORMAT.format(calendar.getTime()));
+                etEventDate.setError(null);
+            }
+        };
+        etEventDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(MainActivity.this, dateSetListener,
+                        calendar.get(Calendar.YEAR),
+                        calendar.get(Calendar.MONTH),
+                        calendar.get(Calendar.DAY_OF_MONTH))
+                        .show();
+            }
+        });
+    }
 
-        FilterKey filterKey = (FilterKey) spFilterKey.getSelectedItem();
+    private void setHallFilterUI() {
+        // Load all halls from DB
+        hallsDatabaseReference.orderByChild("name").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<Hall> halls = new ArrayList<>();
 
-        switch (filterKey) {
-            case DATE:
-                etEventDate.setVisibility(View.VISIBLE);
-                etEventHall.setVisibility(View.GONE);
-                etEventCity.setVisibility(View.GONE);
-                break;
-            case HALL:
-                etEventDate.setVisibility(View.GONE);
-                etEventHall.setVisibility(View.VISIBLE);
-                etEventCity.setVisibility(View.GONE);
-                break;
-            case CITY:
-                etEventDate.setVisibility(View.GONE);
-                etEventHall.setVisibility(View.GONE);
-                etEventCity.setVisibility(View.VISIBLE);
-                break;
-        }
+                // Serialize all halls to list
+                if (dataSnapshot.exists())
+                    for (DataSnapshot hallSnapshot : dataSnapshot.getChildren())
+                        halls.add(hallSnapshot.getValue(Hall.class));
+
+                final HallSpinnerAdapter hallSpinnerAdapter =
+                        new HallSpinnerAdapter(MainActivity.this, R.layout.spinner_item, halls);
+                hallSpinnerAdapter.setDropDownViewResource(R.layout.spinner_item);
+
+                etEventHall.setAdapter(hallSpinnerAdapter);
+
+                // When hall item is chosen from drop-down, set selected hall variable
+                etEventHall.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        selectedHall = hallSpinnerAdapter.getItem(position);
+                        etEventHall.setError(null);
+                    }
+                });
+
+                // When hall name is written in text view, set selected hall variable accordingly
+                etEventHall.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        ArrayList<Hall> halls = hallSpinnerAdapter.getValues();
+                        for (Hall hall : halls) {
+                            if (hall.getName().equals(s.toString())) {
+                                selectedHall = hall;
+                                etEventHall.setError(null);
+                                return;
+                            }
+                        }
+
+                        // Unset the selected hall whenever the user types. Validation will then fail.
+                        // This is how we enforce selecting from the list.
+                        selectedHall = null;
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {}
+                });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        });
     }
 
     private void loadEventsByIndexKey(DataUtils.EventIndexKey indexKey) {
@@ -516,10 +534,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        /* Use AppCompatActivity's inflater's inflate method to inflate our menu layout to this menu */
+        // Use AppCompatActivity's inflater's inflate method to inflate our menu layout to this menu
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        /* Return true so that the menu is displayed in the Toolbar */
+        // Return true so that the menu is displayed in the Toolbar
         return true;
     }
 
@@ -536,6 +554,10 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /*
+     * These two methods are for handling native Android back button the way we need
+     * for keeping the app state valid
+     */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {

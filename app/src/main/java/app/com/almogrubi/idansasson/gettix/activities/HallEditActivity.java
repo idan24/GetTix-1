@@ -49,36 +49,13 @@ public class HallEditActivity extends ManagementScreen {
         initializeDatabaseReferences();
 
         // Initialization actions that should happen whether this is a new event or an edited existing hall
-        initializeUIViews();
+        initializeCommonUIViews();
 
         Intent intent = this.getIntent();
         // If we should be in edit mode, lookup the hall in the database and bind its data to UI
         if ((intent != null) && (intent.hasExtra("hallUid"))) {
-
             isEdit = true;
-
-            hallsDatabaseReference
-                    .child(intent.getStringExtra("hallUid"))
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            // If we have a null result, the hall was somehow not found in the database
-                            if (dataSnapshot == null || !dataSnapshot.exists() || dataSnapshot.getValue() == null) {
-                                abort();
-                                return;
-                            }
-
-                            // If we reached here then the existing hall was found, we'll bind it to UI
-                            editedHall = dataSnapshot.getValue(Hall.class);
-                            binding.tvHallEditTitle.setText(R.string.hall_edit_title);
-                            bindExistingHallInfo();
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            abort();
-                        }
-                    });
+            loadHallFromDB(intent.getStringExtra("hallUid"));
         }
         // If we should be in new/create mode, initialize views accordingly
         else {
@@ -92,13 +69,38 @@ public class HallEditActivity extends ManagementScreen {
         hallSeatsDatabaseReference = firebaseDatabase.getReference().child("hall_seats");
     }
 
-    private void initializeUIViews() {
+    private void initializeCommonUIViews() {
         binding.btSaveHall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 saveHallIfInputValid();
             }
         });
+    }
+
+    private void loadHallFromDB(String hallUid) {
+        hallsDatabaseReference
+                .child(hallUid)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        // If we have a null result, the hall was somehow not found in the database
+                        if (dataSnapshot == null || !dataSnapshot.exists() || dataSnapshot.getValue() == null) {
+                            abort();
+                            return;
+                        }
+
+                        // If we reached here then the existing hall was found, we'll bind it to UI
+                        editedHall = dataSnapshot.getValue(Hall.class);
+                        binding.tvHallEditTitle.setText(R.string.hall_edit_title);
+                        bindExistingHallUI();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        abort();
+                    }
+                });
     }
 
     private void abort() {
@@ -108,7 +110,7 @@ public class HallEditActivity extends ManagementScreen {
         startActivity(new Intent(HallEditActivity.this, HallsActivity.class));
     }
 
-    private void bindExistingHallInfo() {
+    private void bindExistingHallUI() {
         binding.etHallName.setText(this.editedHall.getName());
         binding.etHallAddress.setText(this.editedHall.getAddress());
         binding.etHallCity.setText(this.editedHall.getCity());

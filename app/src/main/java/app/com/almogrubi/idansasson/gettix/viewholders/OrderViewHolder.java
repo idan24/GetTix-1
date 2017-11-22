@@ -10,8 +10,6 @@ import app.com.almogrubi.idansasson.gettix.entities.Order;
 import app.com.almogrubi.idansasson.gettix.dataservices.DataUtils;
 
 /**
- * Created by idans on 17/11/2017.
- *
  * A ViewHolder is a required part of the pattern for RecyclerViews. It mostly behaves as
  * a cache of the child views for a forecast item. It's also a convenient place to set an
  * OnClickListener, since it has access to the adapter and the views.

@@ -1,13 +1,6 @@
 package app.com.almogrubi.idansasson.gettix.entities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-/**
- * Created by idans on 28/10/2017.
- */
 
 public class EventHall implements Serializable {
 

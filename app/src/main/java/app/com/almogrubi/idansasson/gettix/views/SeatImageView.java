@@ -1,14 +1,12 @@
 package app.com.almogrubi.idansasson.gettix.views;
 
 import android.content.Context;
-import android.widget.ImageView;
 
 import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 
-/**
- * Created by idans on 13/11/2017.
+/*
+ * An ImageView that represents a seat in an event with marked seats
  */
-
 public class SeatImageView extends android.support.v7.widget.AppCompatImageView {
 
     private int row;
@@ -36,6 +34,8 @@ public class SeatImageView extends android.support.v7.widget.AppCompatImageView 
 
     public void setStatus(Utils.SeatStatus status) {
         this.status = status;
+
+        // Force UI update
         invalidate();
         requestLayout();
     }

@@ -81,6 +81,13 @@ public class EventDetailsActivity extends AppCompatActivity {
                             // If we reached here then the existing event was found, we'll bind it to UI
                             event = dataSnapshot.getValue(Event.class);
                             bindEventToUI(event);
+
+                            binding.btBookTickets.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    onBookTicketsClick(event);
+                                }
+                            });
                         }
 
                         @Override
@@ -95,6 +102,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     private void bindEventToUI(final Event event) {
 
+        // Use Cloudinary to transform event poster to fit the screen and Glide to load the transformed image to view
         Glide.with(binding.ivEventPoster.getContext())
                 .load(Utils.getTransformedCloudinaryImageUrl(
                         event.getCategoryAsEnum(), 450, 200, event.getPosterUri(), "fill"))
@@ -106,9 +114,29 @@ public class EventDetailsActivity extends AppCompatActivity {
                 DataUtils.convertToUiDateFormat(event.getDate()),
                 event.getHour()));
 
+        bindEventHallToUI(event.getEventHall().getUid());
+
+        binding.ivEventCategory.setBackgroundResource(Utils.lookupImageByCategory(event.getCategoryAsEnum()));
+
+        binding.tvEventPrice.setText(String.format("%s₪", event.getPrice()));
+
+        if (event.getDuration() != 0) {
+            String newLine = System.getProperty("line.separator");
+            binding.tvEventDescription.setText(String.format("משך המופע: %d דקות%s%s%s",
+                    event.getDuration(), newLine, newLine, event.getDescription()));
+        }
+        else {
+            binding.tvEventDescription.setText(event.getDescription());
+        }
+
+        // Set left tickets text
+        setLeftTicketsUI(event);
+    }
+
+    private void bindEventHallToUI(String eventHallUid) {
         // Retrieve hall information from DB
         hallsDatabaseReference
-                .child(event.getEventHall().getUid())
+                .child(eventHallUid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -120,17 +148,13 @@ public class EventDetailsActivity extends AppCompatActivity {
                         // If we reached here then the hall was found, we'll bind it to UI
                         final Hall hall = dataSnapshot.getValue(Hall.class);
 
+                        // Set hall address with the hall name being a hyperlink to the hall's official website
                         final SpannableStringBuilder hallAddress = new SpannableStringBuilder(String.format("%s, %s, %s",
                                 hall.getName(), hall.getAddress(), hall.getCity()));
                         ClickableSpan clickableSpan = new ClickableSpan() {
                             @Override
                             public void onClick(View textView) {
-                                String hallWebsiteUrl = hall.getOfficialWebsite();
-                                if (!hallWebsiteUrl.startsWith("http://") && !hallWebsiteUrl.startsWith("https://"))
-                                    hallWebsiteUrl = "http://" + hallWebsiteUrl;
-                                Intent browserIntent = new Intent(Intent.ACTION_VIEW);
-                                browserIntent.setData(Uri.parse(hallWebsiteUrl));
-                                startActivity(browserIntent);
+                                openHallOfficialWebsite(hall.getOfficialWebsite());
                             }
                         };
                         hallAddress.setSpan(clickableSpan, 0, hall.getName().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -142,57 +166,70 @@ public class EventDetailsActivity extends AppCompatActivity {
                         binding.ivEventLocation.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Uri addressUri = Uri.parse("geo:0,0?q=" + Uri.encode(hall.getAddress() + " " + hall.getCity()));
-                                Intent intent = new Intent(Intent.ACTION_VIEW, addressUri);
-                                if (intent.resolveActivity(getPackageManager()) != null)
-                                    startActivity(intent);
-                                else
-                                    Toast.makeText(EventDetailsActivity.this, "יש להתקין יישום מפות", Toast.LENGTH_LONG).show();
+                                openMapLocation(hall);
                             }
                         });
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        abort();
-                    }
+                    public void onCancelled(DatabaseError databaseError) {}
                 });
+    }
 
-        binding.ivEventCategory.setBackgroundResource(Utils.lookupImageByCategory(event.getCategoryAsEnum()));
+    private void onBookTicketsClick(Event event) {
+        Intent nextActivity;
 
-        binding.tvEventPrice.setText(String.format("%s₪", event.getPrice()));
+        // If the event is with marked seats, go to seats picking activity
+        if (event.isMarkedSeats()) {
+            nextActivity = new Intent(EventDetailsActivity.this, SeatsActivity.class);
+        }
+        // If the event is not seat-marked, go to no-seats activity
+        else {
+            nextActivity = new Intent(EventDetailsActivity.this, NoSeatsActivity.class);
+        }
 
-        String newLine = System.getProperty("line.separator");
-        binding.tvEventDescription.setText(String.format("משך המופע: %d דקות%s%s%s",
-                event.getDuration(), newLine, newLine, event.getDescription()));
-
-        binding.btBookTickets.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // If the event is with marked seats, go to seats picking activity
-                if (event.isMarkedSeats()) {
-                    Intent seatsActivity = new Intent(v.getContext(), SeatsActivity.class);
-                    seatsActivity.putExtra("eventUid", event.getUid());
-                    startActivity(seatsActivity);
-                }
-                // If the event is not seat-marked, go to no-seats activity
-                else {
-                    Intent noSeatsActivity = new Intent(v.getContext(), NoSeatsActivity.class);
-                    noSeatsActivity.putExtra("eventUid", event.getUid());
-                    startActivity(noSeatsActivity);
-                }
-            }
-        });
-
-        // Set left tickets text
-        setLeftTicketsUI(event);
+        nextActivity.putExtra("eventUid", event.getUid());
+        startActivity(nextActivity);
     }
 
     private void abort() {
         String eventNotFoundErrorMessage = "המופע לא נמצא, נסה שנית";
+        Toast.makeText(EventDetailsActivity.this, eventNotFoundErrorMessage, Toast.LENGTH_LONG).show();
+        final Intent mainActivity = new Intent(EventDetailsActivity.this, MainActivity.class);
 
-        Toast.makeText(this, eventNotFoundErrorMessage, Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(this, MainActivity.class));
+        Thread thread = new Thread(){
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(2500);
+                    startActivity(mainActivity);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        thread.start();
+    }
+
+    private void openHallOfficialWebsite(String hallWebsiteUrl) {
+        // Ensure the url is valid with HTTP prefix
+        if (!hallWebsiteUrl.startsWith("http://") && !hallWebsiteUrl.startsWith("https://"))
+            hallWebsiteUrl = "http://" + hallWebsiteUrl;
+
+        // Open browser with hall's official website
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW);
+        browserIntent.setData(Uri.parse(hallWebsiteUrl));
+        startActivity(browserIntent);
+    }
+
+    private void openMapLocation(Hall hall) {
+        Uri addressUri = Uri.parse("geo:0,0?q=" + Uri.encode(hall.getAddress() + " " + hall.getCity()));
+        Intent intent = new Intent(Intent.ACTION_VIEW, addressUri);
+        if (intent.resolveActivity(getPackageManager()) != null)
+            startActivity(intent);
+        else
+            Toast.makeText(EventDetailsActivity.this, "יש להתקין יישום מפות", Toast.LENGTH_LONG).show();
     }
 
     private void setLeftTicketsUI(Event event) {
@@ -214,7 +251,6 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
     private Intent createShareEventIntent() {
-
         String newLine = System.getProperty("line.separator");
         String sharedMessage = String.format("היי! רציתי שתסתכל על המופע הזה:%s%s%sחפש אותו ב-GetTix!",
                 newLine + newLine, this.event.toString(), newLine + newLine);
@@ -250,6 +286,10 @@ public class EventDetailsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /*
+     * These two methods are for handling native Android back button the way we need
+     * for keeping the app and order state valid
+     */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {

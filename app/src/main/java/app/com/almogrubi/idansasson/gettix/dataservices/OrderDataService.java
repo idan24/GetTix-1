@@ -27,32 +27,36 @@ import app.com.almogrubi.idansasson.gettix.entities.Event;
 import app.com.almogrubi.idansasson.gettix.entities.Order;
 import app.com.almogrubi.idansasson.gettix.services.CancelOrderJobService;
 
-/**
- * Created by idans on 19/11/2017.
- */
-
 public class OrderDataService {
 
     // Used for generating order confirmation number when an order is final
     public static int ORDER_CONFIRMATION_NUMBER_LENGTH = 5;
 
+    /*
+     * Cancels the given order in DB
+     */
     public static void cancelOrder(String eventUid, boolean isEventMarkedSeats, Order order) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference ordersDatabaseReference = firebaseDatabase.getReference().child("orders");
 
-        // Update: "orders / $ eventUid / $ orderUid / status = FINAL"
+        // Update: "orders / $ eventUid / $ orderUid / status = CANCELLED"
         ordersDatabaseReference
                 .child(eventUid)
                 .child(order.getUid())
                 .child("status").setValue(DataUtils.OrderStatus.CANCELLED.name());
 
+        // Update the event's left tickets num now that the order tickets are being returned
         updateEventLeftTicketsNum(eventUid, order.getTicketsNum());
 
+        // If the order was for an event with marked seats, handle accordingly
         if (isEventMarkedSeats) {
             freeEventAndOrderSeats(eventUid, order.getUid());
         }
     }
 
+    /*
+     * We update the event's leftTicketsNum value in an atomic transaction for synchronization
+     */
     private static void updateEventLeftTicketsNum(final String eventUid, final int orderTicketsNum) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference eventsDatabaseReference = firebaseDatabase.getReference().child("events");
@@ -104,6 +108,7 @@ public class OrderDataService {
 
                             eventSeatsDatabaseReference.child(eventUid).updateChildren(orderSeatsData);
 
+                            // Delete order seats only after they were examined for event seats status update
                             orderSeatsDatabaseReference.child(orderUid).removeValue();
                         }
                     }
@@ -114,8 +119,8 @@ public class OrderDataService {
     }
 
     /*
-         * Generates a representable string for an order's seats
-         */
+     * Generates a representable string for an order's seats
+     */
     public static String generateOrderSeatsUIString(boolean[][] orderSeats) {
         StringBuilder completeUIString = new StringBuilder();
         String newLine = System.getProperty("line.separator");
@@ -158,6 +163,9 @@ public class OrderDataService {
         return completeUIString.toString();
     }
 
+    /*
+     * Creates and starts a new service to check for a new order's status after 10 minutes
+     */
     public static void fireCancelOrderService(Context context, String orderUid, String eventUid, boolean isMarkedSeats) {
         // Create a new dispatcher using the Google Play driver.
         FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(context));

@@ -1,9 +1,5 @@
 package app.com.almogrubi.idansasson.gettix.viewholders;
 
-/**
- * Created by idans on 25/10/2017.
- */
-
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -52,11 +48,13 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
 
         ivEventCategory.setBackgroundResource(Utils.lookupImageByCategory(event.getCategoryAsEnum()));
 
+        // Use Cloudinary to transform event poster to fit the screen and Glide to load the transformed image to view
         Glide.with(ivEventPoster.getContext())
                 .load(Utils.getTransformedCloudinaryImageUrl(
                         event.getCategoryAsEnum(), 90, 90, event.getPosterUri(), "fill"))
                 .into(ivEventPoster);
 
+        // Set sold-out UI
         if (event.isSoldOut()) {
             ivEventSoldout.setVisibility(View.VISIBLE);
             ivEventPoster.setAlpha((float) 0.5);

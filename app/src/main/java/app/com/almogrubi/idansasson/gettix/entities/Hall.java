@@ -1,16 +1,6 @@
 package app.com.almogrubi.idansasson.gettix.entities;
 
-import org.joda.time.DateTime;
-
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
-
-/**
- * Created by idans on 21/10/2017.
- */
 
 public class Hall implements Serializable {
 

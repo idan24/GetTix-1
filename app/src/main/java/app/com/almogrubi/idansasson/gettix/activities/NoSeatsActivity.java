@@ -35,6 +35,7 @@ import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 
 public class NoSeatsActivity extends AppCompatActivity {
 
+    // Firebase database references
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference eventsDatabaseReference;
     private DatabaseReference ordersDatabaseReference;
@@ -88,27 +89,10 @@ public class NoSeatsActivity extends AppCompatActivity {
                             // To cover the slim chance that the event got sold out between the user first entered
                             // EventDetailsActivity and after he entered this activity, we notify him
                             if (event.isSoldOut()) {
-                                String orderInvalidMessage = "שים לב! ברגעים אלה אזלו הכרטיסים למופע זה. מצטערים!";
-                                Toast.makeText(NoSeatsActivity.this, orderInvalidMessage, Toast.LENGTH_LONG).show();
-                                final Intent detailActivityIntent = new Intent(NoSeatsActivity.this, EventDetailsActivity.class);
-                                detailActivityIntent.putExtra("eventUid", event.getUid());
-
-                                // Send user back to event details activity after toast was shown for long enough
-                                Thread thread = new Thread(){
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            Thread.sleep(2500);
-                                            startActivity(detailActivityIntent);
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                };
-
-                                thread.start();
+                                onEventGotSoldOut();
                             }
                             else {
+                                // Update tickets num with initial value of 1 ticket
                                 updateTicketsNumUI(1);
                             }
                         }
@@ -152,6 +136,28 @@ public class NoSeatsActivity extends AppCompatActivity {
         });
     }
 
+    private void onEventGotSoldOut() {
+        String orderInvalidMessage = "שים לב! ברגעים אלה אזלו הכרטיסים למופע זה. מצטערים!";
+        Toast.makeText(NoSeatsActivity.this, orderInvalidMessage, Toast.LENGTH_LONG).show();
+        final Intent detailActivityIntent = new Intent(NoSeatsActivity.this, EventDetailsActivity.class);
+        detailActivityIntent.putExtra("eventUid", event.getUid());
+
+        // Send user back to event details activity after toast was shown for long enough
+        Thread thread = new Thread(){
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(2500);
+                    startActivity(detailActivityIntent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        thread.start();
+    }
+
     private void abort() {
         String eventNotFoundErrorMessage = "המופע לא נמצא, נסה שנית";
         Toast.makeText(this, eventNotFoundErrorMessage, Toast.LENGTH_SHORT).show();
@@ -189,6 +195,9 @@ public class NoSeatsActivity extends AppCompatActivity {
         startActivity(paymentActivity);
     }
 
+    /*
+     * We update the event's leftTicketsNum value in an atomic transaction for synchronization
+     */
     private void updateEventTicketsNum(final int newOrderTicketsNum) {
         eventsDatabaseReference.child(event.getUid()).runTransaction(new Transaction.Handler() {
             @Override
@@ -263,6 +272,7 @@ public class NoSeatsActivity extends AppCompatActivity {
         // Should be set before updating tickets num UI
         isCouponUsed = true;
 
+        // Now that a coupon has been entered, we update tickets num and price accordingly
         updateTicketsNumUI(Integer.parseInt(binding.tvTicketsNum.getText().toString()));
 
         tvCouponCode.setTextColor(Color.GRAY);
@@ -292,6 +302,10 @@ public class NoSeatsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /*
+     * These two methods are for handling native Android back button the way we need
+     * for keeping the app state valid
+     */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {

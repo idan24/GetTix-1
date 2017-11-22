@@ -25,6 +25,7 @@ import app.com.almogrubi.idansasson.gettix.authentication.ManagementScreen;
 
 public class ReportsActivity extends ManagementScreen {
 
+    // This enum represents all available reports
     enum Report {
         INCOME("הכנסות"),
         OCCUPANCY("תפוסה");
@@ -45,6 +46,7 @@ public class ReportsActivity extends ManagementScreen {
     private RecyclerView reportRecyclerView;
     private LinearLayoutManager linearLayoutManager;
 
+    // Firebase database references
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference eventsDatabaseReference;
 
@@ -62,18 +64,32 @@ public class ReportsActivity extends ManagementScreen {
         linearLayoutManager = new LinearLayoutManager(this);
         reportRecyclerView.setLayoutManager(linearLayoutManager);
 
+        // Initialize all needed Firebase database references
         initializeDatabaseReferences();
 
+        // Initialize the report spinner
+        setReportSpinnerUI();
+    }
+
+    private void initializeDatabaseReferences() {
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        eventsDatabaseReference = firebaseDatabase.getReference().child("events");
+    }
+
+    private void setReportSpinnerUI() {
         // Initializing an ArrayAdapter for the report spinner
         final ArrayAdapter<Report> spinnerArrayAdapter = new ArrayAdapter<Report>(
                 this, R.layout.spinner_item, Report.values()) {};
         spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
+
         spReport.setAdapter(spinnerArrayAdapter);
+
         spReport.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Report selectedReport = (Report) spReport.getSelectedItem();
 
+                // Load report according to user selection
                 if (selectedReport == Report.INCOME)
                     loadIncomeReport();
                 else if (selectedReport == Report.OCCUPANCY)
@@ -83,11 +99,6 @@ public class ReportsActivity extends ManagementScreen {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
-    }
-
-    private void initializeDatabaseReferences() {
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        eventsDatabaseReference = firebaseDatabase.getReference().child("events");
     }
 
     private void loadIncomeReport() {

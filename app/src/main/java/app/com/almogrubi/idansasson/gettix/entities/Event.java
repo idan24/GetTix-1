@@ -6,10 +6,6 @@ import java.io.Serializable;
 
 import app.com.almogrubi.idansasson.gettix.dataservices.DataUtils;
 
-/**
- * Created by idans on 21/10/2017.
- */
-
 public class Event implements Serializable {
 
     private String uid;

@@ -6,12 +6,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * Created by idans on 21/10/2017.
- */
-
 public class DataUtils {
 
+    // This enum represents all event categories supported by the app
     public enum Category {
         ALL("הכל"),
         MUSIC("מוזיקה"),
@@ -33,6 +30,7 @@ public class DataUtils {
         }
     };
 
+    // This enum represents all possible status for an order
     public enum OrderStatus {
         IN_PROGRESS("בתהליך"),
         FINAL("סופי"),
@@ -49,7 +47,7 @@ public class DataUtils {
         }
     };
 
-    // Represents all ways events are indexed in the database
+    // This enum represents all ways events are indexed in the database, except from by producer
     public enum EventIndexKey {
         ALL,
         CATEGORY,
@@ -61,6 +59,7 @@ public class DataUtils {
         CATEGORY_CITY
     }
 
+    // We use these formats to manipulate the appearance of dates
     public static SimpleDateFormat DB_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     public static SimpleDateFormat UI_DATE_FORMAT = new SimpleDateFormat("dd/MM/yy");
     public static SimpleDateFormat HOUR_FORMAT = new SimpleDateFormat("HH:mm");

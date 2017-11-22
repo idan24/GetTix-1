@@ -20,12 +20,7 @@ public class CancelOrderJobService extends JobService {
     private AsyncTask backgroundTask;
 
     private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference eventsDatabaseReference;
-    private DatabaseReference eventSeatsDatabaseReference;
     private DatabaseReference ordersDatabaseReference;
-    private DatabaseReference orderSeatsDatabaseReference;
-
-    private boolean[][] orderSeats;
 
     @Override
     public void onCreate() {
@@ -33,15 +28,11 @@ public class CancelOrderJobService extends JobService {
 
         // Initialize all needed Firebase database references
         firebaseDatabase = FirebaseDatabase.getInstance();
-        eventsDatabaseReference = firebaseDatabase.getReference().child("events");
-        eventSeatsDatabaseReference = firebaseDatabase.getReference().child("event_seats");
         ordersDatabaseReference = firebaseDatabase.getReference().child("orders");
-        orderSeatsDatabaseReference = firebaseDatabase.getReference().child("order_seats");
     }
 
     @Override
     public boolean onStartJob(final JobParameters job) {
-
         backgroundTask = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] objects) {
@@ -66,7 +57,7 @@ public class CancelOrderJobService extends JobService {
                                 // If we reached here then the order was found
                                 Order order = dataSnapshot.getValue(Order.class);
 
-                                // We only have work to do if the order is still marked as "in process" after 10 min
+                                // We only have work to do if the order is still marked as "in progress" after 10 min
                                 // If the order is final or cancelled by now, we can abort
                                 if (order.getStatusAsEnum() == DataUtils.OrderStatus.IN_PROGRESS) {
                                     OrderDataService.cancelOrder(eventUid, isEventMarkedSeats, order);

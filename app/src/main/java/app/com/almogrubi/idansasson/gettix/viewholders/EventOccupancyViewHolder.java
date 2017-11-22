@@ -9,8 +9,6 @@ import app.com.almogrubi.idansasson.gettix.entities.Event;
 import app.com.almogrubi.idansasson.gettix.dataservices.DataUtils;
 
 /**
- * Created by idans on 18/11/2017.
- *
  * A ViewHolder is a required part of the pattern for RecyclerViews. It mostly behaves as
  * a cache of the child views for a forecast item. It's also a convenient place to set an
  * OnClickListener, since it has access to the adapter and the views.
@@ -36,11 +34,16 @@ public class EventOccupancyViewHolder extends RecyclerView.ViewHolder {
         tvEventTitle.setText(event.getTitle());
         tvEventDateTime.setText(DataUtils.convertToUiDateFormat(event.getDate()));
         tvEventHall.setText(String.format("%s, %s", event.getEventHall().getName(), event.getCity()));
+
         int eventTotalTicketsNum = event.isMarkedSeats()
                 ? event.getEventHall().getRows() * event.getEventHall().getColumns()
                 : event.getMaxCapacity();
+
         int eventSoldTicketsNum = eventTotalTicketsNum - event.getLeftTicketsNum();
+
+        // Calculate occupancy in percentage
         int eventOccupancy = (eventSoldTicketsNum * 100) / eventTotalTicketsNum;
+
         tvEventSoldTickets.setText(String.format("%d כרטיסים נמכרו מתוך %d", eventSoldTicketsNum, eventTotalTicketsNum));
         tvEventOccupancy.setText(String.format("תפוסה:%d%%", eventOccupancy));
     }

@@ -6,7 +6,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,10 +33,6 @@ import app.com.almogrubi.idansasson.gettix.dataservices.DataUtils;
 import app.com.almogrubi.idansasson.gettix.dataservices.OrderDataService;
 import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 
-/**
- * Created by almogrubi on 10/20/17.
- */
-
 public class PaymentActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
@@ -51,6 +46,7 @@ public class PaymentActivity extends AppCompatActivity {
     // to ConfirmationActivity
     private String[][] orderSeats;
 
+    // Firebase database references
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference eventsDatabaseReference;
     private DatabaseReference ordersDatabaseReference;
@@ -89,11 +85,37 @@ public class PaymentActivity extends AppCompatActivity {
             if (intent.hasExtra("orderSeats")) {
                 orderSeats = (String[][]) intent.getSerializableExtra("orderSeats");
             }
+
+            // We make sure the event's left tickets num is still valid when entering this screen
+            // This covers the synchronization issue that could occur when multiple customers order the last
+            // tickets at the same time
+            checkLeftTicketsNum();
         }
 
+        binding.tvTicketsNum.setText(
+                String.format("רכישת %d כרטיסים: %d ₪",
+                        order.getTicketsNum(), order.getTotalPrice()));
+
+        binding.btPlaceOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkInputValidity()) {
+                    progressDialog = ProgressDialog.show(PaymentActivity.this, "המתן רק דקה",
+                            "ההזמנה מתבצעת...", true, false);
+                    // Order save and continue to next screen will be triggered from callback
+                    // inside fireOrderValidityCheck()
+                    fireOrderValidityCheck();
+                }
+            }
+        });
+
+        binding.etFullName.requestFocus();
+    }
+
+    private void checkLeftTicketsNum() {
         // Retrieve event's up-to-date leftTicketsNum from DB
         eventsDatabaseReference
-                .child(intent.getStringExtra("eventUid"))
+                .child(this.eventUid)
                 .child("leftTicketsNum").runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
@@ -119,27 +141,12 @@ public class PaymentActivity extends AppCompatActivity {
             @Override
             public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {}
         });
-
-        binding.tvTicketsNum.setText(
-                String.format("רכישת %d כרטיסים: %d ₪",
-                        order.getTicketsNum(), order.getTotalPrice()));
-
-        binding.btPlaceOrder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkInputValidity()) {
-                    progressDialog = ProgressDialog.show(PaymentActivity.this, "המתן רק דקה",
-                            "ההזמנה מתבצעת...", true, false);
-                    // Order save and continue to next screen will be triggered from callback
-                    // inside fireOrderValidityCheck()
-                    fireOrderValidityCheck();
-                }
-            }
-        });
-
-        binding.etFullName.requestFocus();
     }
 
+    /*
+     * Aborting the order happens if the order somehow became invalid - for instance, if multiple customers ordered
+     * last event tickets at the same time
+     */
     private void abortOrder() {
         OrderDataService.cancelOrder(eventUid, isMarkedSeats, order);
 
@@ -175,18 +182,18 @@ public class PaymentActivity extends AppCompatActivity {
             isValid = false;
         }
         // Checking phone was filled
-        if (Utils.isTextViewEmpty(binding.etPhone)) {
+        else if (Utils.isTextViewEmpty(binding.etPhone)) {
             binding.etPhone.setError(emptyFieldErrorMessage);
             isValid = false;
         }
         // Checking email was filled
-        if (Utils.isTextViewEmpty(binding.etEmail)) {
+        else if (Utils.isTextViewEmpty(binding.etEmail)) {
             binding.etEmail.setError(emptyFieldErrorMessage);
             isValid = false;
         }
-
-        if (isValid) {
+        else {
             Card creditCard = binding.creditCardInputWidget.getCard();
+
             // By Stripe design, the card object will be null if the user inputs invalid data
             if ((creditCard == null) || (!creditCard.validateCard())) {
                 Toast.makeText(this, invalidCreditCardErrorMessage, Toast.LENGTH_LONG).show();
@@ -197,6 +204,9 @@ public class PaymentActivity extends AppCompatActivity {
         return isValid;
     }
 
+    /*
+     * Check the order is still valid before placing it
+     */
     private void fireOrderValidityCheck() {
         ordersDatabaseReference.child(eventUid).child(order.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -222,6 +232,9 @@ public class PaymentActivity extends AppCompatActivity {
         });
     }
 
+    /*
+     * Handles the credit card token creation from Stripe and proceeds with order placement
+     */
     private void fireCreditCardTokenCreation() {
         Card creditCard = binding.creditCardInputWidget.getCard();
 
@@ -230,20 +243,9 @@ public class PaymentActivity extends AppCompatActivity {
                 creditCard,
                 new TokenCallback() {
                     public void onSuccess(Token token) {
+                        // Credit card token has been successfully created
                         // Update order object in database
-                        String orderCustomerName = binding.etFullName.getText().toString();
-                        String orderCustomerPhone = binding.etPhone.getText().toString();
-                        String orderCustomerEmail = binding.etEmail.getText().toString();
-                        Customer orderCustomer = new Customer(orderCustomerName, orderCustomerPhone, orderCustomerEmail);
-                        order.setCustomer(orderCustomer);
-                        order.setCreditCardToken(token.getCard().getLast4());
-                        order.setStatusAsEnum(DataUtils.OrderStatus.FINAL);
-                        order.setConfirmationNumber(
-                                Utils.generateRandomString(
-                                        OrderDataService.ORDER_CONFIRMATION_NUMBER_LENGTH,
-                                        new SecureRandom()));
-
-                        ordersDatabaseReference.child(eventUid).child(order.getUid()).setValue(order);
+                        placeOrder(token);
 
                         progressDialog.dismiss();
 
@@ -256,6 +258,22 @@ public class PaymentActivity extends AppCompatActivity {
                                 .show();
                     }
                 });
+    }
+
+    private void placeOrder(Token token) {
+        String orderCustomerName = binding.etFullName.getText().toString();
+        String orderCustomerPhone = binding.etPhone.getText().toString();
+        String orderCustomerEmail = binding.etEmail.getText().toString();
+        Customer orderCustomer = new Customer(orderCustomerName, orderCustomerPhone, orderCustomerEmail);
+        order.setCustomer(orderCustomer);
+        order.setCreditCardToken(token.getCard().getLast4());
+        order.setStatusAsEnum(DataUtils.OrderStatus.FINAL);
+        order.setConfirmationNumber(
+                Utils.generateRandomString(
+                        OrderDataService.ORDER_CONFIRMATION_NUMBER_LENGTH,
+                        new SecureRandom()));
+
+        ordersDatabaseReference.child(eventUid).child(order.getUid()).setValue(order);
     }
 
     private void proceedToConfirmation() {
@@ -326,6 +344,10 @@ public class PaymentActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /*
+     * These two methods are for handling native Android back button the way we need
+     * for keeping the app and order state valid
+     */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {

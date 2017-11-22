@@ -29,6 +29,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import app.com.almogrubi.idansasson.gettix.dataservices.EventDataService;
 import app.com.almogrubi.idansasson.gettix.viewholders.EventViewHolder;
 import app.com.almogrubi.idansasson.gettix.R;
 import app.com.almogrubi.idansasson.gettix.entities.Event;
@@ -36,26 +37,16 @@ import app.com.almogrubi.idansasson.gettix.entities.Order;
 import app.com.almogrubi.idansasson.gettix.dataservices.DataUtils;
 import app.com.almogrubi.idansasson.gettix.authentication.ManagementScreen;
 
-import static app.com.almogrubi.idansasson.gettix.utilities.Utils.INDEXED_KEY_DIVIDER;
-
 public class EventsActivity extends ManagementScreen {
 
     private TextView tvYourEvents;
     private RecyclerView eventsRecyclerView;
     private LinearLayoutManager linearLayoutManager;
 
+    // Firebase database references
     private DatabaseReference firebaseDatabaseReference;
     private DatabaseReference eventsDatabaseReference;
     private DatabaseReference producerEventsDatabaseReference;
-    private DatabaseReference hallEventsDatabaseReference;
-    private DatabaseReference hallEventDatesDatabaseReference;
-    private DatabaseReference dateEventsDatabaseReference;
-    private DatabaseReference cityEventsDatabaseReference;
-    private DatabaseReference categoryEventsDatabaseReference;
-    private DatabaseReference categoryDateEventsDatabaseReference;
-    private DatabaseReference categoryCityEventsDatabaseReference;
-    private DatabaseReference categoryHallEventsDatabaseReference;
-    private DatabaseReference eventSeatsDatabaseReference;
     private DatabaseReference ordersDatabaseReference;
     private DatabaseReference orderSeatsDatabaseReference;
 
@@ -82,15 +73,6 @@ public class EventsActivity extends ManagementScreen {
         firebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
         eventsDatabaseReference = firebaseDatabaseReference.child("events");
         producerEventsDatabaseReference = firebaseDatabaseReference.child("producer_events");
-        hallEventsDatabaseReference = firebaseDatabaseReference.child("hall_events");
-        dateEventsDatabaseReference = firebaseDatabaseReference.child("date_events");
-        cityEventsDatabaseReference = firebaseDatabaseReference.child("city_events");
-        categoryEventsDatabaseReference = firebaseDatabaseReference.child("category_events");
-        categoryDateEventsDatabaseReference = firebaseDatabaseReference.child("category_date_events");
-        categoryCityEventsDatabaseReference = firebaseDatabaseReference.child("category_city_events");
-        categoryHallEventsDatabaseReference = firebaseDatabaseReference.child("category_hall_events");
-        eventSeatsDatabaseReference = firebaseDatabaseReference.child("event_seats");
-        hallEventDatesDatabaseReference = firebaseDatabaseReference.child("hall_eventDates");
         ordersDatabaseReference = firebaseDatabaseReference.child("orders");
         orderSeatsDatabaseReference = firebaseDatabaseReference.child("order_seats");
     }
@@ -160,26 +142,7 @@ public class EventsActivity extends ManagementScreen {
 
                 switch (itemId) {
                     case R.id.action_view_event_orders:
-                        final Intent eventOrdersActivity = new Intent(context, EventOrdersActivity.class);
-                        eventOrdersActivity.putExtra("eventUid", event.getUid());
-                        eventOrdersActivity.putExtra("eventTitle", event.getTitle());
-                        int eventTotalTicketsNum = event.isMarkedSeats()
-                                ? event.getEventHall().getRows() * event.getEventHall().getColumns()
-                                : event.getMaxCapacity();
-                        eventOrdersActivity.putExtra("eventTotalTicketsNum", eventTotalTicketsNum);
-
-                        eventsDatabaseReference.child(event.getUid()).child("leftTicketsNum")
-                                .addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        eventOrdersActivity.putExtra("eventLeftTicketsNum", Integer.parseInt(dataSnapshot.getValue().toString()));
-                                        context.startActivity(eventOrdersActivity);
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {}
-                                });
-
+                        onViewEventOrders(context, event);
                         return true;
                     case R.id.action_new_event_based:
                         eventEditActivity.putExtra("editMode",
@@ -194,7 +157,7 @@ public class EventsActivity extends ManagementScreen {
                         context.startActivity(eventEditActivity);
                         return true;
                     case R.id.action_delete_event:
-                        handleDeleteEvent(event);
+                        onDeleteEvent(event);
                         return true;
                     default:
                         return true;
@@ -205,14 +168,37 @@ public class EventsActivity extends ManagementScreen {
         eventEditPopup.show();
     }
 
-    private void handleDeleteEvent(final Event event) {
+    private void onViewEventOrders(final Context context, Event event) {
+        final Intent eventOrdersActivity = new Intent(context, EventOrdersActivity.class);
+        eventOrdersActivity.putExtra("eventUid", event.getUid());
+        eventOrdersActivity.putExtra("eventTitle", event.getTitle());
+        int eventTotalTicketsNum = event.isMarkedSeats()
+                ? event.getEventHall().getRows() * event.getEventHall().getColumns()
+                : event.getMaxCapacity();
+        eventOrdersActivity.putExtra("eventTotalTicketsNum", eventTotalTicketsNum);
+
+        // Getting real-time leftTicketsNum value from DB
+        eventsDatabaseReference.child(event.getUid()).child("leftTicketsNum")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        eventOrdersActivity.putExtra("eventLeftTicketsNum", Integer.parseInt(dataSnapshot.getValue().toString()));
+                        context.startActivity(eventOrdersActivity);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {}
+                });
+    }
+
+    private void onDeleteEvent(final Event event) {
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int choice) {
                 switch (choice) {
                     case DialogInterface.BUTTON_POSITIVE:
-                        removeEventFromDB(event);
-                        handleEventOrders(event);
+                        handleEventOrdersRemoval(event);
+                        EventDataService.RemoveEventFromDB(event, user.getUid());
                         Toast.makeText(EventsActivity.this, "המופע נמחק", Toast.LENGTH_SHORT).show();
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
@@ -227,32 +213,7 @@ public class EventsActivity extends ManagementScreen {
                 .setNegativeButton("לא", dialogClickListener).show();
     }
 
-    private void removeEventFromDB(Event event) {
-        String eventUid = event.getUid();
-
-        // Removing from event_seats if needed
-        if (event.isMarkedSeats())
-            eventSeatsDatabaseReference.child(eventUid).removeValue();
-
-        // Removing from all indexed tables
-        producerEventsDatabaseReference.child(user.getUid()).child(eventUid).removeValue();
-        dateEventsDatabaseReference.child(event.getDate()).child(eventUid).removeValue();
-        cityEventsDatabaseReference.child(event.getCity()).child(eventUid).removeValue();
-        hallEventsDatabaseReference.child(event.getEventHall().getUid()).child(eventUid).removeValue();
-        categoryEventsDatabaseReference.child(event.getCategory()).child(eventUid).removeValue();
-        categoryDateEventsDatabaseReference.child(event.getCategory() + INDEXED_KEY_DIVIDER + event.getDate())
-                .child(eventUid).removeValue();
-        categoryCityEventsDatabaseReference.child(event.getCategory() + INDEXED_KEY_DIVIDER + event.getCity())
-                .child(eventUid).removeValue();
-        categoryHallEventsDatabaseReference.child(event.getCategory() + INDEXED_KEY_DIVIDER + event.getEventHall().getUid())
-                .child(eventUid).removeValue();
-        hallEventDatesDatabaseReference.child(event.getEventHall().getUid()).child(event.getDate()).removeValue();
-
-        // Finally, removing from main events table
-        eventsDatabaseReference.child(eventUid).removeValue();
-    }
-
-    private void handleEventOrders(final Event event) {
+    private void handleEventOrdersRemoval(final Event event) {
         ordersDatabaseReference.child(event.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

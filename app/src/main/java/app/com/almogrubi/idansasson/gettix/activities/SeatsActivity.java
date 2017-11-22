@@ -43,12 +43,9 @@ import app.com.almogrubi.idansasson.gettix.dataservices.OrderDataService;
 import app.com.almogrubi.idansasson.gettix.views.SeatImageView;
 import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 
-/**
- * Created by almogrubi on 10/14/17.
- */
-
 public class SeatsActivity extends AppCompatActivity{
 
+    // Firebase database references
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference eventsDatabaseReference;
     private DatabaseReference eventSeatsDatabaseReference;
@@ -57,14 +54,18 @@ public class SeatsActivity extends AppCompatActivity{
 
     private Event event;
     private int ticketsNum = 0;
-    private SeatImageView[][] seats;
     private boolean isCouponUsed = false;
+
+    // This array stores all SeatImageViews created and manipulation in this screen
+    private SeatImageView[][] seats;
 
     private ActivitySeatsBinding binding;
     private TextView tvCouponCode;
     private EditText etCouponCode;
     private Button btCheckCoupon;
 
+    // We use this flag to handle UI a little differently when a seat is being updated in DB,
+    // depending on whether the customer is exactly in the middle of ordering process or not
     private boolean isOrderSaveInProgress = false;
 
     @Override
@@ -107,32 +108,17 @@ public class SeatsActivity extends AppCompatActivity{
                             // To cover the slim chance that the event got sold out between the user first entered
                             // EventDetailsActivity and after he entered this activity, we notify him
                             if (event.isSoldOut()) {
-                                String orderInvalidMessage = "שים לב! ברגעים אלה אזלו הכרטיסים למופע זה. מצטערים!";
-                                Toast.makeText(SeatsActivity.this, orderInvalidMessage, Toast.LENGTH_LONG).show();
-                                final Intent detailActivityIntent = new Intent(SeatsActivity.this, EventDetailsActivity.class);
-                                detailActivityIntent.putExtra("eventUid", event.getUid());
-
-                                // Send user back to event details activity after toast was shown for long enough
-                                Thread thread = new Thread(){
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            Thread.sleep(2500);
-                                            startActivity(detailActivityIntent);
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                };
-
-                                thread.start();
+                                onEventGotSoldOut();
                             }
                             else {
                                 // Initializing the array of rows and seats
                                 seats =
                                         new SeatImageView[event.getEventHall().getRows()][event.getEventHall().getColumns()];
 
+                                // Update tickets num UI (initial value is 0 tickets)
                                 updateTicketsNumUI();
+
+                                // Create the seat map UI
                                 createSeatsUI(event.getUid());
                             }
                         }
@@ -171,6 +157,28 @@ public class SeatsActivity extends AppCompatActivity{
         orderSeatsDatabaseReference = firebaseDatabase.getReference().child("order_seats");
     }
 
+    private void onEventGotSoldOut() {
+        String orderInvalidMessage = "שים לב! ברגעים אלה אזלו הכרטיסים למופע זה. מצטערים!";
+        Toast.makeText(SeatsActivity.this, orderInvalidMessage, Toast.LENGTH_LONG).show();
+        final Intent detailActivityIntent = new Intent(SeatsActivity.this, EventDetailsActivity.class);
+        detailActivityIntent.putExtra("eventUid", event.getUid());
+
+        // Send user back to event details activity after toast was shown for long enough
+        Thread thread = new Thread(){
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(2500);
+                    startActivity(detailActivityIntent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        thread.start();
+    }
+
     private void abort() {
         String eventNotFoundErrorMessage = "המופע לא נמצא, נסה שנית";
         Toast.makeText(this, eventNotFoundErrorMessage, Toast.LENGTH_SHORT).show();
@@ -185,9 +193,8 @@ public class SeatsActivity extends AppCompatActivity{
             return;
         }
 
+        // Set order progress flag to true
         isOrderSaveInProgress = true;
-
-        String[][] chosenSeatsStringArray = getChosenSeatsStringArray();
 
         // Create a new order in database
         final String newOrderUid = ordersDatabaseReference.push().getKey();
@@ -197,6 +204,9 @@ public class SeatsActivity extends AppCompatActivity{
 
         // Update order's event's leftTicketsNum (and soldOut if necessary) in DB
         updateEventTicketsNum(newOrder.getTicketsNum());
+
+        // Get chosen seats as string array
+        String[][] chosenSeatsStringArray = getChosenSeatsStringArray();
 
         // Handle order seats save
         // If seats are successfully saved, we can proceed with the rest of the actions and move to PaymentActivity
@@ -217,6 +227,9 @@ public class SeatsActivity extends AppCompatActivity{
         startActivity(paymentActivity);
     }
 
+    /*
+     * We update the event's leftTicketsNum value in an atomic transaction for synchronization
+     */
     private void updateEventTicketsNum(final int newOrderTicketsNum) {
         eventsDatabaseReference.child(event.getUid()).runTransaction(new Transaction.Handler() {
             @Override
@@ -240,13 +253,17 @@ public class SeatsActivity extends AppCompatActivity{
         });
     }
 
+    /*
+     * This method is responsible for creating the seat map UI on screen load
+     */
     private void createSeatsUI(String eventUid) {
+        // Query all event's seats from DB
         eventSeatsDatabaseReference
                 .child(eventUid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-
+                        // Get screen width to calculate the recommended size in pixels for each seat
                         DisplayMetrics displayMetrics = new DisplayMetrics();
                         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
                         final int SCREEN_WIDTH = displayMetrics.widthPixels;
@@ -309,12 +326,37 @@ public class SeatsActivity extends AppCompatActivity{
                 SeatsActivity.this,
                 rowNumber, seatNumber, status);
 
+        // Set seat's UI according to its status
         setSeatUI(newSeatImageView);
+
+        // Add a listener to changes on the seat in DB
         addSeatDbListener(newSeatImageView);
 
-        // Adding to seats array
+        // Store in seats array
         seats[rowNumber - 1][seatNumber - 1] = newSeatImageView;
+
         return newSeatImageView;
+    }
+
+    private void setSeatUI(SeatImageView seatImageView) {
+        // Set seat color according to its status
+        seatImageView.setBackgroundResource(
+                Utils.lookupImageBySeatStatus(seatImageView.getStatus()));
+
+        // If the seat is occupied, it shouldn't be enabled for the user
+        if (seatImageView.getStatus() == Utils.SeatStatus.OCCUPIED) {
+            seatImageView.setClickable(false);
+        }
+        // If the seat is available, enable its selection
+        else {
+            seatImageView.setClickable(true);
+            seatImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    handleOnSeatClick((SeatImageView) v);
+                }
+            });
+        }
     }
 
     private void addSeatDbListener(final SeatImageView seat) {
@@ -332,34 +374,9 @@ public class SeatsActivity extends AppCompatActivity{
                                     isSeatTaken ? Utils.SeatStatus.OCCUPIED : Utils.SeatStatus.AVAILABLE;
                             if (oldSeatStatus == newSeatStatus) return;
 
-                            // If the seat was chosen before this update from DB, it means it was available and
-                            // now it is occupied by another customer, or that we returned from PaymentActivity to
-                            // this activity in which case the order seats have just become re-available.
-                            // In either case, we undo the seat's selection
+                            // If the seat was chosen before this update from DB, handle variables and UI accordingly
                             if (oldSeatStatus == Utils.SeatStatus.CHOSEN) {
-
-                                // In case seat update probably comes from this own customer's order,
-                                // which is right after he clicked "Next", we wouldn't want to update chosen seats UI
-                                if (isOrderSaveInProgress) return;
-
-                                // Update seat's status
-                                seat.setStatus(newSeatStatus);
-                                setSeatUI(seat);
-
-                                // Update chosen tickets num
-                                ticketsNum--;
-
-                                // Handle tickets num + total price text view
-                                updateTicketsNumUI();
-
-                                // Handle chosen seats UI
-                                updateChosenSeatsUI();
-
-                                if (newSeatStatus == Utils.SeatStatus.OCCUPIED) {
-                                    // Notify the user a seat he has chosen has become occupied by another
-                                    String toastMessage = "שים לב! המושבים שבחרת נתפסו ע\"י לקוח אחר. אנא בחר מחדש";
-                                    Toast.makeText(SeatsActivity.this, toastMessage, Toast.LENGTH_LONG).show();
-                                }
+                                handleChosenSeatChangedInDB(newSeatStatus, seat);
                             }
                             // In case the seat was not chosen before this update from DB, we just update its appearance
                             // in the seat map
@@ -375,24 +392,34 @@ public class SeatsActivity extends AppCompatActivity{
                 });
     }
 
-    private void setSeatUI(SeatImageView seatImageView) {
-        // Setting seat color depending on its occupied/available status
-        seatImageView.setBackgroundResource(
-                Utils.lookupImageBySeatStatus(seatImageView.getStatus()));
+    /*
+     * If the seat was chosen before this update from DB, it means it was available and
+     * now it is occupied by another customer, or that we returned from PaymentActivity to
+     * this activity in which case the order seats have just become re-available.
+     * In either case, we undo the seat's selection
+     */
+    private void handleChosenSeatChangedInDB(Utils.SeatStatus newSeatStatus, SeatImageView seat) {
+        // In case seat update probably comes from this own customer's order,
+        // which is right after he clicked "Next", we wouldn't want to update chosen seats UI
+        if (isOrderSaveInProgress) return;
 
-        // If the seat is occupied, it shouldn't be enabled for the user
-        if (seatImageView.getStatus() == Utils.SeatStatus.OCCUPIED) {
-            seatImageView.setClickable(false);
-        }
-        // If the seat is available, enable its selection
-        else {
-            seatImageView.setClickable(true);
-            seatImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    handleOnSeatClick((SeatImageView) v);
-                }
-            });
+        // Update seat's status
+        seat.setStatus(newSeatStatus);
+        setSeatUI(seat);
+
+        // Update chosen tickets num
+        ticketsNum--;
+
+        // Handle tickets num + total price text view
+        updateTicketsNumUI();
+
+        // Handle chosen seats UI
+        updateChosenSeatsUI();
+
+        if (newSeatStatus == Utils.SeatStatus.OCCUPIED) {
+            // Notify the user a seat he has chosen has become occupied by another
+            String toastMessage = "שים לב! המושבים שבחרת נתפסו ע\"י לקוח אחר. אנא בחר מחדש";
+            Toast.makeText(SeatsActivity.this, toastMessage, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -478,6 +505,7 @@ public class SeatsActivity extends AppCompatActivity{
         // Should be set before updating tickets num UI
         isCouponUsed = true;
 
+        // Now that a coupon has been entered, we update tickets num and price accordingly
         updateTicketsNumUI();
 
         tvCouponCode.setTextColor(Color.GRAY);
@@ -496,12 +524,15 @@ public class SeatsActivity extends AppCompatActivity{
                 DataUtils.OrderStatus.IN_PROGRESS);
     }
 
+    /*
+     * We update the order's seats in an atomic transaction for synchronization
+     */
     private void saveNewOrderSeats(final Order newOrder, final String[][] chosenSeatsStringArray) {
         eventSeatsDatabaseReference.child(event.getUid()).runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
 
-                // We are going through all event rows and seats in DB
+                // Going through all event rows and seats in DB
                 for (MutableData row : mutableData.getChildren()) {
                     int rowNumber = Integer.parseInt(row.getKey());
 
@@ -561,6 +592,10 @@ public class SeatsActivity extends AppCompatActivity{
         orderSeatsDatabaseReference.child(newOrder.getUid()).updateChildren(orderSeatsData);
     }
 
+    /*
+     * Aborting the order happens if the order somehow became invalid - for instance, if another customer has
+     * occupied some of the chosen seats
+     */
     private void abortOrder(Order order) {
         OrderDataService.cancelOrder(event.getUid(), true, order);
         isOrderSaveInProgress = false;
@@ -570,6 +605,9 @@ public class SeatsActivity extends AppCompatActivity{
         Toast.makeText(SeatsActivity.this, toastMessage, Toast.LENGTH_LONG).show();
     }
 
+    /*
+     * Converts the array of SeatImageViews to a boolean array representing the seats' statuses
+     */
     @NonNull
     private boolean[][] getChosenSeatsArray() {
         boolean[][] chosenSeats = new boolean[seats.length][seats[0].length];
@@ -582,6 +620,9 @@ public class SeatsActivity extends AppCompatActivity{
         return chosenSeats;
     }
 
+    /*
+     * Converts the array of SeatImageViews to a string array representing the seats' statuses
+     */
     @NonNull
     private String[][] getChosenSeatsStringArray() {
         String[][] chosenSeatsStrings = new String[seats.length][seats[0].length];
@@ -604,6 +645,10 @@ public class SeatsActivity extends AppCompatActivity{
         return super.onOptionsItemSelected(item);
     }
 
+    /*
+     * These two methods are for handling native Android back button the way we need
+     * for keeping the app and order state valid
+     */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {

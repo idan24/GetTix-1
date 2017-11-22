@@ -152,6 +152,10 @@ public class ConfirmationActivity extends AppCompatActivity {
         binding.tvCustomerEmail.setText(order.getCustomer().getEmail());
     }
 
+    /*
+     * These two methods are for handling native Android back button the way we need
+     * for keeping the app and order state valid
+     */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {

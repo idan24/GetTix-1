@@ -2,10 +2,6 @@ package app.com.almogrubi.idansasson.gettix.entities;
 
 import java.io.Serializable;
 
-/**
- * Created by idans on 11/11/2017.
- */
-
 public class Customer implements Serializable {
 
     private String name;

@@ -20,15 +20,12 @@ import app.com.almogrubi.idansasson.gettix.activities.MainActivity;
 import app.com.almogrubi.idansasson.gettix.R;
 
 /**
- * Created by idans on 25/10/2017.
- *
  * Base class for Management screens - handles user sign-in/sign-out.
  * Client should implement onSignedInInitialize(user) and onSignedOutCleanup() if he needs to do something.
  */
-
 public class ManagementScreen extends AppCompatActivity {
 
-    // Arbitrary request code value for FirebaseUI
+    // Arbitrary request code value for FirebaseUI authentication
     public static final int RC_SIGN_IN = 1;
 
     protected FirebaseUser user;
@@ -103,13 +100,17 @@ public class ManagementScreen extends AppCompatActivity {
             return true;
         }
         else if (item.getItemId() == android.R.id.home) {
-            NavUtils.navigateUpFromSameTask(this);
+            onBackPressed();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    /*
+     * These two methods are for handling native Android back button the way we need
+     * for keeping the app state valid
+     */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {

@@ -13,10 +13,6 @@ import java.util.ArrayList;
 
 import app.com.almogrubi.idansasson.gettix.entities.Hall;
 
-/**
- * Created by idans on 29/10/2017.
- */
-
 public class HallSpinnerAdapter extends ArrayAdapter<Hall> {
 
     private Context context;
