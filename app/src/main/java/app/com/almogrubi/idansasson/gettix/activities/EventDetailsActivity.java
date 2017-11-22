@@ -161,7 +161,10 @@ public class EventDetailsActivity extends AppCompatActivity {
         binding.ivEventCategory.setBackgroundResource(Utils.lookupImageByCategory(event.getCategoryAsEnum()));
 
         binding.tvEventPrice.setText(String.format("%s₪", event.getPrice()));
-        binding.tvEventDescription.setText(event.getDescription());
+
+        String newLine = System.getProperty("line.separator");
+        binding.tvEventDescription.setText(String.format("משך המופע: %d דקות%s%s%s",
+                event.getDuration(), newLine, newLine, event.getDescription()));
 
         binding.btBookTickets.setOnClickListener(new View.OnClickListener() {
             @Override

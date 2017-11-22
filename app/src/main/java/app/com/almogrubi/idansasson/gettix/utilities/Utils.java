@@ -118,9 +118,9 @@ public class Utils {
             case DANCE:
                 return R.drawable.ic_dance;
             case CHILDREN:
-                return R.drawable.ic_teddybear;
+                return R.drawable.ic_kids;
             case COMEDY:
-                return R.drawable.ic_lol;
+                return R.drawable.ic_comedy;
             case LECTURES:
                 return R.drawable.ic_lecture;
             case SPORTS:
