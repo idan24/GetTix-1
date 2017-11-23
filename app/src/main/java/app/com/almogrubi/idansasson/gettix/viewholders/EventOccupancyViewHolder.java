@@ -7,6 +7,7 @@ import android.widget.TextView;
 import app.com.almogrubi.idansasson.gettix.R;
 import app.com.almogrubi.idansasson.gettix.entities.Event;
 import app.com.almogrubi.idansasson.gettix.dataservices.DataUtils;
+import app.com.almogrubi.idansasson.gettix.utilities.Utils;
 
 /**
  * A ViewHolder is a required part of the pattern for RecyclerViews. It mostly behaves as
@@ -33,7 +34,10 @@ public class EventOccupancyViewHolder extends RecyclerView.ViewHolder {
     public void bindEvent(Event event) {
         tvEventTitle.setText(event.getTitle());
         tvEventDateTime.setText(DataUtils.convertToUiDateFormat(event.getDate()));
-        tvEventHall.setText(String.format("%s, %s", event.getEventHall().getName(), event.getCity()));
+
+        String hallAddress = String.format("%s, %s", event.getEventHall().getName(), event.getCity());
+        tvEventHall.setText(Utils.createIndentedText(hallAddress,
+                Utils.FIRST_LINE_INDENT, Utils.PARAGRAPH_INDENT));
 
         int eventTotalTicketsNum = event.isMarkedSeats()
                 ? event.getEventHall().getRows() * event.getEventHall().getColumns()

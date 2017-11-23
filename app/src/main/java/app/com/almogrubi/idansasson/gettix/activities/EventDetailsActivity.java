@@ -17,6 +17,7 @@ import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.text.style.LeadingMarginSpan;
 import android.text.style.StyleSpan;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -158,6 +159,8 @@ public class EventDetailsActivity extends AppCompatActivity {
                             }
                         };
                         hallAddress.setSpan(clickableSpan, 0, hall.getName().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        hallAddress.setSpan(new LeadingMarginSpan.Standard(
+                                Utils.FIRST_LINE_INDENT, Utils.PARAGRAPH_INDENT),0, hallAddress.length(),0);
                         binding.tvEventHallAddress.setText(hallAddress);
                         binding.tvEventHallAddress.setMovementMethod(LinkMovementMethod.getInstance());
                         binding.tvEventHallAddress.setHighlightColor(Color.TRANSPARENT);

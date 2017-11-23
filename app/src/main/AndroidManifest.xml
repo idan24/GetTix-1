@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="app.com.almogrubi.idansasson.gettix">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:name=".GetTixApplication"
         android:allowBackup="true"
@@ -10,15 +12,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
-            android:name=".activities.MainActivity"
-            android:launchMode="singleTop">
+            android:name=".activities.SplashActivity"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activities.MainActivity"
+            android:launchMode="singleTop" />
         <activity
             android:name=".activities.ManagementActivity"
             android:label="@string/title_activity_management"
@@ -76,8 +81,7 @@
         <activity
             android:name=".activities.PaymentActivity"
             android:label="@string/title_activity_payment" />
-        <activity
-            android:name=".activities.ConfirmationActivity" />
+        <activity android:name=".activities.ConfirmationActivity" />
 
         <meta-data
             android:name="CLOUDINARY_URL"
@@ -91,9 +95,6 @@
                 <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
             </intent-filter>
         </service>
-
     </application>
-
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
 </manifest>

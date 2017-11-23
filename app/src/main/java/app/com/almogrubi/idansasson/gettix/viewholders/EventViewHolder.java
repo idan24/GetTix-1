@@ -44,7 +44,9 @@ public class EventViewHolder extends RecyclerView.ViewHolder {
                 DataUtils.convertToUiDateFormat(event.getDate()),
                 event.getHour()));
 
-        tvEventHall.setText(String.format("%s, %s", event.getEventHall().getName(), event.getCity()));
+        String hallAddress = String.format("%s, %s", event.getEventHall().getName(), event.getCity());
+        tvEventHall.setText(Utils.createIndentedText(hallAddress,
+                Utils.FIRST_LINE_INDENT, Utils.PARAGRAPH_INDENT));
 
         ivEventCategory.setBackgroundResource(Utils.lookupImageByCategory(event.getCategoryAsEnum()));
 
